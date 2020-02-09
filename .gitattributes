@@ -1,2 +1,2 @@
-kakeibosan/kakeibosan/static/*
-kakeibosan/kakeibosan/templates
+kakeibosan/kakeibosan/static/* linguist-vendored
+kakeibosan/kakeibosan/templates/*  linguist-vendored

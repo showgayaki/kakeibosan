@@ -41,7 +41,7 @@ function createTable(users, records){
                 'User_ID'
             ],
             height: 800,
-            rowHeight:30,
+            rowHeights: 40,
             className: 'htMiddle',
             minSpareRows: 1,
             columnSorting: {

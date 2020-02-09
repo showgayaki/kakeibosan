@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <title>家計簿さん - ログイン</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"/>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+  </head>
+
+  <body class="text-center">
+    <form class="form-signin" action="{{ url_for('login') }}" method="post">
+      {% for category ,message in get_flashed_messages(with_categories=true) %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      <img class="mb-4" src="{{ url_for('static', filename='img/favicon.png') }}" alt="" width="72" height="72">
+      <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
+      {{ form.username.label(class="sr-only") }}
+      {{ form.username(id="username", class="form-control", placeholder="Username") }}
+      {{ form.password.label(class="sr-only") }}
+      {{ form.password(class="form-control", placeholder="Password") }}
+      {{ form.remember(type="checkbox") }}
+      {{ form.remember.label(" Remember me") }}
+      {{ form.submit(class="btn btn-lg btn-primary btn-block") }}
+      <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
+    </form>
+  <script>
+    document.getElementById('username').focus();
+  </script>
+  </body>
+</html>

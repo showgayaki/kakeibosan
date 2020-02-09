@@ -1,0 +1,40 @@
+    <div class="sidebar" data-color="orange">
+      <!--
+        Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
+     -->
+      <div class="logo">
+        <a href="{{ url_for('dashboard') }}" class="simple-text logo-mini">
+          <img src="{{ url_for('static', filename='img/favicon.png') }}">
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="simple-text logo-normal">
+          {{ app_name }}
+        </a>
+      </div>
+      <div class="sidebar-wrapper" id="sidebar-wrapper">
+        {% set navigation_bar = [
+          (url_for('dashboard'), 'ダッシュボード', 'now-ui-icons design_app'),
+          (url_for('records'), 'データ一覧・登録', 'now-ui-icons design_bullet-list-67'),
+          (url_for('settings'), '設定', 'now-ui-icons ui-1_settings-gear-63'),
+          ('#', 'ログアウト', 'now-ui-icons media-1_button-power')
+        ] -%}
+        <ul class="nav">
+            {% for href, caption, class in navigation_bar %}
+            {% if not caption == 'ログアウト' %}
+            <li {% if caption == active_page %}class="active"{% endif%}>
+                <a href="{{ href }}">
+                    <i class="{{ class }}"></i>
+                    <p>{{ caption }}</p>
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a data-toggle="modal" data-target="#logoutModal">
+                    <i class="{{ class }}"></i>
+                    <p>{{ caption }}</p>
+                </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+      </div>
+    </div>

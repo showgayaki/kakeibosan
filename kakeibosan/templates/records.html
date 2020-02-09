@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %} - {{ active_page }}{% endblock %}
+{% block header %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/datatables.min.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/handsontable/handsontable.full.min.css') }}"/>
+{% endblock%}
+{% block contents %}
+      <div class="panel-header panel-header-sm">
+      </div>
+      <div class="content">
+      {% for category ,message in get_flashed_messages(with_categories=true) %}
+      <div class="alert alert-{{ category }} alert-dismissible">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endfor %}
+        <div class="row">
+          <div class="col-md-7">
+            <div class="card">
+              <div class="card-header">
+                <h5 class="card-title">合計 - {{ view_month }}</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-bordered">
+                    {% for key in total_cost.keys() %}
+                    <th class="text-center text-primary">{{ key }}</th>
+                    {% endfor %}
+                    <tbody>
+                      <tr>
+                      {% for val in total_cost.values() %}
+                      <td class="text-right">{{ '{:,}'.format(val) }}</td>
+                      {% endfor %}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-10">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">{{ active_page }}</h4>
+                <!-- tab -->
+                <ul class="nav nav-tabs">
+                  {% for user in users %}
+                  {% if user.user_name == current_user.user_name %}
+                  {% set active = 'active' %}
+                  {% endif %}
+                  <li class="nav-item">
+                      <a href="#{{ user.user_name }}-content" class="nav-link {{ active }}" data-toggle="tab">{{ user.view_name }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+                <!-- endtab -->
+              </div>
+              <div class="card-body">
+                <!-- panel -->
+                <div id="tabContent" class="tab-content">
+                  {% for user in users %}
+                  {% if user.user_name == current_user.user_name %}
+                  {% set active = 'active' %}
+                  {% endif %}
+                  <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
+                    <div class="d-flex justify-content-between">
+                      <!-- 新規登録ボタン -->
+                      <div class="flex-itmes">
+                        <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
+                          登録
+                        </button>
+                      </div>
+                      <div class="flex-itmes">
+                        <!-- ページャー -->
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination float-right">
+                            {% if month.prev != '' %}
+                            <li class="page-item">
+                              <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}" ><< 前月</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                              <a class="page-link text-dark" href="#" tabindex="-1"><< 前月</a>
+                            </li>
+                            {% endif %}
+                            <li class="page-item disabled">
+                              <a class="page-link text-dark" href="#" tabindex="-1">{{ view_month }}</a>
+                            </li>
+                            {% if month.next != '' %}
+                            <li class="page-item">
+                              <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}" >次月 >></a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                              <a class="page-link text-dark" href="#" tabindex="-1">次月 >></a>
+                            </li>
+                            {% endif %}
+                          </ul>
+                        </nav>
+                      </div>
+                    </div>
+                    <div id="{{ user.id }}-handsontable">
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                <!-- endpanel -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- モーダルの設定 -->
+      <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="logoutModalLabel">データ更新</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h5 id="records-caption"></h5>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <th></th>
+                  <th class="text-primary">種別</th>
+                  <th class="text-primary">項目</th>
+                  <th class="text-primary">支払先</th>
+                  <th class="text-primary">金額</th>
+                  <th class="text-primary">支払日</th>
+                  <th class="text-primary">計上月</th>
+                  <tbody id="tbody-update">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+            </div><!-- /.modal-footer -->
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+{% endblock %}
+{% block footer %}
+  <script src="{{ url_for('static', filename='js/plugins/datatables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/plugins/handsontable.full.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/records.js') }}"></script>
+  <script>
+    $(document).ready(function() {
+      var users = {{ users | tojson }};
+      var records = {{ costs | tojson }};
+      createTable(users, records);
+    });
+  </script>
+  <script>
+    jQuery(function($){
+        $.extend( $.fn.dataTable.defaults, {
+            language: {
+                url: "{{ url_for('static', filename='json/japanese.json') }}"
+            }
+        });
+      $("[id$=data-table]").DataTable({
+          order: [ [ 4, "asc" ] ],
+          autoWidth: false,
+          lengthChange: false,
+          searching: false,
+          info: false
+      });
+    });
+  </script>
+{% endblock %}

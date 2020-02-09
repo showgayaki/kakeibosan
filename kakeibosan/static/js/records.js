@@ -6,7 +6,7 @@ function createTable(users, records){
                 {data: 'sub_category', type: 'dropdown'},
                 {data: 'paid_to', type: 'text'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
-                {data: 'bought_in', type: 'date', dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
+                {data: 'bought_in', type: 'date', width: 100, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'date', dateFormat: 'YYYY-M', className: 'htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1}
             ]
@@ -40,8 +40,8 @@ function createTable(users, records){
                 '計上月',
                 'User_ID'
             ],
-            height: 550,
-            rowHeights: 40,
+            height: 800,
+            rowHeight:30,
             className: 'htMiddle',
             minSpareRows: 1,
             columnSorting: {

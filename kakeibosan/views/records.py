@@ -1,3 +1,4 @@
+from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import render_template, request, abort, jsonify, flash
@@ -121,11 +122,12 @@ def _cost_per_month(month_to_add):
         total_costs[user.view_name] = user_total
 
     pay_by = min(total_costs, key=total_costs.get)
-    amount = (int(max(total_costs.values())) - int(min(total_costs.values()))) / len(total_costs)
+    amount = (max(total_costs.values()) - min(total_costs.values())) / len(total_costs)
 
     total_costs['合計'] = total
-    total_costs['折半額'] = round(total / len(users))
-    total_costs['{}支払額'.format(pay_by)] = round(amount)
+    total_costs['折半額'] = Decimal(str(total / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+    total_costs['{}支払額'.format(pay_by)] = Decimal(str(amount)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+
     return total_costs
 
 

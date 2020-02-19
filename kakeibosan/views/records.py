@@ -31,7 +31,7 @@ def records():
             else datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 
         if view_month > oldest_month:
-            users = User.query.filter(User.id > 1).order_by(User.id).all()
+            users = User.query.order_by(User.id).all()
             users_list = [user.to_dict() for user in users]
             fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
 
@@ -108,7 +108,7 @@ def _insert_fixed_costs(costs, fixed_costs, month_to_add):
 
 def _cost_per_month(month_to_add):
     costs = Cost.query.filter_by(month_to_add=month_to_add).order_by(Cost.id).all()
-    users = User.query.filter(User.id > 1).order_by(User.id).all()
+    users = User.query.order_by(User.id).all()
     total_costs = {}
     total = 0
 

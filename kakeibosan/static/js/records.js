@@ -106,6 +106,11 @@ function createTable(users, records){
         };
         //テーブルを生成
         table[users[i]['id']] = new Handsontable(tableElement, tableSettings);
+
+        // 非表示タブのHandsontableが描画されない問題回避
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+          table[users[i]['id']].render();
+        });
     }
     // 登録ボタンクリック
     $(document).on('click', '[id$=fetch-update-records]', function(e){

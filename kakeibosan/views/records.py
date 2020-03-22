@@ -28,8 +28,8 @@ def records():
         # 集計開始月を設定
         oldest_month = datetime.strptime('2019-05-01', '%Y-%m-%d')
         parameter = request.args.get('month')
-        view_month = datetime.strptime(parameter + '-01', '%Y-%m-%d') if parameter\
-            else datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        view_month = (datetime.strptime(parameter + '-01', '%Y-%m-%d') if parameter
+                      else datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond=0))
 
         if view_month > oldest_month:
             users = User.query.order_by(User.id).all()
@@ -134,12 +134,12 @@ def _cost_per_month(month_to_add):
 def _month_pager(view_month, oldest_month):
     is_oldest = (view_month + relativedelta(months=-1)).replace(day=1) == oldest_month
 
-    prev_month = '' if is_oldest \
-        else (view_month + relativedelta(months=-1)).replace(day=1).strftime('%Y-%m')
+    prev_month = ('' if is_oldest
+                  else (view_month + relativedelta(months=-1)).replace(day=1).strftime('%Y-%m'))
 
     is_next_month_future = (view_month + relativedelta(months=1)).replace(day=1) > datetime.today()
-    next_month = '' if is_next_month_future \
-        else (view_month + relativedelta(months=1)).replace(day=1).strftime('%Y-%m')
+    next_month = ('' if is_next_month_future
+                  else (view_month + relativedelta(months=1)).replace(day=1).strftime('%Y-%m'))
 
     month = {'prev': prev_month, 'next': next_month}
     return month

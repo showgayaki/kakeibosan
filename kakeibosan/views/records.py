@@ -28,10 +28,11 @@ def records():
         # 集計開始月を設定
         oldest_month = datetime.strptime('2019-05-01', '%Y-%m-%d')
         parameter = request.args.get('month')
-        view_month = (datetime.strptime(parameter + '-01', '%Y-%m-%d') if parameter
-                      else datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond=0))
+        this_month = datetime.today().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        view_month = datetime.strptime(parameter + '-01', '%Y-%m-%d') if parameter else this_month
+        next_month = (this_month + relativedelta(months=1))
 
-        if view_month > oldest_month:
+        if oldest_month < view_month < next_month:
             users = User.query.order_by(User.id).all()
             users_list = [user.to_dict() for user in users]
             fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
@@ -39,14 +40,13 @@ def records():
             total_cost = _cost_per_month(view_month.date())
             month = _month_pager(view_month, oldest_month)
 
-            # 「>= *月1日00:00:00」だと1日分が表示されないので、seconds=-1している
-            end_of_month = view_month + relativedelta(months=1, seconds=-1)
-            costs = Cost.query.filter(and_(Cost.bought_in >= view_month + relativedelta(seconds=-1)
-                                           , Cost.bought_in <= end_of_month)).order_by(Cost.id).all()
+            # 計上月で検索
+            costs = Cost.query.filter(Cost.month_to_add == view_month.date()).all()
             db.session.close()
 
             cost_records = _cost_records(costs)
-            _insert_fixed_costs(costs, fixed_costs, view_month.date())
+            if this_month == view_month:
+                _insert_fixed_costs(costs, fixed_costs, view_month.date())
 
             view_month = view_month.strftime('%Y年%-m月')
 

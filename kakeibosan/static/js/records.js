@@ -118,7 +118,6 @@ function createTable(users, records){
         let userId = $(this).attr('id').split('-')[0];
         var currentRecords = [];
         $(table[userId].getSourceData()).filter(function(i, e){
-            console.log(e)
             // 種別が空欄ならスルー
             if(e['category']) return e;
         }).each(function(i, e){
@@ -166,8 +165,8 @@ function createUpdateModal(records){
         $('#records-caption').html('以下 ' + records.length + '件のデータを登録しますか？');
         let html = '';
         for(let i = 0; i < records.length; i++){
-            let add = '<td><h5><span class="badge badge-success">新規</span></h5></td>';
-            let update = '<td><h5><span class="badge badge-info">更新</span></h5></td>';
+            let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
+            let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
             let idColumn = records[i]['id'] === null? add : update;
 
             html += '<tr>'
@@ -175,9 +174,9 @@ function createUpdateModal(records){
             + '<td>' + records[i]['category'] + '</td>'
             + '<td>' + records[i]['sub_category'] + '</td>'
             + '<td>' + records[i]['paid_to'] + '</td>'
-            + '<td>' + records[i]['amount'].toString() + '</td>'
-            + '<td>' + records[i]['bought_in'] + '</td>'
-            + '<td>' + records[i]['month_to_add'] + '</td>'
+            + '<td class="amount">' + records[i]['amount'].toLocaleString() + '</td>'
+            + '<td class="bought_in">' + records[i]['bought_in'] + '</td>'
+            + '<td class="month_to_add">' + records[i]['month_to_add'] + '</td>'
             + '</tr>';
         }
         $('#tbody-update').html(html);

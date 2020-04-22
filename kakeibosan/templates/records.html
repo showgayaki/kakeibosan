@@ -2,6 +2,21 @@
 {% block title %} - {{ active_page }}{% endblock %}
 {% block header %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/handsontable/handsontable.full.min.css') }}"/>
+  <style>
+    .modal-dialog{
+      max-width: 600px;
+    }
+    th, .badge_clm{
+      text-align: center;
+    }
+    .badge{
+      font-size: 1em;
+      text-align: center;
+    }
+    td.amount, td.bought_in, td.month_to_add{
+      text-align: right;
+    }
+  </style>
 {% endblock%}
 {% block contents %}
       <div class="panel-header panel-header-sm">
@@ -25,7 +40,7 @@
                 <div class="table-responsive">
                   <table class="table table-bordered">
                     {% for key in total_cost.keys() %}
-                    <th class="text-center text-primary">{{ key }}</th>
+                    <th class="text-primary">{{ key }}</th>
                     {% endfor %}
                     <tbody>
                       <tr>
@@ -71,9 +86,8 @@
                           登録
                         </button>
                       </div>
+                      <!-- ページャー -->
                       <div class="flex-itmes">
-                        <!-- ページャー -->
-                        <nav aria-label="Page navigation">
                           <ul class="pagination float-right">
                             {% if month.prev != '' %}
                             <li class="page-item">
@@ -97,7 +111,6 @@
                             </li>
                             {% endif %}
                           </ul>
-                        </nav>
                       </div>
                     </div>
                     <div id="{{ user.id }}-handsontable">
@@ -113,7 +126,7 @@
       </div>
       <!-- モーダルの設定 -->
       <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="logoutModalLabel">データ更新</h5>

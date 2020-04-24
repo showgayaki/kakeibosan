@@ -13,6 +13,7 @@ from kakeibosan.models import User, FixedCost, Cost
 def records():
     if request.method == 'POST':
         records_json = request.json
+        flash_list = []
         for record in records_json:
             if record['id'] is None:
                 cost = Cost()
@@ -26,8 +27,9 @@ def records():
                     db.session.close()
                 created_at = datetime.strptime(record['created_at'], '%Y-%m-%d %H:%M:%S')
 
-            flash_message, flash_category = _insert_costs(record, cost, created_at)
-            flash(flash_message, flash_category)
+            flash_list.append(_insert_costs(record, cost, created_at))
+
+        _flash_message(flash_list)
         return jsonify(success=True)
     else:
         # 集計開始月を設定
@@ -77,15 +79,13 @@ def _insert_costs(record, cost, created_at):
     try:
         db.session.add(cost)
         db.session.commit()
-        flash_message = 'レコードを更新しました'
-        flash_category = 'info'
+        flash_message = 'add' if record['id'] is None else 'update'
     except exc.SQLAlchemyError:
-        flash_message = 'Insert Error'
-        flash_category = 'warning'
+        flash_message = 'add_error' if record['id'] is None else 'update_error'
     finally:
         db.session.close()
 
-    return flash_message, flash_category
+    return flash_message
 
 
 def _fetch_view_costs(view_month):
@@ -194,3 +194,16 @@ def _cost_records(costs):
         cost_records.append(cost_dict)
 
     return cost_records
+
+
+def _flash_message(flash_list):
+    flash_dict = {
+        'add': 'を追加しました。'
+        , 'update': 'を更新しました。'
+        , 'add_error': 'の追加に失敗しました。'
+        , 'update_error': 'の更新に失敗しました。'
+    }
+    for key, val in flash_dict.items():
+        category = 'warning' if 'error' in key else 'info'
+        if flash_list.count(key) > 0:
+            flash('{}件のレコード{}'.format(flash_list.count(key), val), category)

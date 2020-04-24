@@ -3,7 +3,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import render_template, request, abort, jsonify, flash
 from flask_login import login_required
-from sqlalchemy import and_, exc
+from sqlalchemy import exc
 from kakeibosan import app, db
 from kakeibosan.models import User, FixedCost, Cost
 
@@ -18,7 +18,12 @@ def records():
                 cost = Cost()
                 created_at = datetime.now()
             else:
-                cost = Cost.query.filter(Cost.id == record['id']).first()
+                try:
+                    cost = Cost.query.filter_by(id=record['id']).first()
+                except exc.SQLAlchemyError:
+                    cost = {}
+                finally:
+                    db.session.close()
                 created_at = datetime.strptime(record['created_at'], '%Y-%m-%d %H:%M:%S')
 
             flash_message, flash_category = _insert_costs(record, cost, created_at)
@@ -33,23 +38,24 @@ def records():
         next_month = (this_month + relativedelta(months=1))
 
         if oldest_month < view_month < next_month:
-            users = User.query.order_by(User.id).all()
-            users_list = [user.to_dict() for user in users]
-            fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
+            try:
+                users = User.query.order_by(User.id).all()
+            except exc.SQLAlchemyError:
+                users = {}
+            finally:
+                db.session.close()
 
+            costs = _fetch_view_costs(view_month)
+            users_list = [user.to_dict() for user in users]
             total_cost = _cost_per_month(view_month.date())
             month = _month_pager(view_month, oldest_month)
 
-            # 計上月で検索
-            costs = Cost.query.filter(Cost.month_to_add == view_month.date()).all()
-            db.session.close()
+            # 固定費インサートしたら、インサート後のレコードを再度取得
+            if this_month == view_month and _is_insert_fixed_costs(costs, view_month.date()):
+                costs = _fetch_view_costs(view_month)
 
             cost_records = _cost_records(costs)
-            if this_month == view_month:
-                _insert_fixed_costs(costs, fixed_costs, view_month.date())
-
             view_month = view_month.strftime('%Y年%-m月')
-
             return render_template('records.html', active_page='データ一覧・登録', users=users_list,
                                    costs=cost_records, month=month, view_month=view_month, total_cost=total_cost)
         else:
@@ -82,7 +88,26 @@ def _insert_costs(record, cost, created_at):
     return flash_message, flash_category
 
 
-def _insert_fixed_costs(costs, fixed_costs, month_to_add):
+def _fetch_view_costs(view_month):
+    try:
+        # 計上月で検索
+        costs = Cost.query.filter_by(month_to_add=view_month.date()).all()
+    except exc.SQLAlchemyError:
+        costs = {}
+    finally:
+        db.session.close()
+    return costs
+
+
+def _is_insert_fixed_costs(costs, month_to_add):
+    is_inserted = False
+    try:
+        fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
+    except exc.SQLAlchemyError:
+        fixed_costs = {}
+    finally:
+        db.session.close()
+
     for fc in fixed_costs:
         found = False
         for cost in costs:
@@ -101,15 +126,23 @@ def _insert_fixed_costs(costs, fixed_costs, month_to_add):
             try:
                 db.session.add(cost)
                 db.session.commit()
+                is_inserted = True
             except exc.SQLAlchemyError:
                 pass
             finally:
                 db.session.close()
+    return is_inserted
 
 
 def _cost_per_month(month_to_add):
-    costs = Cost.query.filter_by(month_to_add=month_to_add).order_by(Cost.id).all()
-    users = User.query.order_by(User.id).all()
+    try:
+        costs = Cost.query.filter_by(month_to_add=month_to_add).order_by(Cost.id).all()
+        users = User.query.order_by(User.id).all()
+    except exc.SQLAlchemyError:
+        costs = {}
+        users = {}
+    finally:
+        db.session.close()
     total_costs = {}
     total = 0
 

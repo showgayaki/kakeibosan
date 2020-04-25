@@ -65,23 +65,30 @@ def records():
 
 
 def _insert_costs(record, cost, created_at):
-    cost.id = record['id']
-    cost.category = record['category']
-    cost.sub_category = record['sub_category']
-    cost.paid_to = record['paid_to']
-    cost.amount = record['amount']
-    cost.month_to_add = datetime.strptime(record['month_to_add'] + '-01', '%Y-%m-%d')
-    cost.bought_in = datetime.strptime(record['bought_in'], '%Y-%m-%d')
-    cost.created_at = created_at
-    cost.updated_at = datetime.now()
-    cost.user_id = record['user_id']
-
     try:
-        db.session.add(cost)
+        if record['user_id'] > 0:
+            cost.id = record['id']
+            cost.category = record['category']
+            cost.sub_category = record['sub_category']
+            cost.paid_to = record['paid_to']
+            cost.amount = record['amount']
+            cost.month_to_add = datetime.strptime(record['month_to_add'] + '-01', '%Y-%m-%d')
+            cost.bought_in = datetime.strptime(record['bought_in'], '%Y-%m-%d')
+            cost.created_at = created_at
+            cost.updated_at = datetime.now()
+            cost.user_id = record['user_id']
+            db.session.add(cost)
+            flash_message = 'add' if record['id'] is None else 'update'
+        else:
+            db.session.delete(cost)
+            flash_message = 'delete'
+
         db.session.commit()
-        flash_message = 'add' if record['id'] is None else 'update'
     except exc.SQLAlchemyError:
-        flash_message = 'add_error' if record['id'] is None else 'update_error'
+        if record['user_id'] > 0:
+            flash_message = 'add_error' if record['id'] is None else 'update_error'
+        else:
+            flash_message = 'delete_error'
     finally:
         db.session.close()
 
@@ -200,8 +207,10 @@ def _flash_message(flash_list):
     flash_dict = {
         'add': 'を追加しました。'
         , 'update': 'を更新しました。'
+        , 'delete': 'を削除しました。'
         , 'add_error': 'の追加に失敗しました。'
         , 'update_error': 'の更新に失敗しました。'
+        , 'delete_error': 'の削除に失敗しました。'
     }
     for key, val in flash_dict.items():
         category = 'warning' if 'error' in key else 'info'

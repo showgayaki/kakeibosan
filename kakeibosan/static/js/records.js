@@ -115,68 +115,66 @@ function createTable(users, records){
     // 登録ボタンクリック
     $(document).on('click', '[id$=fetch-update-records]', function(e){
         // ボタンのidは「*-fetch-update-records」
-        let userId = $(this).attr('id').split('-')[0];
+        let userId = Number($(this).attr('id').split('-')[0]);
         var currentRecords = [];
         $(table[userId].getSourceData()).filter(function(i, e){
-            // 種別が空欄ならスルー
-            if(e['category']) return e;
+            // 最終行は除く
+            if(table[userId].getSourceData().length != i + 1) return e;
         }).each(function(i, e){
             currentRecords.push(e);
         });
         defaultRecords = defaultRecords.filter(x => x.user_id == userId);
-        let updateRecords = fetchUpdateRecords(userId, COLUMNS, currentRecords, defaultRecords);
-        createUpdateModal(updateRecords);
+        let updateRecords = fetchUpdateRecords(userId, currentRecords, defaultRecords);
+        createUpdateModal(updateRecords, defaultRecords);
     })
 }
 
 
-function fetchUpdateRecords(userId, columns, currentRecords, defaultRecords){
-    updateRecords = [];
-    for(let i = 0; i < currentRecords.length; i++){
-        if(defaultRecords.length === 0){
-            currentRecords[i]['id'] = null;
-            currentRecords[i]['user_id'] = userId;
-            updateRecords.push(currentRecords[i]);
-        }else{
-            for(let j = 0; j < defaultRecords.length; j++){
-                if(currentRecords[i]['id'] === null){
-                    currentRecords[i]['user_id'] = Number(userId);
-                    updateRecords.push(currentRecords[i]);
-                    break;
-                }else if(currentRecords[i]['id'] === defaultRecords[j]['id']){
-                    for(let k = 0; k < columns.length; k++){
-                        let key = columns[k]['data'];
-                        if(currentRecords[i][key] !== defaultRecords[j][key]){
-                            updateRecords.push(currentRecords[i]);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+function fetchUpdateRecords(userId, currentRecords, defaultRecords){
+    updateRecords = _.differenceWith(currentRecords, defaultRecords, _.isEqual);
+    for(let i = 0; i < updateRecords.length; i++){
+        updateRecords[i]['user_id'] = userId;
     }
     return updateRecords;
 }
 
 
-function createUpdateModal(records){
-    if(records.length > 0){
+function createUpdateModal(updateRecords, defaultRecords){
+    if(updateRecords.length > 0){
         $('#confirmModal').find('.table-responsive').show();
-        $('#records-caption').html('以下 ' + records.length + '件のデータを登録しますか？');
+        $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
         let html = '';
-        for(let i = 0; i < records.length; i++){
+        for(let i = 0; i < updateRecords.length; i++){
             let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
             let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
-            let idColumn = records[i]['id'] === null? add : update;
+            let remove = '<td class="badge_clm"><span class="badge badge-danger">削除</span></td>';
+            let badgeColumn = '';
+
+            if(updateRecords[i]['id'] === null){
+                badgeColumn = add;
+            }else if(updateRecords[i]['category'] === ''
+                    && updateRecords[i]['sub_category'] === ''
+                    && updateRecords[i]['paid_to'] === ''
+                    && updateRecords[i]['amount'] === ''
+                    && updateRecords[i]['bought_in'] === ''
+                    && updateRecords[i]['month_to_add'] === ''){
+                badgeColumn = remove;
+                updateRecords[i]['user_id'] = 0;
+            }else{
+                badgeColumn = update;
+            }
+
+            // 削除時はdefaultRecordsからデータ取得
+            record = badgeColumn === remove? _.find(defaultRecords, ['id', updateRecords[i]['id']]) : updateRecords[i];
 
             html += '<tr>'
-            + idColumn
-            + '<td>' + records[i]['category'] + '</td>'
-            + '<td>' + records[i]['sub_category'] + '</td>'
-            + '<td>' + records[i]['paid_to'] + '</td>'
-            + '<td class="amount">' + records[i]['amount'].toLocaleString() + '</td>'
-            + '<td class="bought_in">' + records[i]['bought_in'] + '</td>'
-            + '<td class="month_to_add">' + records[i]['month_to_add'] + '</td>'
+            + badgeColumn
+            + '<td>' + record['category'] + '</td>'
+            + '<td>' + record['sub_category'] + '</td>'
+            + '<td>' + record['paid_to'] + '</td>'
+            + '<td class="amount">' + Number(record['amount']).toLocaleString() + '</td>'
+            + '<td class="bought_in">' + record['bought_in'] + '</td>'
+            + '<td class="month_to_add">' + record['month_to_add'] + '</td>'
             + '</tr>';
         }
         $('#tbody-update').html(html);
@@ -196,7 +194,7 @@ function createUpdateModal(records){
         let postUrl = '/kakeibosan/records'
         $.ajax({
             url: postUrl,
-            data: JSON.stringify(records),
+            data: JSON.stringify(updateRecords),
             dataType: 'json',
             contentType: 'application/json',
             type: 'POST'

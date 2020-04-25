@@ -66,7 +66,7 @@ def records():
 
 def _insert_costs(record, cost, created_at):
     try:
-        if record['user_id'] > 0:
+        if not record['del']:
             cost.id = record['id']
             cost.category = record['category']
             cost.sub_category = record['sub_category']

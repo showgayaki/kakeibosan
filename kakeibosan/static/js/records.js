@@ -8,9 +8,14 @@ function createTable(users, records){
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
                 {data: 'bought_in', type: 'date', width: 100, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'date', dateFormat: 'YYYY-M', className: 'htRight htMiddle'},
-                {data: 'user_id', type: 'numeric', width: 0.1}
+                {data: 'user_id', type: 'numeric', width: 0.1},
+                {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}
             ]
     var table = {};
+    // チェックボックスにfalseをいれておく
+    records.forEach(function(val){
+        val['del'] = false;
+    });
     // 参照渡し回避
     var defaultRecords = JSON.parse(JSON.stringify(records));
 
@@ -38,7 +43,8 @@ function createTable(users, records){
                 '金額',
                 '支払日',
                 '計上月',
-                'User_ID'
+                'User_ID',
+                '削除'
             ],
             height: 800,
             rowHeights: 40,
@@ -119,7 +125,7 @@ function createTable(users, records){
         var currentRecords = [];
         $(table[userId].getSourceData()).filter(function(i, e){
             // 最終行は除く
-            if(table[userId].getSourceData().length != i + 1) return e;
+            if(table[userId].getSourceData().length !== i + 1) return e;
         }).each(function(i, e){
             currentRecords.push(e);
         });
@@ -152,29 +158,20 @@ function createUpdateModal(updateRecords, defaultRecords){
 
             if(updateRecords[i]['id'] === null){
                 badgeColumn = add;
-            }else if(updateRecords[i]['category'] === ''
-                    && updateRecords[i]['sub_category'] === ''
-                    && updateRecords[i]['paid_to'] === ''
-                    && updateRecords[i]['amount'] === ''
-                    && updateRecords[i]['bought_in'] === ''
-                    && updateRecords[i]['month_to_add'] === ''){
+            }else if(updateRecords[i]['del'] === true){
                 badgeColumn = remove;
-                updateRecords[i]['user_id'] = 0;
             }else{
                 badgeColumn = update;
             }
 
-            // 削除時はdefaultRecordsからデータ取得
-            record = badgeColumn === remove? _.find(defaultRecords, ['id', updateRecords[i]['id']]) : updateRecords[i];
-
             html += '<tr>'
             + badgeColumn
-            + '<td>' + record['category'] + '</td>'
-            + '<td>' + record['sub_category'] + '</td>'
-            + '<td>' + record['paid_to'] + '</td>'
-            + '<td class="amount">' + Number(record['amount']).toLocaleString() + '</td>'
-            + '<td class="bought_in">' + record['bought_in'] + '</td>'
-            + '<td class="month_to_add">' + record['month_to_add'] + '</td>'
+            + '<td>' + updateRecords[i]['category'] + '</td>'
+            + '<td>' + updateRecords[i]['sub_category'] + '</td>'
+            + '<td>' + updateRecords[i]['paid_to'] + '</td>'
+            + '<td class="amount">' + Number(updateRecords[i]['amount']).toLocaleString() + '</td>'
+            + '<td class="bought_in">' + updateRecords[i]['bought_in'] + '</td>'
+            + '<td class="month_to_add">' + updateRecords[i]['month_to_add'] + '</td>'
             + '</tr>';
         }
         $('#tbody-update').html(html);

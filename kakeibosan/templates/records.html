@@ -162,9 +162,10 @@
   <script src="{{ url_for('static', filename='js/records.js') }}"></script>
   <script>
     $(document).ready(function() {
+      var currentUserId = {{ current_user.id}}
       var users = {{ users | tojson }};
       var records = {{ costs | tojson }};
-      createTable(users, records);
+      createTable(currentUserId, users, records);
     });
   </script>
 {% endblock %}

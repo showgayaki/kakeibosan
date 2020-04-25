@@ -1,4 +1,4 @@
-function createTable(users, records){
+function createTable(currentUserId, users, records){
     const SUB_CATEGORY_COLUMN = 2;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1},
@@ -122,16 +122,22 @@ function createTable(users, records){
     $(document).on('click', '[id$=fetch-update-records]', function(e){
         // ボタンのidは「*-fetch-update-records」
         let userId = Number($(this).attr('id').split('-')[0]);
-        var currentRecords = [];
-        $(table[userId].getSourceData()).filter(function(i, e){
-            // 最終行は除く
-            if(table[userId].getSourceData().length !== i + 1) return e;
-        }).each(function(i, e){
-            currentRecords.push(e);
-        });
-        defaultRecords = defaultRecords.filter(x => x.user_id == userId);
-        let updateRecords = fetchUpdateRecords(userId, currentRecords, defaultRecords);
-        createUpdateModal(updateRecords, defaultRecords);
+        let isSelfData = userId === currentUserId;
+
+        if(isSelfData){
+            var currentRecords = [];
+            $(table[userId].getSourceData()).filter(function(i, e){
+                // 最終行は除く
+                if(table[userId].getSourceData().length !== i + 1) return e;
+            }).each(function(i, e){
+                currentRecords.push(e);
+            });
+            defaultRecords = defaultRecords.filter(x => x.user_id == userId);
+            let updateRecords = fetchUpdateRecords(userId, currentRecords, defaultRecords);
+            createUpdateModal(isSelfData, updateRecords, defaultRecords);
+        }else{
+            createUpdateModal(isSelfData, [], []);
+        }
     })
 }
 
@@ -145,7 +151,7 @@ function fetchUpdateRecords(userId, currentRecords, defaultRecords){
 }
 
 
-function createUpdateModal(updateRecords, defaultRecords){
+function createUpdateModal(isSelfData, updateRecords, defaultRecords){
     if(updateRecords.length > 0){
         $('#confirmModal').find('.table-responsive').show();
         $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
@@ -179,9 +185,10 @@ function createUpdateModal(updateRecords, defaultRecords){
                 + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
         $('#confirmModal').find('.modal-footer').html(btn);
     }else{
+        let caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
         $('#confirmModal').find('.table-responsive').hide();
         let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
-        $('#records-caption').html('更新可能なデータがありません');
+        $('#records-caption').html(caption);
         $('#confirmModal').find('.modal-footer').html(btn);
     }
     $('#confirmModal').modal('show');

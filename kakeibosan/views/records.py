@@ -48,7 +48,12 @@ def records():
                 db.session.close()
 
             costs = _fetch_view_costs(view_month)
-            users_list = [user.to_dict() for user in users]
+            users_list = []
+            for user in users:
+                user_dict = user.to_dict()
+                user_dict['password'] = ''
+                users_list.append(user_dict)
+
             total_cost = _cost_per_month(view_month.date())
             month = _month_pager(view_month, oldest_month)
 

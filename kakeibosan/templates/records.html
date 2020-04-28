@@ -2,7 +2,7 @@
 {% block title %} - {{ active_page }}{% endblock %}
 {% block header %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/handsontable/handsontable.full.min.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/holiday.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}"/>
   <style>
     .modal-dialog{
       max-width: 600px;
@@ -16,14 +16,6 @@
     }
     td.amount, td.bought_in, td.month_to_add{
       text-align: right;
-    }
-    .pika-lendar th:first-child,
-    .pika-lendar td:first-child .pika-button {
-      color: #f00;
-    }
-    .pika-lendar th:last-child,
-    .pika-lendar td:last-child .pika-button {
-      color: #00f;
     }
     .handsontable .htAutocompleteArrow {
       font-size: 16px;

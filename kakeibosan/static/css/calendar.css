@@ -1,3 +1,11 @@
+.pika-lendar th:first-child,
+.pika-lendar td:first-child .pika-button {
+  color: #f00;
+}
+.pika-lendar th:last-child,
+.pika-lendar td:last-child .pika-button {
+  color: #00f;
+}
 [data-pika-year="2019"][data-pika-month="0"][data-pika-day="1"],
 [data-pika-year="2019"][data-pika-month="0"][data-pika-day="14"],
 [data-pika-year="2019"][data-pika-month="1"][data-pika-day="11"],

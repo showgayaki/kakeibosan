@@ -6,7 +6,7 @@ from kakeibosan.views.forms import EditFixedCost
 from kakeibosan.models import FixedCost
 
 
-@app.route('/kakuninsam/settings/fixed_cost', methods=['GET', 'POST'])
+@app.route('/kakeibosan/settings/fixed_cost', methods=['GET', 'POST'])
 @login_required
 def edit_fixedcost():
     form = EditFixedCost()

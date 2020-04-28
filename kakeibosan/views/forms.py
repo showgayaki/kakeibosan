@@ -22,8 +22,6 @@ class LoginForm(FlaskForm):
 
 
 class Settings(FlaskForm):
-    edit_account = SubmitField('更新')
-    add_account = SubmitField('新規登録')
     add_fixed_cost = SubmitField('新規登録')
 
 
@@ -40,5 +38,5 @@ class EditFixedCost(FlaskForm):
     sub_category = StringField('項目', [DataRequired()])
     paid_to = StringField('支払先')
     amount = IntegerField('金額', [DataRequired()], widget=html5.NumberInput(min=1))
-    username = SelectField('ユーザー名', [DataRequired()], choices=_user())
+    username = SelectField('ユーザー名', [DataRequired()], choices=_user(), default=0)
     submit = SubmitField('登録')

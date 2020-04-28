@@ -41,10 +41,11 @@ def edit_fixedcost():
         if record_id:
             fixed_cost = FixedCost.query.filter_by(id=record_id).first()
             active_page = '固定費更新'
+            form.username.default = fixed_cost.user_id
+            form.process()
             form.sub_category.data = fixed_cost.sub_category
             form.paid_to.data = fixed_cost.paid_to
             form.amount.data = fixed_cost.amount
-            form.username.data = fixed_cost.user_id
         else:
             active_page = '固定費追加'
         return render_template('edit_fixedcost.html', form=form, active_page=active_page,

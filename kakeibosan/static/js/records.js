@@ -1,4 +1,19 @@
 function createTable(currentUserId, users, records){
+    moment.locale('ja');
+    let datePickerConfig = {
+        yearSuffix: '年',
+        showMonthAfterYear: true,
+        showDaysInNextAndPreviousMonths: true,
+        i18n: {
+            previousMonth: '前月',
+            nextMonth: '次月',
+            months: moment.localeData()._monthsShort,
+            weekdays: moment.localeData()._weekdays,
+            weekdaysShort: moment.localeData()._weekdaysShort
+        }
+    }
+    let lastSixMonths = lastHalfYear();
+
     const SUB_CATEGORY_COLUMN = 2;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1},
@@ -6,8 +21,8 @@ function createTable(currentUserId, users, records){
                 {data: 'sub_category', type: 'dropdown'},
                 {data: 'paid_to', type: 'text'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
-                {data: 'bought_in', type: 'date', width: 100, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
-                {data: 'month_to_add', type: 'date', dateFormat: 'YYYY-M', className: 'htRight htMiddle'},
+                {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 100, dateFormat: 'YYYY-M-D', className: 'datepicker htRight htMiddle'},
+                {data: 'month_to_add', type: 'dropdown', height: 250, source: lastSixMonths, dateFormat: 'YYYY-M', className: 'monthpicker htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1},
                 {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}
             ]
@@ -31,9 +46,8 @@ function createTable(currentUserId, users, records){
             }
         }
 
-        let dataObject = userRecords;
         let tableSettings = {
-            data: dataObject,
+            data: userRecords,
             columns: COLUMNS,
             colHeaders: [
                 'ID',
@@ -46,7 +60,6 @@ function createTable(currentUserId, users, records){
                 'User_ID',
                 '削除'
             ],
-            height: 800,
             rowHeights: 40,
             className: 'htMiddle',
             minSpareRows: 1,
@@ -139,6 +152,24 @@ function createTable(currentUserId, users, records){
             createUpdateModal(isSelfData, [], []);
         }
     })
+}
+
+
+function lastHalfYear(){
+    const HALF_YEAR = 6;
+    let date = new Date();
+    let lastHalfYear = [];
+    for(let i = 0; i < HALF_YEAR; i++){
+        let month = '';
+        if(i === 0){
+            date.setDate(1);
+        }else{
+            date.setMonth(date.getMonth() - 1);
+        }
+        month = date.getFullYear() + '-' + (date.getMonth() + 1);
+        lastHalfYear.push(month)
+    }
+    return lastHalfYear
 }
 
 

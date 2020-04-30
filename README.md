@@ -1,7 +1,7 @@
 # kakeibosan(家計簿さん)
 二人用家計簿アプリ。  
 pipenv && flask && uWSGI && Nginx  
-テンプレートは[now-ui-dashbord](#https://github.com/creativetimofficial/now-ui-dashboard)を使用。
+テンプレートは[now-ui-dashbord](https://github.com/creativetimofficial/now-ui-dashboard)を使用。
 
 ## kakeibosanインストール
 `$ git clone [ここのURL].git`  

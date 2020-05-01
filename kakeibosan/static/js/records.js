@@ -1,4 +1,4 @@
-function createTable(currentUserId, users, records){
+function createTable(currentUserId, users, records, viewMonth){
     moment.locale('ja');
     let datePickerConfig = {
         yearSuffix: '年',
@@ -12,17 +12,16 @@ function createTable(currentUserId, users, records){
             weekdaysShort: moment.localeData()._weekdaysShort
         }
     }
-    let lastSixMonths = lastHalfYear();
 
     const SUB_CATEGORY_COLUMN = 2;
     const COLUMNS = [
-                {data: 'id', type: 'numeric', width: 1},
+                {data: 'id', type: 'numeric', width:1},
                 {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費']},
                 {data: 'sub_category', type: 'dropdown'},
                 {data: 'paid_to', type: 'text'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
-                {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 100, dateFormat: 'YYYY-M-D', className: 'datepicker htRight htMiddle'},
-                {data: 'month_to_add', type: 'dropdown', height: 250, source: lastSixMonths, dateFormat: 'YYYY-M', className: 'monthpicker htRight htMiddle'},
+                {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 100, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
+                {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1},
                 {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}
             ]
@@ -136,6 +135,7 @@ function createTable(currentUserId, users, records){
         // ボタンのidは「*-fetch-update-records」
         let userId = Number($(this).attr('id').split('-')[0]);
         let isSelfData = userId === currentUserId;
+        let isThisMonth = viewMonth === monthToAdd();
 
         if(isSelfData){
             var currentRecords = [];
@@ -143,46 +143,45 @@ function createTable(currentUserId, users, records){
                 // 最終行は除く
                 if(table[userId].getSourceData().length !== i + 1) return e;
             }).each(function(i, e){
+                if(e['category'] === '' && e['sub_category'] === '' && e['paid_to'] === ''
+                    && e['amount'] === '' && e['bought_in'] === ''){
+                    return e;
+                }
                 currentRecords.push(e);
             });
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
-            let updateRecords = fetchUpdateRecords(userId, currentRecords, defaultRecords);
-            createUpdateModal(isSelfData, updateRecords, defaultRecords);
+            let updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);
+            createUpdateModal(isThisMonth, isSelfData, updateRecords, defaultRecords);
         }else{
-            createUpdateModal(isSelfData, [], []);
+            createUpdateModal(isThisMonth, isSelfData, [], []);
         }
     })
 }
 
 
-function lastHalfYear(){
-    const HALF_YEAR = 6;
+function monthToAdd(){
     let date = new Date();
-    let lastHalfYear = [];
-    for(let i = 0; i < HALF_YEAR; i++){
-        let month = '';
-        if(i === 0){
-            date.setDate(1);
-        }else{
-            date.setMonth(date.getMonth() - 1);
-        }
-        month = date.getFullYear() + '-' + (date.getMonth() + 1);
-        lastHalfYear.push(month)
-    }
-    return lastHalfYear
+    date.setDate(1);
+    let month_to_add = date.getFullYear() + '-' + (date.getMonth() + 1);
+    return month_to_add
 }
 
 
-function fetchUpdateRecords(userId, currentRecords, defaultRecords){
+function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
     updateRecords = _.differenceWith(currentRecords, defaultRecords, _.isEqual);
     for(let i = 0; i < updateRecords.length; i++){
+        if(!updateRecords[i]['id']){
+            updateRecords[i]['id'] = null;
+            updateRecords[i]['del'] = null;
+        }
+        updateRecords[i]['month_to_add'] = viewMonth;
         updateRecords[i]['user_id'] = userId;
     }
     return updateRecords;
 }
 
 
-function createUpdateModal(isSelfData, updateRecords, defaultRecords){
+function createUpdateModal(isThisMonth, isSelfData, updateRecords, defaultRecords){
     if(updateRecords.length > 0){
         $('#confirmModal').find('.table-responsive').show();
         $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
@@ -216,7 +215,13 @@ function createUpdateModal(isSelfData, updateRecords, defaultRecords){
                 + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
         $('#confirmModal').find('.modal-footer').html(btn);
     }else{
-        let caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
+        caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
+//        let caption = '';
+//        if(isThisMonth){
+//            caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
+//        }else{
+//            caption = '過去の月には計上できません';
+//        }
         $('#confirmModal').find('.table-responsive').hide();
         let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
         $('#records-caption').html(caption);

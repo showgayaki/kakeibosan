@@ -62,7 +62,7 @@ def records():
                 costs = _fetch_view_costs(view_month)
 
             cost_records = _cost_records(costs)
-            view_month = view_month.strftime('%Y年%-m月')
+            view_month = view_month.date()
             return render_template('records.html', active_page='データ一覧・登録', users=users_list,
                                    costs=cost_records, month=month, view_month=view_month, total_cost=total_cost)
         else:

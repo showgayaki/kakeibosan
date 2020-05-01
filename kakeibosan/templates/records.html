@@ -26,6 +26,9 @@
     .handsontableEditor.autocompleteEditor, .handsontableEditor.autocompleteEditor .ht_master .wtHolder {
       min-height: 230px;
     }
+    .ht_month_to_add{
+      font-size: 0;
+    }
   </style>
 {% endblock%}
 {% block contents %}
@@ -44,7 +47,7 @@
           <div class="col-md-7">
             <div class="card">
               <div class="card-header">
-                <h5 class="card-title">合計 - {{ view_month }}</h5>
+                <h5 class="card-title">合計 - {{ '{0:%Y年%-m月}'.format(view_month) }}</h5>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
@@ -109,7 +112,7 @@
                             </li>
                             {% endif %}
                             <li class="page-item disabled">
-                              <a class="page-link text-dark" href="#" tabindex="-1">{{ view_month }}</a>
+                              <a class="page-link text-dark" href="#" tabindex="-1">{{ '{0:%Y年%-m月}'.format(view_month) }}</a>
                             </li>
                             {% if month.next != '' %}
                             <li class="page-item">
@@ -176,7 +179,8 @@
       var currentUserId = {{ current_user.id }}
       var users = {{ users | tojson }};
       var records = {{ costs | tojson }};
-      createTable(currentUserId, users, records);
+      var viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
+      createTable(currentUserId, users, records, viewMonth);
     });
   </script>
 {% endblock %}

@@ -143,11 +143,12 @@ function createTable(currentUserId, users, records, viewMonth){
                 // 最終行は除く
                 if(table[userId].getSourceData().length !== i + 1) return e;
             }).each(function(i, e){
-                if(e['category'] === '' && e['sub_category'] === '' && e['paid_to'] === ''
-                    && e['amount'] === '' && e['bought_in'] === ''){
+                if(e['paid_to'] === null || e['bought_in'] === null || e['amount'] === null){
+                    alert('未入力項目があるレコードは、更新対象に含まれません。');
                     return e;
+                }else{
+                    currentRecords.push(e);
                 }
-                currentRecords.push(e);
             });
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
             let updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);

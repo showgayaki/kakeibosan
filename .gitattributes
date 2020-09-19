@@ -1,1 +1,4 @@
 kakeibosan/migrations/* linguist-vendored
+kakeibosan/static/img/* linguist-vendored
+kakeibosan/static/json/* linguist-vendored
+kakeibosan/static/scss/* linguist-vendored

@@ -74,4 +74,4 @@ WantedBy=multi-user.target
 `$ sudo nginx -s reload`
 
 ## デモ的なもの
-coming soon...
+[https://kakeibosan.herokuapp.com/login](https://kakeibosan.herokuapp.com/login)

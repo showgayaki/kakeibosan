@@ -75,5 +75,3 @@ WantedBy=multi-user.target
 
 ## デモ的なもの
 [https://kakeibosan.herokuapp.com/login](https://kakeibosan.herokuapp.com/login)
-- Username: user1 or user2
-- Password: test

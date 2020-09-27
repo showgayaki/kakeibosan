@@ -50,11 +50,11 @@ function createTable(currentUserId, users, records, viewMonth){
             columns: COLUMNS,
             colHeaders: [
                 'ID',
-                '種別',
-                '項目',
+                '種別<span class="required"> *</span>',
+                '項目<span class="required"> *</span>',
                 '支払先',
-                '金額',
-                '支払日',
+                '金額<span class="required"> *</span>',
+                '支払日<span class="required"> *</span>',
                 '計上月',
                 'User_ID',
                 '削除'
@@ -141,14 +141,22 @@ function createTable(currentUserId, users, records, viewMonth){
             var currentRecords = [];
             $(table[userId].getSourceData()).filter(function(i, e){
                 // 最終行は除く
-                if(table[userId].getSourceData().length !== i + 1) return e;
-            }).each(function(i, e){
-                if(e['paid_to'] === null || e['bought_in'] === null || e['amount'] === null){
-                    alert('未入力項目があるレコードは、更新対象に含まれません。');
+                if(table[userId].getSourceData().length !== i + 1){
                     return e;
-                }else{
-                    currentRecords.push(e);
                 }
+            }).each(function(i, e){
+                console.log(e);
+                if(e['category'] === null || e['category'] === '' ||
+                   e['sub_category'] === null || e['sub_category'] === '' ||
+                   e['amount'] === null || e['category'] === '' ||
+                   e['bought_in'] === null ||  e['bought_in'] === ''){
+                    return;
+                }
+
+                if(e['paid_to'] === null){
+                    e['paid_to'] = '';
+                }
+                currentRecords.push(e);
             });
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
             let updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);

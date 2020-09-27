@@ -29,6 +29,13 @@
     .ht_month_to_add{
       font-size: 0;
     }
+    p.annotation{
+      margin: 0;
+      font-size: 0.8rem;
+    }
+    span.required{
+      color: #f96332;
+    }
   </style>
 {% endblock%}
 {% block contents %}
@@ -126,6 +133,7 @@
                           </ul>
                       </div>
                     </div>
+                    <p class="annotation"><span class="required"> * </span>は入力必須</p>
                     <div id="{{ user.id }}-handsontable">
                     </div>
                   </div>

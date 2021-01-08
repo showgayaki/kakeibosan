@@ -18,23 +18,23 @@
           ('#', 'ログアウト', 'now-ui-icons media-1_button-power')
         ] -%}
         <ul class="nav">
-            {% for href, caption, class in navigation_bar %}
-            {% if not caption == 'ログアウト' %}
+            {%- for href, caption, class in navigation_bar %}
+            {%- if not caption == 'ログアウト' %}
             <li {% if caption == active_page %}class="active"{% endif%}>
                 <a href="{{ href }}">
                     <i class="{{ class }}"></i>
                     <p>{{ caption }}</p>
                 </a>
             </li>
-            {% else %}
+            {%- else %}
             <li>
                 <a data-toggle="modal" data-target="#logoutModal">
                     <i class="{{ class }}"></i>
                     <p>{{ caption }}</p>
                 </a>
             </li>
-            {% endif %}
-            {% endfor %}
+            {%- endif %}
+            {%- endfor %}
         </ul>
       </div>
     </div>

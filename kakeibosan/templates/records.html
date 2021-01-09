@@ -26,13 +26,18 @@
                 <div class="table-responsive">
                   <table class="table table-bordered">
                     {%- for key in total_cost.keys() %}
+                    {%- if '支払額' in key %}
+                    <th class="text-primary" colspan="2">{{ key }}</th>
+                    {%- else %}
                     <th class="text-primary">{{ key }}</th>
+                    {%- endif %}
                     {%- endfor %}
                     <tbody>
                       <tr>
                       {%- for key, val in total_cost.items() %}
                       {%- if '支払額' in key %}
-                      <td id="copy-target" class="text-right">{{ '{:,}'.format(val) }}
+                      <td id="copy-target" class="text-right">{{ '{:,}'.format(val) }}</td>
+                      <td class="copy-btn">
                         <button id="copy-btn" class="copy-btn" value="{{ val }}">
                           <i class="copy-icon now-ui-icons files_single-copy-04"></i>
                         </button>

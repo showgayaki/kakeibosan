@@ -38,7 +38,7 @@
                       {%- if '支払額' in key %}
                       <td id="copy-target" class="text-right">{{ '{:,}'.format(val) }}</td>
                       <td class="copy-btn">
-                        <button id="copy-btn" class="copy-btn" value="{{ val }}">
+                        <button id="copy-btn" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
                           <i class="copy-icon now-ui-icons files_single-copy-04"></i>
                         </button>
                       </td>
@@ -170,7 +170,19 @@
       createTable(currentUserId, users, records, viewMonth);
     });
 
-    $('#copy-btn').on('click', function(){
+    $('#copy-btn')
+    // tooltip設定
+    .tooltip({
+      trigger: 'manual'
+    })
+    // tooltip表示後の動作を設定
+    .on('shown.bs.tooltip', function(){
+      setTimeout((function(){
+        $(this).tooltip('hide');
+      }).bind(this), 1500);
+    })
+    // クリック時の動作を設定
+    .on('click', function(){
       // buttonのvalueを取得
       const payAmount = $(this).val();
       // tdから直接はコピーできないためテキストエリアを経由
@@ -178,8 +190,17 @@
       $textarea.text(payAmount);
       $(this).append($textarea);
       $textarea.select();
-      document.execCommand('copy');
+      // コピー結果を取得してtextareaは削除
+      const copyResult = document.execCommand('copy');
       $textarea.remove();
+      // コピー結果によって表示変更
+      if(copyResult){
+        $('#copy-btn').attr('data-original-title', 'コピーしました');
+      }else{
+        $('#copy-btn').attr('data-original-title', 'コピー失敗しました');
+      }
+      // tooltip表示
+      $(this).tooltip('show');
     });
   </script>
 {%- endblock %}

@@ -30,8 +30,16 @@
                     {%- endfor %}
                     <tbody>
                       <tr>
-                      {%- for val in total_cost.values() %}
+                      {%- for key, val in total_cost.items() %}
+                      {%- if '支払額' in key %}
+                      <td id="copy-target" class="text-right">{{ '{:,}'.format(val) }}
+                        <button id="copy-btn" class="copy-btn" value="{{ val }}">
+                          <i class="copy-icon now-ui-icons files_single-copy-04"></i>
+                        </button>
+                      </td>
+                      {%- else %}
                       <td class="text-right">{{ '{:,}'.format(val) }}</td>
+                      {%- endif %}
                       {%- endfor %}
                       </tr>
                     </tbody>
@@ -155,6 +163,18 @@
       var records = {{ costs | tojson }};
       var viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
       createTable(currentUserId, users, records, viewMonth);
+    });
+
+    $('#copy-btn').on('click', function(){
+      // buttonのvalueを取得
+      const payAmount = $(this).val();
+      // tdから直接はコピーできないためテキストエリアを経由
+      let $textarea = $('<textarea></textarea>');
+      $textarea.text(payAmount);
+      $(this).append($textarea);
+      $textarea.select();
+      document.execCommand('copy');
+      $textarea.remove();
     });
   </script>
 {%- endblock %}

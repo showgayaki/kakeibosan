@@ -42,3 +42,13 @@ p.annotation{
 span.required{
     color: #f96332;
 }
+button.copy-btn{
+    margin: 0;
+    padding: 0 2px;
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+i.copy-icon:hover{
+    color: #f96332;
+}

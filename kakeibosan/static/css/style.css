@@ -10,9 +10,6 @@
 .main-panel > .content {
     min-height: calc(100vh - 174px);
 }
-.modal-dialog{
-    max-width: 600px;
-}
 th, .badge_clm{
     text-align: center;
 }
@@ -49,7 +46,6 @@ button.copy-btn{
     display: block;
     margin: 0 auto;
     padding: 0;
-    width: 100%;
     border: none;
     background-color: #fff;
     cursor: pointer;
@@ -63,4 +59,16 @@ i.copy-icon:hover{
 }
 i.copy-icon:action{
     color: #f96332;
+}
+.caclc-result{
+    font-size: 1.2rem;
+    overflow: hidden;
+}
+.key-area button{
+    background-color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.key-area button:hover{
+    background-color:rgba(249, 99, 50, 0.2);
 }

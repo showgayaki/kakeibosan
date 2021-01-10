@@ -36,9 +36,9 @@
                       <tr>
                       {%- for key, val in total_cost.items() %}
                       {%- if '支払額' in key %}
-                      <td id="copy-target" class="text-right">{{ '{:,}'.format(val) }}</td>
-                      <td class="copy-btn">
-                        <button id="copy-btn" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
+                      <td class="text-right">{{ '{:,}'.format(val) }}</td>
+                      <td>
+                        <button id="pay-amount" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
                           <i class="copy-icon now-ui-icons files_single-copy-04"></i>
                         </button>
                       </td>
@@ -83,6 +83,9 @@
                       <div class="flex-itmes">
                         <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
                           登録
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm ml-3" data-toggle="modal" data-target="#calcModal">
+                          電卓
                         </button>
                       </div>
                       <!-- ページャー -->
@@ -155,6 +158,55 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
+      <!-- モーダルの設定 -->
+      <div class="modal fade" id="calcModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="calcModalLabel">電卓</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="d-flex mb-3">
+                <input id="caclc-result" class="caclc-result p-1" value="test" type="text" readonly>
+                <button id="copy-input" class="copy-btn px-1 bg-white border border-secondary rounded" data-toggle="tooltip">
+                  <i class="copy-icon now-ui-icons files_single-copy-04"></i>
+                </button>
+              </div>
+              <div class="key-area container-fluid">
+                <div class="row mt-1">
+                  <button class="col mr-1">7</button>
+                  <button class="col mr-1">8</button>
+                  <button class="col mr-1">9</button>
+                  <button class="col">÷</button>
+                </div>
+                <div class="row mt-1">
+                  <button class="col mr-1">4</button>
+                  <button class="col mr-1">5</button>
+                  <button class="col mr-1">6</button>
+                  <button class="col">×</button>
+                </div>
+                <div class="row mt-1">
+                  <button class="col mr-1">1</button>
+                  <button class="col mr-1">2</button>
+                  <button class="col mr-1">3</button>
+                  <button class="col">−</button>
+                </div>
+                <div class="row mt-1">
+                  <button class="col mr-1">0</button>
+                  <button class="col mr-1">.</button>
+                  <button class="col mr-1">=</button>
+                  <button class="col">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+            </div><!-- /.modal-footer -->
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 {%- endblock %}
 {%- block footer %}
   <script src="{{ url_for('static', filename='js/vendor/handsontable.full.min.js') }}"></script>
@@ -170,7 +222,7 @@
       createTable(currentUserId, users, records, viewMonth);
     });
 
-    $('#copy-btn')
+    $('.copy-btn')
     // tooltip設定
     .tooltip({
       trigger: 'manual'
@@ -183,21 +235,29 @@
     })
     // クリック時の動作を設定
     .on('click', function(){
-      // buttonのvalueを取得
-      const payAmount = $(this).val();
-      // tdから直接はコピーできないためテキストエリアを経由
-      let $textarea = $('<textarea></textarea>');
-      $textarea.text(payAmount);
-      $(this).append($textarea);
-      $textarea.select();
-      // コピー結果を取得してtextareaは削除
-      const copyResult = document.execCommand('copy');
-      $textarea.remove();
+      console.log($(this).attr('id'));
+      const clickId = $(this).attr('id');
+      let copyResult;
+      if(clickId === 'pay-amount'){
+        // buttonのvalueを取得
+        const text = $(this).val();
+        // tdから直接はコピーできないためテキストエリアを経由
+        let $textarea = $('<textarea></textarea>');
+        $textarea.text(text);
+        $(this).append($textarea);
+        $textarea.select();
+        // コピー結果を取得してtextareaは削除
+        copyResult = document.execCommand('copy');
+        $textarea.remove();
+      }else{
+        $('#caclc-result').select();
+        copyResult = document.execCommand('copy');
+      }
       // コピー結果によって表示変更
       if(copyResult){
-        $('#copy-btn').attr('data-original-title', 'コピーしました');
+        $(this).attr('data-original-title', 'コピーしました');
       }else{
-        $('#copy-btn').attr('data-original-title', 'コピー失敗しました');
+        $(this).attr('data-original-title', 'コピー失敗しました');
       }
       // tooltip表示
       $(this).tooltip('show');

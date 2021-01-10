@@ -20,7 +20,7 @@ function createTable(currentUserId, users, records, viewMonth){
                 {data: 'sub_category', type: 'dropdown'},
                 {data: 'paid_to', type: 'text'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
-                {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 100, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
+                {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1},
                 {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}

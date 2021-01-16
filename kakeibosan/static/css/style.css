@@ -22,12 +22,12 @@ th, .update-table .badge_clm{
 .update-table td.amount, td.bought_in, td.month_to_add{
     text-align: right;
 }
-.btn-secondary, .btn-secondary:focus{
+.btn-calc, .btn-calc:focus{
     color: #fff;
     background-color: #2a5788;
     border-color: #2a5788;
 }
-.btn-secondary:hover{
+.btn-calc:hover{
     background-color: rgba(42, 87, 136, 0.8);
 }
 .handsontable .htAutocompleteArrow {
@@ -70,15 +70,27 @@ i.copy-icon:hover{
 i.copy-icon:action{
     color: #f96332;
 }
-.caclc-result{
+.calc-result-area{
+    border: 1px solid #000;
+    height: 5rem;
+    text-align: right;
+    resize: none;
     font-size: 1.2rem;
     overflow: hidden;
 }
-.key-area button{
+.calc-result-row1{
+    height: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+.calc-result-row2{
+    text-align: right;
+    font-size: 2rem;
+}
+.calc-key{
     background-color: #fff;
     font-size: 1.5rem;
     cursor: pointer;
 }
-.key-area button:hover{
+.calc-key:hover{
     background-color: rgba(42, 87, 136, 0.2);
 }

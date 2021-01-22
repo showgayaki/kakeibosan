@@ -179,32 +179,33 @@
                 </button>
               </div>
               <div class="calc-key-area container">
-                <div class="row mt-1">
-                  <button id="calc-clear" class="calc-key col">Clear</button>
+                <div class="row">
+                  <button id="calc-clear" class="calc-key w-75" value="clear">Clear</button>
+                  <button id="calc-delete" class="calc-key calc-backspace ml-1" value="backspace"><i class="fas fa-backspace"></i></button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col">7</button>
-                  <button class="calc-key col ml-1">8</button>
-                  <button class="calc-key col ml-1">9</button>
-                  <button class="calc-key col ml-1">÷</button>
+                  <button class="calc-key col" value="7">7</button>
+                  <button class="calc-key col ml-1" value="8">8</button>
+                  <button class="calc-key col ml-1" value="9">9</button>
+                  <button class="calc-key col ml-1" value="÷">÷</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col">4</button>
-                  <button class="calc-key col ml-1">5</button>
-                  <button class="calc-key col ml-1">6</button>
-                  <button class="calc-key col ml-1">×</button>
+                  <button class="calc-key col" value="4">4</button>
+                  <button class="calc-key col ml-1" value="5">5</button>
+                  <button class="calc-key col ml-1" value="6">6</button>
+                  <button class="calc-key col ml-1" value="×">×</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col">1</button>
-                  <button class="calc-key col ml-1">2</button>
-                  <button class="calc-key col ml-1">3</button>
-                  <button class="calc-key col ml-1">−</button>
+                  <button class="calc-key col" value="1">1</button>
+                  <button class="calc-key col ml-1" value="2">2</button>
+                  <button class="calc-key col ml-1" value="3">3</button>
+                  <button class="calc-key col ml-1" value="−">−</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col">0</button>
-                  <button class="calc-key col ml-1">.</button>
-                  <button class="calc-key col ml-1">=</button>
-                  <button class="calc-key col ml-1">+</button>
+                  <button class="calc-key col" value="0">0</button>
+                  <button class="calc-key col ml-1" value=".">.</button>
+                  <button class="calc-key col ml-1" value="=">=</button>
+                  <button class="calc-key col ml-1" value="+">+</button>
                 </div>
               </div>
             </div>
@@ -278,15 +279,19 @@
       $('#copy-calc').prop('disabled', true);
       inputRow = $('#calc-input-row');
       resultRow = $('#calc-result-row');
-      let clickKey = $(this).html();
+      let clickKey = $(this).val();
 
       // Clearキー押下時の処理
-      if(clickKey === 'Clear'){
+      if(clickKey === 'clear'){
         inputRow.html('');
         resultRow.html('0');
         calcResult = 0;
         operator = ''
         inputStart = true;
+      }else if(clickKey === 'backspace'){
+        let slice = resultRow.html().slice(0, -1);
+        resultRow.html(slice);
+        console.log(slice);
       }else if(clickKey === '+' || clickKey === '−' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
         inputStart = true;
         calcTmp = Number(resultRow.html());

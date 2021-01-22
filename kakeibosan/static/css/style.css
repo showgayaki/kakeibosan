@@ -94,3 +94,7 @@ i.copy-icon:action{
 .calc-key:hover{
     background-color: rgba(42, 87, 136, 0.2);
 }
+.calc-backspace{
+    width: 62.5px;
+    color: #808080;
+}

@@ -279,54 +279,57 @@
       inputRow = $('#calc-input-row');
       resultRow = $('#calc-result-row');
       let clickKey = $(this).html();
+
+      // Clearキー押下時の処理
       if(clickKey === 'Clear'){
         inputRow.html('');
         resultRow.html('0');
         calcResult = 0;
         operator = ''
         inputStart = true;
-      }else{
-        // コピーボタンを無効にする
-        $('#copy-calc').prop('disabled', true);
-        // 演算子キー押下時の処理
-        if(clickKey === '+' || clickKey === '−' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
-          inputStart = true;
-          inputRow.html(inputRow.html() + resultRow.html() + clickKey);
-          calcTmp = Number(resultRow.html());
+      }else if(clickKey === '+' || clickKey === '−' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
+        inputStart = true;
+        calcTmp = Number(resultRow.html());
 
-          if(operator === '+'){
-            calcResult += calcTmp;
-          }else if(operator === '−'){
-            calcResult = calcResult - calcTmp;
-          }else if(operator === '×'){
-            calcResult = calcResult * calcTmp;
-          }else if(operator === '÷'){
-            calcResult = calcResult / calcTmp;
-          }else{
-            calcResult = calcTmp;
-          }
+        if(clickKey === '='){
+          inputStart = true;
+          calcResult = calc(operator, calcTmp, calcResult);
+          // コピーボタンを有効にしてvalueに設定
+          $('#copy-calc').prop('disabled', false);
+          $('#copy-calc').val(calcResult);
+          inputRow.html(inputRow.html() + resultRow.html() + clickKey + calcResult);
           resultRow.html(calcResult);
           operator = clickKey;
-
-          if(clickKey === '='){
-            inputStart = true;
-            // コピーボタンを有効にしてvalueに設定
-            $("#copy-calc").prop("disabled", false);
-            $('#copy-calc').val(calcResult);
-          }
+        }else if(operator === '='){
+          // 「=」押下後、引き続き計算するときの処理
+          inputRow.html(inputRow.html() + clickKey);
+          operator = clickKey;
+        }else if(operator !== '' && inputStart){
+          // 演算子を変更したときの処理
+          inputRow.html(inputRow.html().slice(0, -1) + clickKey);
+          operator = clickKey;
         }else{
+          calcResult = calc(operator, calcTmp, calcResult);
+          inputRow.html(inputRow.html() + resultRow.html() + clickKey);
+          resultRow.html(calcResult);
+          operator = clickKey;
+        }
+      }else{
+        // 数字キー押下時の処理
+        if(inputStart){
+          // コピーボタンを無効にする
+          $('#copy-calc').prop('disabled', true);
+          resultRow.html(clickKey);
+          inputStart = false;
+          // 「=」押下後、次の計算に入るときに初期化
           if(operator === '='){
+            calcTmp = 0;
+            calcResult = 0;
+            operator= '';
             inputRow.html('');
           }
-          // 数字キー押下時の処理
-          if(inputStart){
-            // コピーボタンを無効にする
-            $('#copy-calc').prop('disabled', true);
-            resultRow.html(clickKey);
-            inputStart = false;
-          }else{
-            resultRow.html(resultRow.html() + clickKey);
-          }
+        }else{
+          resultRow.html(resultRow.html() + clickKey);
         }
       }
     })
@@ -338,6 +341,21 @@
       calcResult = 0;
       operator = '';
       inputStart = true;
-    })
+    });
+
+    function calc(ope, tmp, result){
+      if(ope === '+'){
+        result += tmp;
+        }else if(ope === '−'){
+          result = result - tmp;
+        }else if(ope === '×'){
+          result = result * tmp;
+        }else if(ope === '÷'){
+          result = result / tmp;
+        }else{
+          result = tmp;
+        }
+      return result;
+    }
   </script>
 {%- endblock %}

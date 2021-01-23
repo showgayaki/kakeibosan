@@ -159,7 +159,7 @@
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
       <!-- モーダルの設定 -->
-      <div class="modal fade" id="calcModal" tabindex="-1" role="dialog">
+      <div class="modal fade calc-modal" id="calcModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm">
           <div class="modal-content">
             <div class="modal-header">
@@ -171,7 +171,7 @@
             <div class="modal-body">
               <div class="d-flex mb-3">
                 <div id="calc-result" class="calc-result-area col p-1">
-                  <p id="calc-input-row" class="calc-result-row1"></p>
+                  <p id="calc-process-row" class="calc-result-row1"></p>
                   <p id="calc-result-row" class="calc-result-row2">0</p>
                 </div>
                 <button id="copy-calc" class="copy-btn px-1 bg-white border border-secondary rounded" data-toggle="tooltip" disabled>
@@ -180,7 +180,7 @@
               </div>
               <div class="calc-key-area container">
                 <div class="row">
-                  <button id="calc-clear" class="calc-key w-75" value="clear">Clear</button>
+                  <button id="calc-clear" class="calc-key calc-clear" value="clear">Clear</button>
                   <button id="calc-delete" class="calc-key calc-backspace ml-1" value="backspace"><i class="fas fa-backspace"></i></button>
                 </div>
                 <div class="row mt-1">
@@ -277,21 +277,24 @@
     $('.calc-key').on('click', function(){
       // コピーボタンを無効にする
       $('#copy-calc').prop('disabled', true);
-      inputRow = $('#calc-input-row');
+      processRow = $('#calc-process-row');
       resultRow = $('#calc-result-row');
       let clickKey = $(this).val();
 
       // Clearキー押下時の処理
       if(clickKey === 'clear'){
-        inputRow.html('');
+        processRow.html('');
         resultRow.html('0');
         calcResult = 0;
         operator = ''
         inputStart = true;
       }else if(clickKey === 'backspace'){
-        let slice = resultRow.html().slice(0, -1);
-        resultRow.html(slice);
-        console.log(slice);
+        if(!inputStart){
+          // 最後の一文字を削除
+          let slice = resultRow.html().slice(0, -1);
+          // 表示変更
+          resultRow.html(slice);
+        }
       }else if(clickKey === '+' || clickKey === '−' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
         inputStart = true;
         calcTmp = Number(resultRow.html());
@@ -302,21 +305,26 @@
           // コピーボタンを有効にしてvalueに設定
           $('#copy-calc').prop('disabled', false);
           $('#copy-calc').val(calcResult);
-          inputRow.html(inputRow.html() + resultRow.html() + clickKey + calcResult);
+          // 表示変更
+          processRow.html(processRow.html() + resultRow.html() + clickKey + calcResult);
           resultRow.html(calcResult);
           operator = clickKey;
-        }else if(operator === '='){
-          // 「=」押下後、引き続き計算するときの処理
-          inputRow.html(inputRow.html() + clickKey);
+        }else if(operator === '='){// 「=」押下後、引き続き計算するときの処理
+          // 表示変更
+          processRow.html(processRow.html() + clickKey);
+          // 演算子更新
           operator = clickKey;
-        }else if(operator !== '' && inputStart){
-          // 演算子を変更したときの処理
-          inputRow.html(inputRow.html().slice(0, -1) + clickKey);
+        }else if(operator !== '' && inputStart){// 演算子を変更したときの処理
+          // 表示変更
+          processRow.html(processRow.html().slice(0, -1) + clickKey);
+          // 演算子更新
           operator = clickKey;
         }else{
           calcResult = calc(operator, calcTmp, calcResult);
-          inputRow.html(inputRow.html() + resultRow.html() + clickKey);
+          // 表示変更
+          processRow.html(processRow.html() + resultRow.html() + clickKey);
           resultRow.html(calcResult);
+          // 演算子更新
           operator = clickKey;
         }
       }else{
@@ -331,7 +339,7 @@
             calcTmp = 0;
             calcResult = 0;
             operator= '';
-            inputRow.html('');
+            processRow.html('');
           }
         }else{
           resultRow.html(resultRow.html() + clickKey);

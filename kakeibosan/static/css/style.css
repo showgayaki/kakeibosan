@@ -1,17 +1,23 @@
 @charset "UTF-8";
 
-/* navbar */
+/*---------
+  navbar
+---------*/
 .dropdown-toggle, a.dropdown-item{
     cursor: pointer;
 }
 .navbar-nav p.user_name{
     font-size: 1.5em;
 }
-/* main panel */
+/*---------
+ main panel
+--------- */
 .main-panel > .content {
     min-height: calc(100vh - 174px);
 }
-/* records */
+/*---------
+ records
+---------*/
 th, .update-table .badge_clm{
     text-align: center;
 }
@@ -70,6 +76,12 @@ i.copy-icon:hover{
 i.copy-icon:action{
     color: #f96332;
 }
+/*---------
+ calc
+---------*/
+.calc-modal .row{
+    /* margin: 0; */
+}
 .calc-result-area{
     border: 1px solid #000;
     height: 5rem;
@@ -94,7 +106,10 @@ i.copy-icon:action{
 .calc-key:hover{
     background-color: rgba(42, 87, 136, 0.2);
 }
+.calc-clear{
+    width: calc(75% - 1px);
+}
 .calc-backspace{
-    width: 62.5px;
+    width: calc(25% - 0.25rem + 1px);
     color: #808080;
 }

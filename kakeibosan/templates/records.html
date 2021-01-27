@@ -39,7 +39,7 @@
                       <td class="text-right">{{ '{:,}'.format(val) }}</td>
                       <td>
                         <button id="pay-amount" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
-                          <i class="copy-icon now-ui-icons files_single-copy-04"></i>
+                          <i class="total-copy-icon fas fa-clipboard"></i>
                         </button>
                       </td>
                       {%- else %}
@@ -175,7 +175,7 @@
                   <p id="calc-result-row" class="calc-result-row2">0</p>
                 </div>
                 <button id="copy-calc" class="copy-btn px-1 bg-white border border-secondary rounded" data-toggle="tooltip" disabled>
-                  <i class="copy-icon now-ui-icons files_single-copy-04"></i>
+                  <i class="calc-copy-icon fas fa-clipboard"></i>
                 </button>
               </div>
               <div class="calc-key-area container">
@@ -348,7 +348,7 @@
     })
     // 電卓モーダル閉じるときに初期化
     $('#calcModal').on('hide.bs.modal', function(){
-      $('#calc-input-row').text('');
+      $('#calc-process-row').text('');
       $('#calc-result-row').text('0');
       calcTmp = 0;
       calcResult = 0;

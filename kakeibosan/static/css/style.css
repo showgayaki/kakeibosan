@@ -37,7 +37,9 @@ th, .update-table .badge_clm{
     background-color: rgba(42, 87, 136, 0.8);
 }
 .handsontable .htAutocompleteArrow {
-    font-size: 16px;
+    margin-left: 0.3rem;
+    font-size: 18px;
+    cursor: pointer;
 }
 td.listbox.htDimmed{
     padding: 0.5em;
@@ -58,7 +60,7 @@ span.required{
 table tbody tr td.copy-btn{
     padding: 0;
 }
-button.copy-btn{
+.copy-btn{
     display: block;
     margin: 0 auto;
     padding: 0;
@@ -66,22 +68,19 @@ button.copy-btn{
     background-color: #fff;
     cursor: pointer;
 }
-i.copy-icon{
+.total-copy-icon{
     font-size: 1.2rem;
     text-align: center;
 }
-i.copy-icon:hover{
+.total-copy-icon:hover{
     color: #f96332;
 }
-i.copy-icon:action{
+.total-copy-icon:action{
     color: #f96332;
 }
 /*---------
  calc
 ---------*/
-.calc-modal .row{
-    /* margin: 0; */
-}
 .calc-result-area{
     border: 1px solid #000;
     height: 5rem;
@@ -98,6 +97,19 @@ i.copy-icon:action{
     text-align: right;
     font-size: 2rem;
 }
+.calc-copy-icon{
+    width: 1.7rem;
+    font-size: 1.5rem;
+}
+.calc-copy-icon:hover{
+    color: #f96332;
+}
+.calc-copy-icon:action{
+    color: #f96332;
+}
+.copy-btn:disabled{
+    pointer-events: none;
+}
 .calc-key{
     background-color: #fff;
     font-size: 1.5rem;
@@ -112,4 +124,5 @@ i.copy-icon:action{
 .calc-backspace{
     width: calc(25% - 0.25rem + 1px);
     color: #808080;
+
 }

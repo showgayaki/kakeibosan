@@ -346,8 +346,14 @@
           resultRow.html(resultRow.html() + clickKey);
         }
       }
-      //直前に押したキー更新
+      // 直前に押したキー更新
       lastKey = clickKey;
+
+      // 計算領域でスクロールバーが表示されたら右端までスクロールさせる
+      if($(processRow).get(0).scrollWidth > $(processRow)[0].offsetWidth){
+        let differnceWidth = $(processRow).get(0).scrollWidth - $(processRow)[0].offsetWidth;
+        $(processRow).scrollLeft(differnceWidth);
+      }
     })
     // 電卓モーダル閉じるときに初期化
     $('#calcModal').on('hide.bs.modal', function(){

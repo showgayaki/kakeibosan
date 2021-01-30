@@ -274,6 +274,7 @@
     let calcResult = 0;
     let operator = '';
     let inputStart = true;
+    let lastKey;//直前に押したキー
     $('.calc-key').on('click', function(){
       // コピーボタンを無効にする
       $('#copy-calc').prop('disabled', true);
@@ -314,7 +315,7 @@
           processRow.html(processRow.html() + clickKey);
           // 演算子更新
           operator = clickKey;
-        }else if(operator !== '' && inputStart){// 演算子を変更したときの処理
+        }else if(lastKey === '+' || lastKey === '−' || lastKey === '×' || lastKey === '÷'){// 演算子を変更したときの処理
           // 表示変更
           processRow.html(processRow.html().slice(0, -1) + clickKey);
           // 演算子更新
@@ -345,6 +346,8 @@
           resultRow.html(resultRow.html() + clickKey);
         }
       }
+      //直前に押したキー更新
+      lastKey = clickKey;
     })
     // 電卓モーダル閉じるときに初期化
     $('#calcModal').on('hide.bs.modal', function(){

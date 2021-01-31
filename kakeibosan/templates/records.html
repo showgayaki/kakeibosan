@@ -274,7 +274,6 @@
     let calcResult = 0;
     let operator = '';
     let inputStart = true;
-    let inputKey = '';
     let lastKey;//直前に押したキー
     processRow = $('#calc-process-row');
     resultRow = $('#calc-result-row');
@@ -288,6 +287,7 @@
     $('#calcModal').on('keydown', function(e){
       // コピーボタンを無効にする
       $('#copy-calc').prop('disabled', true);
+      let inputKey = '';
       switch(e.keyCode){
         case 8:
           inputKey = 'backspace';
@@ -344,6 +344,7 @@
           inputKey = '÷';
           break;
       }
+      console.log(e.keyCode + ':' + inputKey);
       if(inputKey !== ''){
         viewCalc(inputKey);
       }

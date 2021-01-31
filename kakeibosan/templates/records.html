@@ -274,14 +274,93 @@
     let calcResult = 0;
     let operator = '';
     let inputStart = true;
+    let inputKey = '';
     let lastKey;//直前に押したキー
+    processRow = $('#calc-process-row');
+    resultRow = $('#calc-result-row');
     $('.calc-key').on('click', function(){
       // コピーボタンを無効にする
       $('#copy-calc').prop('disabled', true);
-      processRow = $('#calc-process-row');
-      resultRow = $('#calc-result-row');
       let clickKey = $(this).val();
+      viewCalc(clickKey);
+    });
 
+    $('#calcModal').on('keydown', function(e){
+      // コピーボタンを無効にする
+      $('#copy-calc').prop('disabled', true);
+      switch(e.keyCode){
+        case 8:
+          inputKey = 'backspace';
+          break;
+        case 13:
+          inputKey = '=';
+          break;
+        case 67:
+          inputKey = 'clear';
+          break;
+        case 48:
+          inputKey = '0';
+          break;
+        case 49:
+          inputKey = '1';
+          break;
+        case 50:
+          inputKey = '2';
+          break;
+        case 51:
+          inputKey = '3';
+          break;
+        case 52:
+          inputKey = '4';
+          break;
+        case 53:
+          inputKey = '5';
+          break;
+        case 54:
+          inputKey = '6';
+          break;
+        case 55:
+          inputKey = '7';
+          break;
+        case 56:
+          inputKey = '8';
+          break;
+        case 57:
+          inputKey = '9';
+          break;
+        case 106:
+          inputKey = '×';
+          break;
+        case 107:
+          inputKey = '+';
+          break;
+        case 109:
+          inputKey = '−';
+          break;
+        case 110:
+          inputKey = '.';
+          break;
+        case 111:
+          inputKey = '÷';
+          break;
+      }
+      console.log(e.keyCode + ':' + inputKey);
+      if(inputKey !== ''){
+        viewCalc(inputKey);
+      }
+    });
+
+    // 電卓モーダル閉じるときに初期化
+    $('#calcModal').on('hide.bs.modal', function(){
+      $('#calc-process-row').text('');
+      $('#calc-result-row').text('0');
+      calcTmp = 0;
+      calcResult = 0;
+      operator = '';
+      inputStart = true;
+    });
+
+    function viewCalc(clickKey){
       // Clearキー押下時の処理
       if(clickKey === 'clear'){
         processRow.html('');
@@ -311,6 +390,7 @@
           resultRow.html(calcResult);
           operator = clickKey;
         }else if(operator === '='){// 「=」押下後、引き続き計算するときの処理
+          console.log(clickKey);
           // 表示変更
           processRow.html(processRow.html() + clickKey);
           // 演算子更新
@@ -354,29 +434,21 @@
         let differnceWidth = $(processRow).get(0).scrollWidth - $(processRow)[0].offsetWidth;
         $(processRow).scrollLeft(differnceWidth);
       }
-    })
-    // 電卓モーダル閉じるときに初期化
-    $('#calcModal').on('hide.bs.modal', function(){
-      $('#calc-process-row').text('');
-      $('#calc-result-row').text('0');
-      calcTmp = 0;
-      calcResult = 0;
-      operator = '';
-      inputStart = true;
-    });
+    }
 
+    // 四則演算
     function calc(ope, tmp, result){
       if(ope === '+'){
         result += tmp;
-        }else if(ope === '−'){
-          result = result - tmp;
-        }else if(ope === '×'){
-          result = result * tmp;
-        }else if(ope === '÷'){
-          result = result / tmp;
-        }else{
-          result = tmp;
-        }
+      }else if(ope === '−'){
+        result = result - tmp;
+      }else if(ope === '×'){
+        result = result * tmp;
+      }else if(ope === '÷'){
+        result = result / tmp;
+      }else{
+        result = tmp;
+      }
       return result;
     }
   </script>

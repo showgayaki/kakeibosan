@@ -299,33 +299,43 @@
           inputKey = 'clear';
           break;
         case 48:
+        case 96:
           inputKey = '0';
           break;
         case 49:
+        case 97:
           inputKey = '1';
           break;
         case 50:
+        case 98:
           inputKey = '2';
           break;
         case 51:
+        case 99:
           inputKey = '3';
           break;
         case 52:
+        case 100:
           inputKey = '4';
           break;
         case 53:
+        case 101:
           inputKey = '5';
           break;
         case 54:
+        case 102:
           inputKey = '6';
           break;
         case 55:
+        case 103:
           inputKey = '7';
           break;
         case 56:
+        case 104:
           inputKey = '8';
           break;
         case 57:
+        case 105:
           inputKey = '9';
           break;
         case 106:
@@ -380,34 +390,31 @@
         calcTmp = Number(resultRow.html());
 
         if(clickKey === '='){
-          inputStart = true;
-          calcResult = calc(operator, calcTmp, calcResult);
           // コピーボタンを有効にしてvalueに設定
           $('#copy-calc').prop('disabled', false);
           $('#copy-calc').val(calcResult);
-          // 表示変更
-          processRow.html(processRow.html() + resultRow.html() + clickKey + calcResult);
-          resultRow.html(calcResult);
-          operator = clickKey;
+          // 再度「＝」ボタン押してもなにもしない
+          if(lastKey !== '='){
+            inputStart = true;
+            calcResult = calc(operator, calcTmp, calcResult);
+            // 表示変更
+            processRow.html(processRow.html() + resultRow.html() + clickKey + calcResult);
+            resultRow.html(calcResult);
+          }
         }else if(operator === '='){// 「=」押下後、引き続き計算するときの処理
-          console.log(clickKey);
           // 表示変更
           processRow.html(processRow.html() + clickKey);
-          // 演算子更新
-          operator = clickKey;
         }else if(lastKey === '+' || lastKey === '−' || lastKey === '×' || lastKey === '÷'){// 演算子を変更したときの処理
           // 表示変更
           processRow.html(processRow.html().slice(0, -1) + clickKey);
-          // 演算子更新
-          operator = clickKey;
         }else{
           calcResult = calc(operator, calcTmp, calcResult);
           // 表示変更
           processRow.html(processRow.html() + resultRow.html() + clickKey);
           resultRow.html(calcResult);
-          // 演算子更新
-          operator = clickKey;
         }
+        // 演算子更新
+        operator = clickKey;
       }else{
         // 数字キー押下時の処理
         if(inputStart){

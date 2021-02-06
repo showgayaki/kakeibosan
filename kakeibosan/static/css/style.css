@@ -93,12 +93,13 @@ table tbody tr td.copy-btn{
     width: 100%;
     height: 3rem;
     margin-bottom: 0;
+    white-space: nowrap;
     overflow-x: auto;
     -ms-overflow-style: none;/* IE, Edge 対応 */
     scrollbar-width: none;/* Firefox 対応 */
 }
 .calc-process-row::-webkit-scrollbar{
-    display:none;
+    display: none;
 }
 .calc-result-row{
     text-align: right;
@@ -130,4 +131,5 @@ table tbody tr td.copy-btn{
 }
 .press-calc-key{
     background-color: rgba(42, 87, 136, 0.2);
+    outline: 5px auto -webkit-focus-ring-color;
 }

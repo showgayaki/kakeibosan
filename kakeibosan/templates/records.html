@@ -187,25 +187,25 @@
                   <button id="calc-key_7" class="calc-key col" value="7">7</button>
                   <button id="calc-key_8" class="calc-key col ml-1" value="8">8</button>
                   <button id="calc-key_9" class="calc-key col ml-1" value="9">9</button>
-                  <button id="calc-key_÷" class="calc-key col ml-1" value="÷">÷</button>
+                  <button id="calc-key_divide" class="calc-key col ml-1" value="÷">÷</button>
                 </div>
                 <div class="row mt-1">
                   <button id="calc-key_4" class="calc-key col" value="4">4</button>
                   <button id="calc-key_5" class="calc-key col ml-1" value="5">5</button>
                   <button id="calc-key_6" class="calc-key col ml-1" value="6">6</button>
-                  <button id="calc-key_5" class="calc-key col ml-1" value="5">×</button>
+                  <button id="calc-key_multiply" class="calc-key col ml-1" value="×">×</button>
                 </div>
                 <div class="row mt-1">
                   <button id="calc-key_1" class="calc-key col" value="1">1</button>
                   <button id="calc-key_2" class="calc-key col ml-1" value="2">2</button>
                   <button id="calc-key_3" class="calc-key col ml-1" value="3">3</button>
-                  <button id="calc-key_−" class="calc-key col ml-1" value="−">−</button>
+                  <button id="calc-key_minus" class="calc-key col ml-1" value="-">-</button>
                 </div>
                 <div class="row mt-1">
                   <button id="calc-key_0" class="calc-key col" value="0">0</button>
-                  <button id="calc-key_." class="calc-key col ml-1" value=".">.</button>
-                  <button id="calc-key_=" class="calc-key col ml-1" value="=">=</button>
-                  <button id="calc-key_+" class="calc-key col ml-1" value="+">+</button>
+                  <button id="calc-key_dot" class="calc-key col ml-1" value=".">.</button>
+                  <button id="calc-key_equal" class="calc-key col ml-1" value="=">=</button>
+                  <button id="calc-key_plus" class="calc-key col ml-1" value="+">+</button>
                 </div>
               </div>
             </div>
@@ -346,7 +346,7 @@
             break;
           case 109:
           case 189:
-            inputKey = '−';
+            inputKey = '-';
             break;
           case 110:
           case 190:
@@ -360,6 +360,33 @@
       }
       // 有効なキーが押されたら計算
       if(inputKey !== ''){
+        // 演算子はid名に使えないので変換
+        switch(inputKey){
+          case '+':
+            keyName = 'plus';
+            break;
+          case '-':
+            keyName = 'minus';
+            break;
+          case '×':
+            keyName = 'multiply';
+            break;
+          case '÷':
+            keyName = 'divide';
+            break;
+          case '=':
+            keyName = 'equal';
+            break;
+          default:
+            keyName = inputKey;
+        }
+        // 押したキーの色を変える
+        const clickId = '#calc-key_' + keyName;
+        $(clickId).addClass('press-calc-key').delay(200).queue(function(next){
+          $(clickId).removeClass('press-calc-key');
+          next();
+        });
+        // 計算結果表示
         viewCalc(inputKey);
       }
       console.log('inputKey:' + inputKey + ', keyCode:' + e.keyCode);
@@ -395,7 +422,7 @@
           // 表示変更
           resultRow.html(slice);
         }
-      }else if(clickKey === '+' || clickKey === '−' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
+      }else if(clickKey === '+' || clickKey === '-' || clickKey === '×' || clickKey === '÷' || clickKey === '='){
         inputStart = true;
         calcTmp = Number(resultRow.html());
 
@@ -411,7 +438,7 @@
         }else if(operator === '='){// 「=」押下後、引き続き計算するときの処理
           // 表示変更
           processRow.html(processRow.html() + clickKey);
-        }else if(lastKey === '+' || lastKey === '−' || lastKey === '×' || lastKey === '÷'){// 演算子を変更したときの処理
+        }else if(lastKey === '+' || lastKey === '-' || lastKey === '×' || lastKey === '÷'){// 演算子を変更したときの処理
           // 表示変更
           processRow.html(processRow.html().slice(0, -1) + clickKey);
         }else{
@@ -480,7 +507,7 @@
     function calc(ope, tmp, result){
       if(ope === '+'){
         result += tmp;
-      }else if(ope === '−'){
+      }else if(ope === '-'){
         result = result - tmp;
       }else if(ope === '×'){
         result = result * tmp;

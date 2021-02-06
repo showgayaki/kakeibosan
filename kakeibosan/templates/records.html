@@ -180,32 +180,32 @@
               </div>
               <div class="calc-key-area container">
                 <div class="row">
-                  <button id="calc-clear" class="calc-key calc-clear" value="clear">Clear</button>
-                  <button id="calc-delete" class="calc-key calc-backspace ml-1" value="backspace"><i class="fas fa-backspace"></i></button>
+                  <button id="calc-key_clear" class="calc-key calc-clear" value="clear">Clear</button>
+                  <button id="calc-key_backspace" class="calc-key calc-backspace ml-1" value="backspace"><i class="fas fa-backspace"></i></button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col" value="7">7</button>
-                  <button class="calc-key col ml-1" value="8">8</button>
-                  <button class="calc-key col ml-1" value="9">9</button>
-                  <button class="calc-key col ml-1" value="÷">÷</button>
+                  <button id="calc-key_7" class="calc-key col" value="7">7</button>
+                  <button id="calc-key_8" class="calc-key col ml-1" value="8">8</button>
+                  <button id="calc-key_9" class="calc-key col ml-1" value="9">9</button>
+                  <button id="calc-key_÷" class="calc-key col ml-1" value="÷">÷</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col" value="4">4</button>
-                  <button class="calc-key col ml-1" value="5">5</button>
-                  <button class="calc-key col ml-1" value="6">6</button>
-                  <button class="calc-key col ml-1" value="×">×</button>
+                  <button id="calc-key_4" class="calc-key col" value="4">4</button>
+                  <button id="calc-key_5" class="calc-key col ml-1" value="5">5</button>
+                  <button id="calc-key_6" class="calc-key col ml-1" value="6">6</button>
+                  <button id="calc-key_5" class="calc-key col ml-1" value="5">×</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col" value="1">1</button>
-                  <button class="calc-key col ml-1" value="2">2</button>
-                  <button class="calc-key col ml-1" value="3">3</button>
-                  <button class="calc-key col ml-1" value="−">−</button>
+                  <button id="calc-key_1" class="calc-key col" value="1">1</button>
+                  <button id="calc-key_2" class="calc-key col ml-1" value="2">2</button>
+                  <button id="calc-key_3" class="calc-key col ml-1" value="3">3</button>
+                  <button id="calc-key_−" class="calc-key col ml-1" value="−">−</button>
                 </div>
                 <div class="row mt-1">
-                  <button class="calc-key col" value="0">0</button>
-                  <button class="calc-key col ml-1" value=".">.</button>
-                  <button class="calc-key col ml-1" value="=">=</button>
-                  <button class="calc-key col ml-1" value="+">+</button>
+                  <button id="calc-key_0" class="calc-key col" value="0">0</button>
+                  <button id="calc-key_." class="calc-key col ml-1" value=".">.</button>
+                  <button id="calc-key_=" class="calc-key col ml-1" value="=">=</button>
+                  <button id="calc-key_+" class="calc-key col ml-1" value="+">+</button>
                 </div>
               </div>
             </div>
@@ -265,6 +265,9 @@
       viewCalc(clickKey);
     });
 
+    // ------------------
+    // キーボード操作
+    // ------------------
     $('#calcModal').on('keydown', function(e){
       let inputKey = '';
       // Ctrlキー押下時
@@ -273,6 +276,15 @@
           // Ctrl + C
           case 67:
             copyText($('#copy-calc'));
+            break;
+        }
+      }else if(e.shiftKey){
+        switch(e.keyCode){
+          case 186:
+            inputKey = '×';
+            break;
+          case 187:
+            inputKey = '+';
             break;
         }
       }else{
@@ -333,20 +345,24 @@
             inputKey = '+';
             break;
           case 109:
+          case 189:
             inputKey = '−';
             break;
           case 110:
+          case 190:
             inputKey = '.';
             break;
           case 111:
+          case 191:
             inputKey = '÷';
             break;
         }
-        console.log('inputKey:' + inputKey + ', keyCode:' + e.keyCode);
-        if(inputKey !== ''){
-          viewCalc(inputKey);
-        }
       }
+      // 有効なキーが押されたら計算
+      if(inputKey !== ''){
+        viewCalc(inputKey);
+      }
+      console.log('inputKey:' + inputKey + ', keyCode:' + e.keyCode);
     });
 
     // ------------------

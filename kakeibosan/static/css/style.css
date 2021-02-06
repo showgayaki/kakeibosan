@@ -128,3 +128,6 @@ table tbody tr td.copy-btn{
     width: calc(25% - 0.25rem + 1px);
     color: #808080;
 }
+.press-calc-key{
+    background-color: rgba(42, 87, 136, 0.2);
+}

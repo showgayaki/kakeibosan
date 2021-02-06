@@ -127,7 +127,7 @@
           </div>
         </div>
       </div>
-      <!-- モーダルの設定 -->
+      <!-- 追加確認モーダル -->
       <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -158,7 +158,7 @@
           </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
       </div><!-- /.modal -->
-      <!-- モーダルの設定 -->
+      <!-- 電卓モーダル -->
       <div class="modal fade calc-modal" id="calcModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-sm">
           <div class="modal-content">
@@ -171,10 +171,10 @@
             <div class="modal-body">
               <div class="d-flex mb-3">
                 <div id="calc-result" class="calc-result-area col p-1">
-                  <p id="calc-process-row" class="calc-result-row1"></p>
-                  <p id="calc-result-row" class="calc-result-row2">0</p>
+                  <p id="calc-process-row" class="calc-process-row"></p>
+                  <p id="calc-result-row" class="calc-result-row">0</p>
                 </div>
-                <button id="copy-calc" class="copy-btn px-1 bg-white border border-secondary rounded" data-toggle="tooltip" disabled>
+                <button id="copy-calc" class="copy-btn calc-copy px-1 bg-white border border-secondary rounded" data-toggle="tooltip" value="0">
                   <i class="calc-copy-icon fas fa-clipboard"></i>
                 </button>
               </div>
@@ -245,26 +245,9 @@
     })
     // クリック時の動作を設定
     .on('click', function(){
-      const clickId = $(this).attr('id');
-      let copyResult;
-      // buttonのvalueを取得
-      const text = $(this).val();
-      // tdから直接はコピーできないためテキストエリアを経由
-      let $textarea = $('<textarea></textarea>');
-      $textarea.text(text);
-      $(this).append($textarea);
-      $textarea.select();
-      // コピー結果を取得してtextareaは削除
-      copyResult = document.execCommand('copy');
-      $textarea.remove();
-      // コピー結果によって表示変更
-      if(copyResult){
-        $(this).attr('data-original-title', 'コピーしました');
-      }else{
-        $(this).attr('data-original-title', 'コピー失敗しました');
-      }
-      // tooltip表示
-      $(this).tooltip('show');
+      // クリックした要素を取得してコピー
+      const clickElem = $(this);
+      copyText(clickElem);
     });
 
     // ------------------
@@ -278,89 +261,97 @@
     processRow = $('#calc-process-row');
     resultRow = $('#calc-result-row');
     $('.calc-key').on('click', function(){
-      // コピーボタンを無効にする
-      $('#copy-calc').prop('disabled', true);
       let clickKey = $(this).val();
       viewCalc(clickKey);
     });
 
     $('#calcModal').on('keydown', function(e){
-      // コピーボタンを無効にする
-      $('#copy-calc').prop('disabled', true);
       let inputKey = '';
-      switch(e.keyCode){
-        case 8:
-          inputKey = 'backspace';
-          break;
-        case 13:
-          inputKey = '=';
-          break;
-        case 67:
-          inputKey = 'clear';
-          break;
-        case 48:
-        case 96:
-          inputKey = '0';
-          break;
-        case 49:
-        case 97:
-          inputKey = '1';
-          break;
-        case 50:
-        case 98:
-          inputKey = '2';
-          break;
-        case 51:
-        case 99:
-          inputKey = '3';
-          break;
-        case 52:
-        case 100:
-          inputKey = '4';
-          break;
-        case 53:
-        case 101:
-          inputKey = '5';
-          break;
-        case 54:
-        case 102:
-          inputKey = '6';
-          break;
-        case 55:
-        case 103:
-          inputKey = '7';
-          break;
-        case 56:
-        case 104:
-          inputKey = '8';
-          break;
-        case 57:
-        case 105:
-          inputKey = '9';
-          break;
-        case 106:
-          inputKey = '×';
-          break;
-        case 107:
-          inputKey = '+';
-          break;
-        case 109:
-          inputKey = '−';
-          break;
-        case 110:
-          inputKey = '.';
-          break;
-        case 111:
-          inputKey = '÷';
-          break;
-      }
-      console.log(e.keyCode + ':' + inputKey);
-      if(inputKey !== ''){
-        viewCalc(inputKey);
+      // Ctrlキー押下時
+      if(e.ctrlKey){
+        switch(e.keyCode){
+          // Ctrl + C
+          case 67:
+            copyText($('#copy-calc'));
+            break;
+        }
+      }else{
+        switch(e.keyCode){
+          case 8:
+            inputKey = 'backspace';
+            break;
+          case 13:
+            inputKey = '=';
+            break;
+          case 67:
+            inputKey = 'clear';
+            break;
+          case 48:
+          case 96:
+            inputKey = '0';
+            break;
+          case 49:
+          case 97:
+            inputKey = '1';
+            break;
+          case 50:
+          case 98:
+            inputKey = '2';
+            break;
+          case 51:
+          case 99:
+            inputKey = '3';
+            break;
+          case 52:
+          case 100:
+            inputKey = '4';
+            break;
+          case 53:
+          case 101:
+            inputKey = '5';
+            break;
+          case 54:
+          case 102:
+            inputKey = '6';
+            break;
+          case 55:
+          case 103:
+            inputKey = '7';
+            break;
+          case 56:
+          case 104:
+            inputKey = '8';
+            break;
+          case 57:
+          case 105:
+            inputKey = '9';
+            break;
+          case 106:
+            inputKey = '×';
+            break;
+          case 107:
+            inputKey = '+';
+            break;
+          case 109:
+            inputKey = '−';
+            break;
+          case 110:
+            inputKey = '.';
+            break;
+          case 111:
+            inputKey = '÷';
+            break;
+        }
+        console.log('inputKey:' + inputKey + ', keyCode:' + e.keyCode);
+        if(inputKey !== ''){
+          viewCalc(inputKey);
+        }
       }
     });
 
+    // ------------------
     // 電卓モーダル閉じるときに初期化
+    // ------------------
     $('#calcModal').on('hide.bs.modal', function(){
       $('#calc-process-row').text('');
       $('#calc-result-row').text('0');
@@ -370,6 +361,9 @@
       inputStart = true;
     });
 
+    // ------------------
+    // 計算結果表示
+    // ------------------
     function viewCalc(clickKey){
       // Clearキー押下時の処理
       if(clickKey === 'clear'){
@@ -390,9 +384,6 @@
         calcTmp = Number(resultRow.html());
 
         if(clickKey === '='){
-          // コピーボタンを有効にしてvalueに設定
-          $('#copy-calc').prop('disabled', false);
-          $('#copy-calc').val(calcResult);
           // 再度「＝」ボタン押してもなにもしない
           if(lastKey !== '='){
             inputStart = true;
@@ -418,8 +409,6 @@
       }else{
         // 数字キー押下時の処理
         if(inputStart){
-          // コピーボタンを無効にする
-          $('#copy-calc').prop('disabled', true);
           resultRow.html(clickKey);
           inputStart = false;
           // 「=」押下後、次の計算に入るときに初期化
@@ -433,6 +422,8 @@
           resultRow.html(resultRow.html() + clickKey);
         }
       }
+      // コピーボタンのvalue更新
+      $('#copy-calc').val(calcResult);
       // 直前に押したキー更新
       lastKey = clickKey;
 
@@ -443,7 +434,33 @@
       }
     }
 
+    // ------------------
+    // コピー
+    // ------------------
+    function copyText(elem){
+      // コピー対象のvalueを取得
+      const val = elem.val();
+      // tdから直接はコピーできないためテキストエリアを経由
+      let $textarea = $('<textarea></textarea>');
+      $textarea.text(val);
+      elem.append($textarea);
+      $textarea.select();
+      // コピーしてtextareaは削除
+      const copyResult = document.execCommand('copy');
+      $textarea.remove();
+      // コピー結果によって表示変更
+      if(copyResult){
+        elem.attr('data-original-title', 'コピーしました');
+      }else{
+        elem.attr('data-original-title', 'コピー失敗しました');
+      }
+      // tooltip表示
+      elem.tooltip('show');
+    }
+
+    // ------------------
     // 四則演算
+    // ------------------
     function calc(ope, tmp, result){
       if(ope === '+'){
         result += tmp;

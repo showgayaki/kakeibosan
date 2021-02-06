@@ -89,7 +89,7 @@ table tbody tr td.copy-btn{
     font-size: 1.2rem;
     overflow: hidden;
 }
-.calc-result-row1{
+.calc-process-row{
     width: 100%;
     height: 3rem;
     margin-bottom: 0;
@@ -97,27 +97,21 @@ table tbody tr td.copy-btn{
     -ms-overflow-style: none;/* IE, Edge 対応 */
     scrollbar-width: none;/* Firefox 対応 */
 }
-.calc-result-row1::-webkit-scrollbar{
+.calc-process-row::-webkit-scrollbar{
     display:none;
 }
-.calc-result-row2{
+.calc-result-row{
     text-align: right;
     font-size: 2rem;
     margin-top: -1rem;
     margin-bottom: 0;
 }
+.calc-copy:hover{
+    color: #f96332;
+}
 .calc-copy-icon{
     width: 1.7rem;
     font-size: 1.5rem;
-}
-.calc-copy-icon:hover{
-    color: #f96332;
-}
-.calc-copy-icon:action{
-    color: #f96332;
-}
-.copy-btn:disabled{
-    pointer-events: none;
 }
 .calc-key{
     background-color: #fff;

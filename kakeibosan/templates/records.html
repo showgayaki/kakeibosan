@@ -430,13 +430,15 @@
         calcTmp = Number(resultRow.html());
 
         if(clickKey === '='){
-          // 再度「＝」ボタン押してもなにもしない
+          // 直前が「＝」キーでなければ計算する
           if(lastKey !== '='){
             inputStart = true;
             calcResult = calc(operator, calcTmp, calcResult);
             // 表示変更
             processRow.html(processRow.html() + resultRow.html() + clickKey + calcResult);
             resultRow.html(calcResult);
+          }else{
+            return false;
           }
         }else if(operator === '='){// 「=」押下後、引き続き計算するときの処理
           // 表示変更
@@ -452,12 +454,14 @@
         }
         // 演算子更新
         operator = clickKey;
-      }else{
-        // 数字キー押下時の処理
+      }else{// 数字キー押下時の処理
+        // 1文字目の入力時
         if(inputStart){
+          // ドットが押された場合は、「0.*」にする
+          clickKey = (clickKey === '.')? '0' + clickKey: clickKey;
           resultRow.html(clickKey);
           inputStart = false;
-          // 「=」押下後、次の計算に入るときに初期化
+          // 「=」押下後、次の計算に入るときは初期化
           if(operator === '='){
             calcTmp = 0;
             calcResult = 0;
@@ -465,6 +469,10 @@
             processRow.html('');
           }
         }else{
+          // 2個以上のドットは許さない
+          if(clickKey === '.' && resultRow.html().indexOf('.') > -1){
+            return false;
+          }
           resultRow.html(resultRow.html() + clickKey);
         }
       }
@@ -508,16 +516,21 @@
     // 四則演算
     // ------------------
     function calc(ope, tmp, result){
-      if(ope === '+'){
-        result += tmp;
-      }else if(ope === '-'){
-        result = result - tmp;
-      }else if(ope === '×'){
-        result = result * tmp;
-      }else if(ope === '÷'){
-        result = result / tmp;
-      }else{
-        result = tmp;
+      switch(ope){
+        case '+':
+          result += tmp;
+          break;
+        case '-':
+          result = result - tmp;
+          break;
+        case '×':
+          result = result * tmp;
+          break;
+        case '÷':
+          result = result / tmp;
+          break;
+        default:
+          result = tmp;
       }
       return result;
     }

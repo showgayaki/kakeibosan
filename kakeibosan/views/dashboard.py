@@ -3,14 +3,15 @@ from dateutil.relativedelta import relativedelta
 from flask import render_template
 from sqlalchemy import and_
 from flask_login import login_required
-from kakeibosan import app
-from kakeibosan.models import Cost
+from kakeibosan import app, db
+from kakeibosan.models import Cost, FixedCost
 
 
 @app.route('/kakeibosan/')
 @login_required
 def dashboard():
     this_month = datetime.today().date().replace(day=1)
+    _insert_fixed_costs(this_month)
 
     sub_categories = ('電気代', 'ガス代', '水道代')
     total_per_months = _total_per_months(this_month)
@@ -36,7 +37,12 @@ def _total_per_months(this_month):
     for i in range(month_count):
         month = (this_month + relativedelta(months=-i))
         last_12_months.append(month)
-        costs = Cost.query.filter_by(month_to_add=month).all()
+        try:
+            costs = Cost.query.filter_by(month_to_add=month).all()
+        except exc.SQLAlchemyError:
+            cost = {}
+        finally:
+            db.session.close()
         total = 0
         total += sum(cost.amount for cost in costs)
         total_costs.append(total)
@@ -54,6 +60,8 @@ def _costs_per_month(this_month, category):
             cost_per_month.append(total_dict)
         except AttributeError:
             cost_per_month[cat] = 0
+        finally:
+            db.session.close()
     return cost_per_month
 
 
@@ -68,6 +76,51 @@ def _utility_per_month(sub_categories, months):
                 utility_charnge[sc] = cost.amount
             except AttributeError:
                 utility_charnge[sc] = 0
+            finally:
+                db.session.close()
         utility_costs['{0:%Y-%m}'.format(month)] = utility_charnge
 
     return utility_costs
+
+
+def _insert_fixed_costs(month_to_add):
+    # 固定費を取得
+    try:
+        fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
+    except exc.SQLAlchemyError:
+        fixed_costs = {}
+    finally:
+        db.session.close()
+
+    # 今月のコストを取得
+    try:
+        costs = Cost.query.filter_by(month_to_add=month_to_add).all()
+    except exc.SQLAlchemyError:
+        costs = {}
+    finally:
+        db.session.close()
+
+    # 今月のコストにまだ固定費が入ってなければインサート
+    for fc in fixed_costs:
+        found = False
+        for cost in costs:
+            if fc.sub_category == cost.sub_category:
+                found = True
+                break
+
+        if not found:
+            cost = Cost()
+            cost.category = '固定費'
+            cost.sub_category = fc.sub_category
+            cost.paid_to = fc.paid_to
+            cost.amount = fc.amount
+            cost.month_to_add = month_to_add
+            cost.bought_in = month_to_add
+            cost.user_id = fc.user_id
+            try:
+                db.session.add(cost)
+                db.session.commit()
+            except exc.SQLAlchemyError:
+                pass
+            finally:
+                db.session.close()

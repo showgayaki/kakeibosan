@@ -57,10 +57,6 @@ def records():
             total_cost = _cost_per_month(view_month.date())
             month = _month_pager(view_month, oldest_month)
 
-            # 固定費インサートしたら、インサート後のレコードを再度取得
-            if this_month == view_month and _is_insert_fixed_costs(costs, view_month.date()):
-                costs = _fetch_view_costs(view_month)
-
             cost_records = _cost_records(costs)
             view_month = view_month.date()
             return render_template('records.html', active_page='データ一覧・登録', users=users_list,
@@ -109,41 +105,6 @@ def _fetch_view_costs(view_month):
     finally:
         db.session.close()
     return costs
-
-
-def _is_insert_fixed_costs(costs, month_to_add):
-    is_inserted = False
-    try:
-        fixed_costs = FixedCost.query.order_by(FixedCost.id).all()
-    except exc.SQLAlchemyError:
-        fixed_costs = {}
-    finally:
-        db.session.close()
-
-    for fc in fixed_costs:
-        found = False
-        for cost in costs:
-            if fc.sub_category == cost.sub_category:
-                found = True
-                break
-        if not found:
-            cost = Cost()
-            cost.category = '固定費'
-            cost.sub_category = fc.sub_category
-            cost.paid_to = fc.paid_to
-            cost.amount = fc.amount
-            cost.month_to_add = month_to_add
-            cost.bought_in = month_to_add
-            cost.user_id = fc.user_id
-            try:
-                db.session.add(cost)
-                db.session.commit()
-                is_inserted = True
-            except exc.SQLAlchemyError:
-                pass
-            finally:
-                db.session.close()
-    return is_inserted
 
 
 def _cost_per_month(month_to_add):

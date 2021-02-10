@@ -460,7 +460,8 @@
           // ドットが押された場合は、「0.*」にする
           clickKey = (clickKey === '.')? '0' + clickKey: clickKey;
           resultRow.html(clickKey);
-          inputStart = false;
+          // 入力が0なら再度1文字目とする
+          inputStart = (clickKey === '0')? true: false;
           // 「=」押下後、次の計算に入るときは初期化
           if(operator === '='){
             calcTmp = 0;
@@ -469,8 +470,9 @@
             processRow.html('');
           }
         }else{
-          // 2個以上のドットは許さない
-          if(clickKey === '.' && resultRow.html().indexOf('.') > -1){
+          // 2個以上のドットと2個以上の0は許さない
+          if((clickKey === '.' && resultRow.html().indexOf('.') > -1)
+          || (clickKey === '0' && resultRow.html() === '0')){
             return false;
           }
           resultRow.html(resultRow.html() + clickKey);

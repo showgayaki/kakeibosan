@@ -447,7 +447,7 @@
           // 表示変更
           processRow.html(processRow.html().slice(0, -1) + clickKey);
         }else{
-          calcResult = calc(operator, calcTmp, calcResult);
+          calcResult = (operator !== '')? calc(operator, calcTmp, calcResult): Number(resultRow.html());
           // 表示変更
           processRow.html(processRow.html() + resultRow.html() + clickKey);
           resultRow.html(calcResult);
@@ -471,7 +471,7 @@
           }
         }else{
           // 2個以上のドットと2個以上の0は許さない
-          if((clickKey === '.' && resultRow.html().indexOf('.') > -1)
+          if((clickKey === '.' && resultRow.html().indexOf('.') !== -1)
           || (clickKey === '0' && resultRow.html() === '0')){
             return false;
           }
@@ -518,6 +518,17 @@
     // 四則演算
     // ------------------
     function calc(ope, tmp, result){
+      // IEEE754の誤差回避
+      // 小数点位置の最大値を取得
+      const tmpDotPosition = getDotPosition(tmp);
+      const resultDotPosition = getDotPosition(result);
+      const max = Math.max(tmpDotPosition, resultDotPosition);
+      // 小数点を含んでいたら大きい方の桁に合わせて整数化、文字列化する
+      tmp = (tmp.toString().indexOf('.') !== -1)? Number((tmp.toFixed(max) + '').replace('.', '')): tmp;
+      result = (result.toString().indexOf('.') !== -1)? Number((result.toFixed(max) + '').replace('.', '')): result;
+      // 10^N の値を計算
+      const power = Math.pow(10, max);
+
       switch(ope){
         case '+':
           result += tmp;
@@ -534,7 +545,20 @@
         default:
           result = tmp;
       }
-      return result;
+      return result / power;
+    }
+
+    // ------------------
+    // 小数点位置取得
+    // ------------------
+    function getDotPosition(val){
+      const strVal = String(val);
+    　let dotPosition = 0;
+      // 小数点があったら位置を取得
+      if(strVal.lastIndexOf('.') !== -1){
+        dotPosition = (strVal.length - 1) - strVal.lastIndexOf('.');
+      }
+      return dotPosition;
     }
   </script>
 {%- endblock %}

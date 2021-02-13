@@ -269,6 +269,9 @@
     // キーボード操作
     // ------------------
     $('#calcModal').on('keydown', function(e){
+      // マウスカーソルがキー上にあるとエンター押下時にクリックされてしまうのでフォーカス移動
+      $('#calcModal').focus();
+      // 初期化
       let inputKey = '';
       // Ctrlキー押下時
       if(e.ctrlKey){

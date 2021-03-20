@@ -3,6 +3,7 @@ __pycache__
 test_database.py
 .idea
 .git
+.DS_Store
 edit_record.js
 kakeibosan.db
 backup

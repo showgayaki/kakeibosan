@@ -13,6 +13,7 @@ sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-wtf = "*"
+werkzeug = "==0.16.1"
 
 [requires]
 python_version = "3.8"

@@ -29,7 +29,7 @@
       {{ form.remember(type="checkbox") }}
       {{ form.remember.label(" Remember me") }}
       {{ form.submit(class="btn btn-lg btn-primary btn-block") }}
-      <p class="mt-5 mb-3 text-muted">&copy; 2020</p>
+      <p class="mt-5 mb-3 text-muted">&copy; {{ this_year }}</p>
     </form>
   <script>
     document.getElementById('username').focus();

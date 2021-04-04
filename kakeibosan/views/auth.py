@@ -1,5 +1,6 @@
 from flask_login import login_user, logout_user
 from flask import render_template, request, redirect, flash, url_for
+from datetime import datetime
 from kakeibosan import app, login_manager
 from kakeibosan.views.forms import LoginForm
 from kakeibosan.models import User
@@ -24,7 +25,7 @@ def login():
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'danger')
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, this_year=_year())
 
 
 @app.route('/kakeibosan/logout')
@@ -32,4 +33,8 @@ def logout():
     logout_user()
     form = LoginForm()
     flash('Log out', 'info')
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=form, this_year=_year())
+
+
+def _year():
+    return datetime.today().year

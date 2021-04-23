@@ -153,7 +153,7 @@ function createTable(currentUserId, users, records, viewMonth){
                     return;
                 }
 
-                if(e['paid_to'] === null){
+                if(e['paid_to'] == null){
                     e['paid_to'] = '';
                 }
                 currentRecords.push(e);
@@ -220,7 +220,7 @@ function createUpdateModal(isThisMonth, isSelfData, updateRecords, defaultRecord
             + '</tr>';
         }
         $('#tbody-update').html(html);
-        let btn = '<button name="save" type="button" class="btn btn-primary">OK</button>'
+        let btn = '<button name="save" type="button" class="to-loading btn btn-primary">OK</button>'
                 + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
         $('#confirmModal').find('.modal-footer').html(btn);
     }else{

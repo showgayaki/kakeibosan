@@ -8,7 +8,6 @@ $('.form-signin').submit(function(){
 });
 // レコード追加時にローディングアニメーション表示
 $(document).on('click', '.to-loading', function(){
-    $('.modal').css('display', 'none');
     displayLoader();
 });
 

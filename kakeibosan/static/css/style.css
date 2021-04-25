@@ -14,7 +14,7 @@ html{
 }
 .loader{
     position: absolute;
-    top: 40%;
+    top: 400px;
     left: calc(50% - 5em);
     z-index: 103;
     font-size: 10px;

@@ -3,10 +3,8 @@
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
      -->
       <div class="logo">
-        <a href="{{ url_for('dashboard') }}" class="simple-text logo-mini">
-          <img src="{{ url_for('static', filename='img/favicon.png') }}">
-        </a>
-        <a href="{{ url_for('dashboard') }}" class="simple-text logo-normal">
+        <a href="{{ url_for('dashboard') }}" class="text-white logo-text to-loading">
+          <img class="logo-img" src="{{ url_for('static', filename='img/favicon.png') }}">
           {{ app_name }}
         </a>
       </div>
@@ -21,7 +19,7 @@
             {%- for href, caption, class in navigation_bar %}
             {%- if not caption == 'ログアウト' %}
             <li {% if caption == active_page %}class="active"{% endif%}>
-                <a href="{{ href }}">
+                <a class="to-loading" href="{{ href }}">
                     <i class="{{ class }}"></i>
                     <p>{{ caption }}</p>
                 </a>

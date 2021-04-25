@@ -97,6 +97,29 @@ html{
     border-top-right-radius: 0;
 }
 /*---------
+  sidebar
+---------*/
+.sidebar .logo{
+    padding: 1rem;
+}
+.logo-text{
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+}
+.logo-text:hover{
+    text-decoration: none;
+}
+.sidebar .nav p{
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.logo-img{
+    width: 34px;
+    margin-right: 10px;
+}
+/*---------
   navbar
 ---------*/
 .dropdown-toggle, a.dropdown-item{

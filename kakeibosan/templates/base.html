@@ -18,14 +18,15 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
 </head>
 <body>
-  <div class="loader"></div>
-  <div class="loader-bg"></div>
   <div class="wrapper">
     {%- include 'base_side.html' %}
     <div class="main-panel" id="main-panel">
-      <!-- Navbar -->
+    <!-- Navbar -->
     {%- include 'base_header.html' %}
-      <!-- End Navbar -->
+    <!-- End Navbar -->
+    <!-- LoadingAnimation -->
+    <div class="loader"></div>
+    <div class="loader-bg"></div>
     {%- block contents %}
     {%- endblock %}
     </div>

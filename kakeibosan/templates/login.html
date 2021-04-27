@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
   <body class="auth-bg h-100 d-flex align-items-center text-center">
-    <div class="loader"></div>
+    <div class="loader loader-top"></div>
     <div class="loader-bg"></div>
     <form class="form-signin" action="{{ url_for('login') }}" method="post">
       {% for category ,message in get_flashed_messages(with_categories=true) %}

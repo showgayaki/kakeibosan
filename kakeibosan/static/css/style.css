@@ -49,6 +49,9 @@ html{
         transform: rotate(360deg);
     }
 }
+.loader-top{
+    left: calc(50% - 5em);
+}
 .loader-bg{
     position: absolute;
     top: 0;

@@ -10,7 +10,10 @@ $('.form-signin').submit(function(){
 $(document).on('click', '.to-loading', function(){
     displayLoader();
 });
-
+// ログアウトモーダル表示時にOKボタンにフォーカス。エンターでログアウトできるように。
+$('#logoutModal').on('shown.bs.modal', function(){
+    $('#logoutOk').trigger('focus');
+})
 // ローディングアニメーション表示
 function displayLoader(){
     $('.loader').css('display', 'block');

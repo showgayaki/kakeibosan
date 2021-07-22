@@ -68,20 +68,22 @@ function createTable(currentUserId, users, records, viewMonth){
                     sortOrder: 'asc'
                 }
             },
-            afterChange: function(changes, source) {
-                if (source === 'edit') {
+            beforeChange: function(changes, source) {
+                if (source !== 'loadData') {
                     // 値に変更無し時
                     if (changes[0][2] == changes[0][3]) {
                         return;
                     };
                     change_row = changes[0][0];
                     change_prop = changes[0][1];
-                    change_after_value = changes[0][3];
+                    value_after_change = changes[0][3];
 
                     if (change_prop == 'category') {
-                        // sub_categoryを空にする。
-                        this.setDataAtRowProp(change_row, 'sub_category','','autoedit');
-                        switch (change_after_value) {
+                        // category削除時はsub_categoryを空にする
+                        if(value_after_change === ''){
+                            this.setDataAtRowProp(change_row, 'sub_category', '', 'autoedit');
+                        }
+                        switch(value_after_change){
                             case '固定費':
                                 this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
                                 '家賃',
@@ -119,6 +121,12 @@ function createTable(currentUserId, users, records, viewMonth){
                                 this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', []);
                         }
                     }
+                }
+            },
+            afterValidate: function (isValid, value, row, prop, source){
+                // 複数カラムコピぺ時に、サブカテゴリでValidationエラーになるため再度値を入れる
+                if(!isValid){
+                    this.setDataAtRowProp(row, prop, value, 'autoedit');
                 }
             }
         };

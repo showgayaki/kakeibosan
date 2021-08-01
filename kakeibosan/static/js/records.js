@@ -25,6 +25,12 @@ function createTable(currentUserId, users, records, viewMonth){
                 {data: 'user_id', type: 'numeric', width: 0.1},
                 {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}
             ]
+    const REQUIRED_COLUMNS = {
+        'category': '種別',
+        'sub_category': '項目',
+        'amount': '金額',
+        'bought_in': '支払日',
+    }
     var table = {};
     // チェックボックスにfalseをいれておく
     records.forEach(function(val){
@@ -144,33 +150,49 @@ function createTable(currentUserId, users, records, viewMonth){
         let userId = Number($(this).attr('id').split('-')[0]);
         let isSelfData = userId === currentUserId;
         let isThisMonth = viewMonth === monthToAdd();
+        let validationError = '';
 
         if(isSelfData){
             var currentRecords = [];
+            let updateRecords = [];
             $(table[userId].getSourceData()).filter(function(i, e){
                 // 最終行は除く
                 if(table[userId].getSourceData().length !== i + 1){
                     return e;
                 }
             }).each(function(i, e){
-                console.log(e);
-                if(e['category'] === null || e['category'] === '' ||
-                   e['sub_category'] === null || e['sub_category'] === '' ||
-                   e['amount'] === null || e['category'] === '' ||
-                   e['bought_in'] === null ||  e['bought_in'] === ''){
-                    return;
-                }
-
                 if(e['paid_to'] == null){
                     e['paid_to'] = '';
                 }
-                currentRecords.push(e);
+                // 空の行はスキップ
+                if((e['category'] == null || e['category'] === '') &&
+                   (e['sub_category'] == null || e['sub_category'] === '') &&
+                   (e['amount'] == null || e['amount'] === '') &&
+                   (e['bought_in'] == null || e['bought_in'] === '')){
+                       return true;
+                }
+                // 必須項目が空かどうか判定
+                for(let item in REQUIRED_COLUMNS){
+                    if(e[item] == null || e[item] == ''){
+                        validationError = String(i + 1) + '行目の必須項目「' + REQUIRED_COLUMNS[item] + '」を入力してください。';
+                        break;
+                    }
+                }
+                // 空の必須項目なければ配列に追加、あればエラーモーダル表示
+                if(!validationError){
+                    currentRecords.push(e);
+                }else{
+                    createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords);
+                    return false;
+                }
             });
+
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
-            let updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);
-            createUpdateModal(isThisMonth, isSelfData, updateRecords, defaultRecords);
+            updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);
+            createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords);
         }else{
-            createUpdateModal(isThisMonth, isSelfData, [], []);
+            createUpdateModal(validationError, isThisMonth, isSelfData, [], []);
+            return false;
         }
     })
 }
@@ -198,52 +220,64 @@ function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
 }
 
 
-function createUpdateModal(isThisMonth, isSelfData, updateRecords, defaultRecords){
-    if(updateRecords.length > 0){
-        $('#confirmModal').find('.table-responsive').show();
-        $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
-        let html = '';
-        for(let i = 0; i < updateRecords.length; i++){
-            let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
-            let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
-            let remove = '<td class="badge_clm"><span class="badge badge-danger">削除</span></td>';
-            let badgeColumn = '';
+function createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords){
+    let caption = '';
+    let updateModalTitle = $('#updateModalTitle');
+    // デフォルトはOKボタンのみにしておく
+    $('#confirmModal').find('.table-responsive').hide();
+    let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
+    $('#confirmModal').find('.modal-footer').html(btn);
 
-            if(updateRecords[i]['id'] === null){
-                badgeColumn = add;
-            }else if(updateRecords[i]['del'] === true){
-                badgeColumn = remove;
-            }else{
-                badgeColumn = update;
-            }
-
-            html += '<tr>'
-            + badgeColumn
-            + '<td>' + updateRecords[i]['category'] + '</td>'
-            + '<td>' + updateRecords[i]['sub_category'] + '</td>'
-            + '<td>' + updateRecords[i]['paid_to'] + '</td>'
-            + '<td class="amount">' + Number(updateRecords[i]['amount']).toLocaleString() + '</td>'
-            + '<td class="bought_in">' + updateRecords[i]['bought_in'] + '</td>'
-            + '<td class="month_to_add">' + updateRecords[i]['month_to_add'] + '</td>'
-            + '</tr>';
-        }
-        $('#tbody-update').html(html);
-        let btn = '<button name="save" type="button" class="to-loading btn btn-primary">OK</button>'
-                + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
-        $('#confirmModal').find('.modal-footer').html(btn);
+    if(validationError){
+        updateModalTitle.addClass('text-primary');
+        updateModalTitle.html('入力エラー');
+        $('#records-caption').html(validationError);
     }else{
-        caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
-//        let caption = '';
-//        if(isThisMonth){
-//            caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
-//        }else{
-//            caption = '過去の月には計上できません';
-//        }
-        $('#confirmModal').find('.table-responsive').hide();
-        let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
-        $('#records-caption').html(caption);
-        $('#confirmModal').find('.modal-footer').html(btn);
+        updateModalTitle.removeClass('text-primary');
+        updateModalTitle.html('データ更新');
+        if(updateRecords.length > 0){
+            $('#confirmModal').find('.table-responsive').show();
+            $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
+            let html = '';
+            for(let i = 0; i < updateRecords.length; i++){
+                let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
+                let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
+                let remove = '<td class="badge_clm"><span class="badge badge-danger">削除</span></td>';
+                let badgeColumn = '';
+
+                if(updateRecords[i]['id'] === null){
+                    badgeColumn = add;
+                }else if(updateRecords[i]['del'] === true){
+                    badgeColumn = remove;
+                }else{
+                    badgeColumn = update;
+                }
+
+                html += '<tr>'
+                + badgeColumn
+                + '<td>' + updateRecords[i]['category'] + '</td>'
+                + '<td>' + updateRecords[i]['sub_category'] + '</td>'
+                + '<td>' + updateRecords[i]['paid_to'] + '</td>'
+                + '<td class="amount">' + Number(updateRecords[i]['amount']).toLocaleString() + '</td>'
+                + '<td class="bought_in">' + updateRecords[i]['bought_in'] + '</td>'
+                + '<td class="month_to_add">' + updateRecords[i]['month_to_add'] + '</td>'
+                + '</tr>';
+            }
+            $('#tbody-update').html(html);
+            btn = '<button name="save" type="button" class="to-loading btn btn-primary">OK</button>'
+                    + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
+            $('#confirmModal').find('.modal-footer').html(btn);
+        }else{
+            caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
+    //        if(isThisMonth){
+    //            caption = isSelfData? '更新可能なデータがありません' : 'ほかのユーザーのデータは更新できません';
+    //        }else{
+    //            caption = '過去の月には計上できません';
+    //        }
+            $('#records-caption').html(caption);
+        }
     }
+    // モーダル表示
     $('#confirmModal').modal('show');
 
     $('#confirmModal').find('button[name=save]').click(function () {

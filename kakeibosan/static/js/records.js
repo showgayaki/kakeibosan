@@ -174,14 +174,14 @@ function createTable(currentUserId, users, records, viewMonth){
                 // 必須項目が空かどうか判定
                 for(let item in REQUIRED_COLUMNS){
                     if(e[item] == null || e[item] == ''){
-                        validationError = String(i + 1) + '行目の必須項目「' + REQUIRED_COLUMNS[item] + '」を入力してください。';
-                        break;
+                        validationError += '・' + REQUIRED_COLUMNS[item] + '<br>';
                     }
                 }
                 // 空の必須項目なければ配列に追加、あればエラーモーダル表示
                 if(!validationError){
                     currentRecords.push(e);
                 }else{
+                    validationError = String(i + 1) + '行目の以下の必須項目を入力してください。<br>' + validationError;
                     createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords);
                     return false;
                 }

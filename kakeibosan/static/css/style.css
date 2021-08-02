@@ -198,6 +198,9 @@ table tbody tr td.copy-btn{
 .total-copy-icon:action{
     color: #f96332;
 }
+.validation-error{
+    font-size: 1.2rem;
+}
 /*---------
  calc
 ---------*/

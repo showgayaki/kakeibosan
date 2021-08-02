@@ -151,6 +151,7 @@ function createTable(currentUserId, users, records, viewMonth){
         let isSelfData = userId === currentUserId;
         let isThisMonth = viewMonth === monthToAdd();
         let validationError = '';
+        let validationErrorDict = {};
 
         if(isSelfData){
             var currentRecords = [];
@@ -171,27 +172,44 @@ function createTable(currentUserId, users, records, viewMonth){
                    (e['bought_in'] == null || e['bought_in'] === '')){
                        return true;
                 }
-                // 必須項目が空かどうか判定
+                // 入力の判定
                 for(let item in REQUIRED_COLUMNS){
+                    // 必須項目が空かどうか判定
                     if(e[item] == null || e[item] == ''){
+                        validationError += '以下の項目が空です。<br>';
                         validationError += '・' + REQUIRED_COLUMNS[item] + '<br>';
+                    }
+                    // 形式の判定
+                    switch (item){
+                        case 'amount':
+                            if(isNaN(e[item])){
+                                validationError += '金額には数字を入力してください。<br>';
+                            }
+                            break;
+                        case 'bought_in':
+                            if(!e[item].match(/^(\d+)-(\d+)-(\d+)$/)){
+                                validationError += '日付には、2000-1-1の形式で入力してください。<br>';
+                            }
+                            break;
+                        default:
+                            // break;
                     }
                 }
                 // 空の必須項目なければ配列に追加、あればエラーモーダル表示
                 if(!validationError){
                     currentRecords.push(e);
                 }else{
-                    validationError = String(i + 1) + '行目の以下の必須項目を入力してください。<br>' + validationError;
-                    createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords);
+                    validationErrorDict = {[String(i + 1)]: validationError};
+                    createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords);
                     return false;
                 }
             });
 
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
             updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);
-            createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords);
+            createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords);
         }else{
-            createUpdateModal(validationError, isThisMonth, isSelfData, [], []);
+            createUpdateModal(validationErrorDict, isThisMonth, isSelfData, [], []);
             return false;
         }
     })
@@ -220,7 +238,7 @@ function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
 }
 
 
-function createUpdateModal(validationError, isThisMonth, isSelfData, updateRecords){
+function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords){
     let caption = '';
     let updateModalTitle = $('#updateModalTitle');
     // デフォルトはOKボタンのみにしておく
@@ -228,16 +246,18 @@ function createUpdateModal(validationError, isThisMonth, isSelfData, updateRecor
     let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
     $('#confirmModal').find('.modal-footer').html(btn);
 
-    if(validationError){
+    // validationエラーのDictionaryが空でなければエラー表示
+    if(Object.keys(validationErrorDict).length > 0){
         updateModalTitle.addClass('text-primary');
         updateModalTitle.html('入力エラー');
-        $('#records-caption').html(validationError);
+        $('#updateCaption').html(Object.keys(validationErrorDict) + '行目のデータを確認してください。');
+        $('#validationError').html(validationErrorDict[Object.keys(validationErrorDict)]);
     }else{
         updateModalTitle.removeClass('text-primary');
         updateModalTitle.html('データ更新');
         if(updateRecords.length > 0){
             $('#confirmModal').find('.table-responsive').show();
-            $('#records-caption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
+            $('#updateCaption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
             let html = '';
             for(let i = 0; i < updateRecords.length; i++){
                 let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
@@ -274,7 +294,7 @@ function createUpdateModal(validationError, isThisMonth, isSelfData, updateRecor
     //        }else{
     //            caption = '過去の月には計上できません';
     //        }
-            $('#records-caption').html(caption);
+            $('#updateCaption').html(caption);
         }
     }
     // モーダル表示

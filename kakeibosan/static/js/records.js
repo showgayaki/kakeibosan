@@ -129,9 +129,9 @@ function createTable(currentUserId, users, records, viewMonth){
                     }
                 }
             },
-            afterValidate: function (isValid, value, row, prop, source){
+            afterValidate: function(isValid, value, row, prop, source){
                 // 複数カラムコピぺ時に、サブカテゴリでValidationエラーになるため再度値を入れる
-                if(!isValid){
+                if(!isValid && source == 'CopyPaste.paste'){
                     this.setDataAtRowProp(row, prop, value, 'autoedit');
                 }
             }
@@ -141,7 +141,7 @@ function createTable(currentUserId, users, records, viewMonth){
 
         // 非表示タブのHandsontableが描画されない問題回避
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-          table[users[i]['id']].render();
+            table[users[i]['id']].render();
         });
     }
     // 登録ボタンクリック

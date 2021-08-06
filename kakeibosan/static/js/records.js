@@ -170,13 +170,13 @@ function createTable(currentUserId, users, records, viewMonth){
                    (e['sub_category'] == null || e['sub_category'] === '') &&
                    (e['amount'] == null || e['amount'] === '') &&
                    (e['bought_in'] == null || e['bought_in'] === '')){
-                       return true;
+                       return;
                 }
                 // 入力の判定
                 for(let item in REQUIRED_COLUMNS){
                     // 必須項目が空かどうか判定
                     if(e[item] == null || e[item] == ''){
-                        validationError += '以下の項目が空です。<br>';
+                        validationError += (validationError == '')? '以下の項目が空です。<br>' : '';
                         validationError += '・' + REQUIRED_COLUMNS[item] + '<br>';
                     }
                     // 形式の判定
@@ -192,11 +192,10 @@ function createTable(currentUserId, users, records, viewMonth){
                             }
                             break;
                         default:
-                            // break;
                     }
                 }
                 // 空の必須項目なければ配列に追加、あればエラーモーダル表示
-                if(!validationError){
+                if(validationError == ''){
                     currentRecords.push(e);
                 }else{
                     validationErrorDict = {[String(i + 1)]: validationError};

@@ -183,12 +183,20 @@ function createTable(currentUserId, users, records, viewMonth){
                     switch (item){
                         case 'amount':
                             if(isNaN(e[item])){
-                                validationError += '金額には数字を入力してください。<br>';
+                                validationError += e[item] + '：金額には数字を入力してください。<br>';
                             }
                             break;
                         case 'bought_in':
-                            if(!e[item].match(/^(\d+)-(\d+)-(\d+)$/)){
-                                validationError += '日付には、2000-1-1の形式で入力してください。<br>';
+                            if(!e[item].match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)){
+                                validationError += REQUIRED_COLUMNS[item] + '：2000-1-1の形式で入力してください。<br>';
+                            }else{
+                                let inputYear = e[item].split('-')[0];
+                                let inputMonth = e[item].split('-')[1] - 1;
+                                let inputDay = e[item].split('-')[2];
+                                let date = new Date(inputYear, inputMonth, inputDay);
+                                if(date.getFullYear() != inputYear || date.getMonth() != inputMonth || date.getDate() != inputDay){
+                                    validationError += REQUIRED_COLUMNS[item] + '：有効な日付を入力してください。';
+                                }
                             }
                             break;
                         default:
@@ -252,6 +260,8 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
         $('#updateCaption').html(Object.keys(validationErrorDict) + '行目のデータを確認してください。');
         $('#validationError').html(validationErrorDict[Object.keys(validationErrorDict)]);
     }else{
+        // validationエラーは初期化
+        $('#validationError').html('');
         updateModalTitle.removeClass('text-primary');
         updateModalTitle.html('データ更新');
         if(updateRecords.length > 0){

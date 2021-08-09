@@ -150,7 +150,9 @@ function createTable(currentUserId, users, records, viewMonth){
         let userId = Number($(this).attr('id').split('-')[0]);
         let isSelfData = userId === currentUserId;
         let isThisMonth = viewMonth === monthToAdd();
-        let validationError = '';
+        // バリデーション用変数
+        let validationError = [];
+        let validationErrorEmpty = [];
         let validationErrorDict = {};
 
         if(isSelfData){
@@ -176,26 +178,25 @@ function createTable(currentUserId, users, records, viewMonth){
                 for(let item in REQUIRED_COLUMNS){
                     // 必須項目が空かどうか判定
                     if(e[item] == null || e[item] == ''){
-                        validationError += (validationError == '')? '以下の項目が空です。<br>' : '';
-                        validationError += '・' + REQUIRED_COLUMNS[item] + '<br>';
+                        validationErrorEmpty.push(REQUIRED_COLUMNS[item]);
                     }else{
                         // 形式の判定
                         switch (item){
                             case 'amount':
                                 if(!Number.isInteger(e[item])){
-                                    validationError += REQUIRED_COLUMNS[item] + '：整数で入力してください。<br>';
+                                    validationError.push(REQUIRED_COLUMNS[item] + '：整数で入力してください。');
                                 }
                                 break;
                             case 'bought_in':
                                 if(!e[item].match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)){
-                                    validationError += REQUIRED_COLUMNS[item] + '：2000-1-1の形式で入力してください。<br>';
+                                    validationError.push(REQUIRED_COLUMNS[item] + '：2000-1-1の形式で入力してください。');
                                 }else{
                                     let inputYear = e[item].split('-')[0];
                                     let inputMonth = e[item].split('-')[1] - 1;
                                     let inputDay = e[item].split('-')[2];
                                     let date = new Date(inputYear, inputMonth, inputDay);
                                     if(date.getFullYear() != inputYear || date.getMonth() != inputMonth || date.getDate() != inputDay){
-                                        validationError += REQUIRED_COLUMNS[item] + '：有効な日付を入力してください。';
+                                        validationError.push(REQUIRED_COLUMNS[item] + '：有効な日付を入力してください。');
                                     }
                                 }
                                 break;
@@ -204,12 +205,14 @@ function createTable(currentUserId, users, records, viewMonth){
                     }
                 }
                 // 空の必須項目なければ配列に追加、あればエラーモーダル表示
-                if(validationError == ''){
+                if(validationError.length == 0 && validationErrorEmpty.length == 0){
                     currentRecords.push(e);
                 }else{
-                    validationErrorDict = {[String(i + 1)]: validationError};
-                    createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords);
-                    return false;
+                    validationErrorDict = {
+                        'row': i + 1,
+                        'empty': validationErrorEmpty,
+                        'error': validationError,
+                    };
                 }
             });
 
@@ -249,21 +252,38 @@ function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
 function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords){
     let caption = '';
     let updateModalTitle = $('#updateModalTitle');
+    // validationエラーは初期化
+    $('#validationError').empty();
+    updateModalTitle.removeClass('text-primary');
     // デフォルトはOKボタンのみにしておく
     $('#confirmModal').find('.table-responsive').hide();
     let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
     $('#confirmModal').find('.modal-footer').html(btn);
 
+    console.log(validationErrorDict);
     // validationエラーのDictionaryが空でなければエラー表示
     if(Object.keys(validationErrorDict).length > 0){
+        let validationError = '';
         updateModalTitle.addClass('text-primary');
         updateModalTitle.html('入力エラー');
-        $('#updateCaption').html(Object.keys(validationErrorDict) + '行目のデータを確認してください。');
-        $('#validationError').html(validationErrorDict[Object.keys(validationErrorDict)]);
+        $('#updateCaption').html(validationErrorDict['row'] + '行目のデータを確認してください。');
+        // 空の場合のエラー
+        if(validationErrorDict['empty'].length > 0){
+            validationError += '<p class="mb-0">以下の項目が空です。</p>';
+            validationError += '<ul>';
+            for(let error of validationErrorDict['empty']){
+                validationError += '<li>' + error + '</li>';
+            }
+            validationError += '</ul>';
+        }
+        // 有効な値でない場合のエラー
+        if(validationErrorDict['error'].length > 0){
+            for(let error of validationErrorDict['error']){
+                validationError += '<p class="mb-0">' + error + '</p>';
+            }
+        }
+        $('#validationError').html(validationError);
     }else{
-        // validationエラーは初期化
-        $('#validationError').html('');
-        updateModalTitle.removeClass('text-primary');
         updateModalTitle.html('データ更新');
         if(updateRecords.length > 0){
             $('#confirmModal').find('.table-responsive').show();

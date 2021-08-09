@@ -178,28 +178,29 @@ function createTable(currentUserId, users, records, viewMonth){
                     if(e[item] == null || e[item] == ''){
                         validationError += (validationError == '')? '以下の項目が空です。<br>' : '';
                         validationError += '・' + REQUIRED_COLUMNS[item] + '<br>';
-                    }
-                    // 形式の判定
-                    switch (item){
-                        case 'amount':
-                            if(isNaN(e[item])){
-                                validationError += e[item] + '：金額には数字を入力してください。<br>';
-                            }
-                            break;
-                        case 'bought_in':
-                            if(!e[item].match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)){
-                                validationError += REQUIRED_COLUMNS[item] + '：2000-1-1の形式で入力してください。<br>';
-                            }else{
-                                let inputYear = e[item].split('-')[0];
-                                let inputMonth = e[item].split('-')[1] - 1;
-                                let inputDay = e[item].split('-')[2];
-                                let date = new Date(inputYear, inputMonth, inputDay);
-                                if(date.getFullYear() != inputYear || date.getMonth() != inputMonth || date.getDate() != inputDay){
-                                    validationError += REQUIRED_COLUMNS[item] + '：有効な日付を入力してください。';
+                    }else{
+                        // 形式の判定
+                        switch (item){
+                            case 'amount':
+                                if(!Number.isInteger(e[item])){
+                                    validationError += REQUIRED_COLUMNS[item] + '：整数で入力してください。<br>';
                                 }
-                            }
-                            break;
-                        default:
+                                break;
+                            case 'bought_in':
+                                if(!e[item].match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)){
+                                    validationError += REQUIRED_COLUMNS[item] + '：2000-1-1の形式で入力してください。<br>';
+                                }else{
+                                    let inputYear = e[item].split('-')[0];
+                                    let inputMonth = e[item].split('-')[1] - 1;
+                                    let inputDay = e[item].split('-')[2];
+                                    let date = new Date(inputYear, inputMonth, inputDay);
+                                    if(date.getFullYear() != inputYear || date.getMonth() != inputMonth || date.getDate() != inputDay){
+                                        validationError += REQUIRED_COLUMNS[item] + '：有効な日付を入力してください。';
+                                    }
+                                }
+                                break;
+                            default:
+                        }
                     }
                 }
                 // 空の必須項目なければ配列に追加、あればエラーモーダル表示

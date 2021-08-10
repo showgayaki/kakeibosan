@@ -138,6 +138,16 @@ html{
 /*---------
  records
 ---------*/
+.card-total-table{
+    width: 480px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.card-records{
+    width: 620px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
 th, .update-table .badge_clm{
     text-align: center;
 }
@@ -161,8 +171,12 @@ th, .update-table .badge_clm{
     font-size: 18px;
     cursor: pointer;
 }
+.wtHolder{
+    height: auto!important;
+    margin-bottom: 30px;
+}
 .overflow-x-scroll{
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 td.listbox.htDimmed{
     padding: 0.5em;
@@ -211,6 +225,14 @@ table tbody tr td.copy-btn{
     .nav-tabs{
         display: flex;
         padding: 0!important;
+    }
+    .card-total-table{
+        width: 100%;
+        padding: 0;
+    }
+    .card-records{
+        width: 100%;
+        padding: 0;
     }
 }
 /*---------

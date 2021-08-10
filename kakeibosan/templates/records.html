@@ -16,113 +16,111 @@
         </button>
       </div>
       {%- endfor %}
-        <div class="row">
-          <div class="col-md-7">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">合計 - {{ '{0:%Y年%-m月}'.format(view_month) }}</h5>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-bordered">
-                    {%- for key in total_cost.keys() %}
+        <div class="card-total-table">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title">合計 - {{ '{0:%Y年%-m月}'.format(view_month) }}</h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  {%- for key in total_cost.keys() %}
+                  {%- if '支払額' in key %}
+                  <th class="text-primary" colspan="2">{{ key }}</th>
+                  {%- else %}
+                  <th class="text-primary">{{ key }}</th>
+                  {%- endif %}
+                  {%- endfor %}
+                  <tbody>
+                    <tr>
+                    {%- for key, val in total_cost.items() %}
                     {%- if '支払額' in key %}
-                    <th class="text-primary" colspan="2">{{ key }}</th>
+                    <td class="text-right">{{ '{:,}'.format(val) }}</td>
+                    <td>
+                      <button id="pay-amount" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
+                        <i class="total-copy-icon fas fa-clipboard"></i>
+                      </button>
+                    </td>
                     {%- else %}
-                    <th class="text-primary">{{ key }}</th>
+                    <td class="text-right">{{ '{:,}'.format(val) }}</td>
                     {%- endif %}
                     {%- endfor %}
-                    <tbody>
-                      <tr>
-                      {%- for key, val in total_cost.items() %}
-                      {%- if '支払額' in key %}
-                      <td class="text-right">{{ '{:,}'.format(val) }}</td>
-                      <td>
-                        <button id="pay-amount" class="copy-btn" value="{{ val }}" data-toggle="tooltip">
-                          <i class="total-copy-icon fas fa-clipboard"></i>
-                        </button>
-                      </td>
-                      {%- else %}
-                      <td class="text-right">{{ '{:,}'.format(val) }}</td>
-                      {%- endif %}
-                      {%- endfor %}
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
-          <div class="col-md-10">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">{{ active_page }}</h4>
-                <!-- tab -->
-                <ul class="nav nav-tabs">
-                  {%- for user in users %}
-                  {%- if user.user_name == current_user.user_name %}
-                  {%- set active = 'active' %}
-                  {%- endif %}
-                  <li class="nav-item">
-                      <a href="#{{ user.user_name }}-content" class="nav-link {{ active }}" data-toggle="tab">{{ user.view_name }}</a>
-                  </li>
-                  {%- endfor %}
-                </ul>
-                <!-- endtab -->
-              </div>
-              <div class="card-body pt-1 pt-md-2">
-                <!-- panel -->
-                <div id="tabContent" class="tab-content">
-                  {%- for user in users %}
-                  {%- if user.user_name == current_user.user_name %}
-                  {%- set active = 'active' %}
-                  {%- endif %}
-                  <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
-                    <div class="d-flex justify-content-md-between justify-content-around flex-wrap flex-md-nowrap mb-md-2 mb-3">
-                      <!-- 新規登録ボタン -->
-                      <div class="flex-itmes">
-                        <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
-                          登録
-                        </button>
-                        <button type="button" class="btn btn-calc btn-sm ml-3" data-toggle="modal" data-target="#calcModal">
-                          電卓
-                        </button>
-                      </div>
-                      <!-- ページャー -->
-                      <div class="flex-itmes d-flex align-items-center">
-                          <ul class="pagination mb-0">
-                            {%- if month.prev != '' %}
-                            <li class="page-item">
-                              <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}" ><< 前月</a>
-                            </li>
-                            {%- else %}
-                            <li class="page-item disabled">
-                              <a class="page-link text-dark" href="#" tabindex="-1"><< 前月</a>
-                            </li>
-                            {%- endif %}
-                            <li class="page-item disabled">
-                              <a class="page-link text-dark" href="#" tabindex="-1">{{ '{0:%Y年%-m月}'.format(view_month) }}</a>
-                            </li>
-                            {%- if month.next != '' %}
-                            <li class="page-item">
-                              <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}" >次月 >></a>
-                            </li>
-                            {%- else %}
-                            <li class="page-item disabled">
-                              <a class="page-link text-dark" href="#" tabindex="-1">次月 >></a>
-                            </li>
-                            {%- endif %}
-                          </ul>
-                      </div>
+        </div>
+        <div class="card-records">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title">{{ active_page }}</h4>
+              <!-- tab -->
+              <ul class="nav nav-tabs">
+                {%- for user in users %}
+                {%- if user.user_name == current_user.user_name %}
+                {%- set active = 'active' %}
+                {%- endif %}
+                <li class="nav-item">
+                    <a href="#{{ user.user_name }}-content" class="nav-link {{ active }}" data-toggle="tab">{{ user.view_name }}</a>
+                </li>
+                {%- endfor %}
+              </ul>
+              <!-- endtab -->
+            </div>
+            <div class="card-body pt-1 pt-md-2">
+              <!-- panel -->
+              <div id="tabContent" class="tab-content">
+                {%- for user in users %}
+                {%- if user.user_name == current_user.user_name %}
+                {%- set active = 'active' %}
+                {%- endif %}
+                <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
+                  <div class="d-flex justify-content-md-between justify-content-around flex-wrap flex-md-nowrap mb-md-2 mb-3">
+                    <!-- 新規登録ボタン -->
+                    <div class="flex-itmes">
+                      <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
+                        登録
+                      </button>
+                      <button type="button" class="btn btn-calc btn-sm ml-3" data-toggle="modal" data-target="#calcModal">
+                        電卓
+                      </button>
                     </div>
-                    <p class="annotation"><span class="required"> * </span>は入力必須</p>
-                    <div id="{{ user.id }}-handsontable">
+                    <!-- ページャー -->
+                    <div class="flex-itmes d-flex align-items-center">
+                        <ul class="pagination mb-0">
+                          {%- if month.prev != '' %}
+                          <li class="page-item">
+                            <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}" ><< 前月</a>
+                          </li>
+                          {%- else %}
+                          <li class="page-item disabled">
+                            <a class="page-link text-dark" href="#" tabindex="-1"><< 前月</a>
+                          </li>
+                          {%- endif %}
+                          <li class="page-item disabled">
+                            <a class="page-link text-dark" href="#" tabindex="-1">{{ '{0:%Y年%-m月}'.format(view_month) }}</a>
+                          </li>
+                          {%- if month.next != '' %}
+                          <li class="page-item">
+                            <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}" >次月 >></a>
+                          </li>
+                          {%- else %}
+                          <li class="page-item disabled">
+                            <a class="page-link text-dark" href="#" tabindex="-1">次月 >></a>
+                          </li>
+                          {%- endif %}
+                        </ul>
                     </div>
                   </div>
-                  {%- endfor %}
+                  <p class="annotation"><span class="required"> * </span>は入力必須</p>
+                  <div id="{{ user.id }}-handsontable">
+                  </div>
                 </div>
-                <!-- endpanel -->
+                {%- endfor %}
               </div>
+              <!-- endpanel -->
             </div>
           </div>
         </div>

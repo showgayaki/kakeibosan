@@ -70,7 +70,7 @@
                 </ul>
                 <!-- endtab -->
               </div>
-              <div class="card-body">
+              <div class="card-body pt-1 pt-md-2">
                 <!-- panel -->
                 <div id="tabContent" class="tab-content">
                   {%- for user in users %}
@@ -78,7 +78,7 @@
                   {%- set active = 'active' %}
                   {%- endif %}
                   <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-md-between justify-content-around flex-wrap flex-md-nowrap mb-md-2 mb-3">
                       <!-- 新規登録ボタン -->
                       <div class="flex-itmes">
                         <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
@@ -89,8 +89,8 @@
                         </button>
                       </div>
                       <!-- ページャー -->
-                      <div class="flex-itmes">
-                          <ul class="pagination float-right">
+                      <div class="flex-itmes d-flex align-items-center">
+                          <ul class="pagination mb-0">
                             {%- if month.prev != '' %}
                             <li class="page-item">
                               <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}" ><< 前月</a>

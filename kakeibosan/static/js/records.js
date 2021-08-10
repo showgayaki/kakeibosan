@@ -143,6 +143,8 @@ function createTable(currentUserId, users, records, viewMonth){
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             table[users[i]['id']].render();
         });
+        // 表示が崩れるため、Handsontable描画後にcss適用する
+        $('#' + String(i + 1) + '-handsontable').addClass('overflow-x-scroll');
     }
     // 登録ボタンクリック
     $(document).on('click', '[id$=fetch-update-records]', function(e){

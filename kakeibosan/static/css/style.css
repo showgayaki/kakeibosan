@@ -161,6 +161,9 @@ th, .update-table .badge_clm{
     font-size: 18px;
     cursor: pointer;
 }
+.overflow-x-scroll{
+    overflow-x: scroll;
+}
 td.listbox.htDimmed{
     padding: 0.5em;
 }
@@ -200,6 +203,15 @@ table tbody tr td.copy-btn{
 }
 .validation-error{
     font-size: 1.2rem;
+}
+@media screen and (max-width: 768px){
+    .loader{
+        left: calc(50% - 50px);
+    }
+    .nav-tabs{
+        display: flex;
+        padding: 0!important;
+    }
 }
 /*---------
  calc

@@ -158,6 +158,9 @@ th, .update-table .badge_clm{
 .update-table td.amount, td.bought_in, td.month_to_add{
     text-align: right;
 }
+.btn-md-xs{
+    padding: 5px 15px;
+}
 .btn-calc, .btn-calc:focus{
     color: #fff;
     background-color: #2a5788;
@@ -233,6 +236,12 @@ table tbody tr td.copy-btn{
     .card-records{
         width: 100%;
         padding: 0;
+    }
+    .page-link{
+        padding: 0.75rem 0.25rem;
+    }
+    .btn-md-xs{
+        padding: 0.4rem 0.6rem;
     }
 }
 /*---------

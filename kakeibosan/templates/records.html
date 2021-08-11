@@ -77,13 +77,13 @@
                 {%- set active = 'active' %}
                 {%- endif %}
                 <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
-                  <div class="d-flex justify-content-md-between justify-content-around flex-wrap flex-md-nowrap mb-md-2 mb-3">
+                  <div class="d-flex justify-content-between flex-nowrap mb-md-2 mb-3">
                     <!-- 新規登録ボタン -->
                     <div class="flex-itmes">
-                      <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm">
+                      <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm mr-md-3 mr-1 btn-md-xs">
                         登録
                       </button>
-                      <button type="button" class="btn btn-calc btn-sm ml-3" data-toggle="modal" data-target="#calcModal">
+                      <button type="button" class="btn btn-calc btn-sm btn-md-xs" data-toggle="modal" data-target="#calcModal">
                         電卓
                       </button>
                     </div>

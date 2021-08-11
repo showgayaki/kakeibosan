@@ -143,6 +143,16 @@ function createTable(currentUserId, users, records, viewMonth){
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             table[users[i]['id']].render();
         });
+        // ウィンドウリサイズ時にテーブル表示が崩れるため、リサイズ後に再描画
+        let timer = false;
+        $(window).resize(function(e){
+            if (timer !== false) {
+                clearTimeout(timer);
+            }
+            timer = setTimeout(function() {
+                table[users[i]['id']].render();
+            }, 200);
+        })
         // 表示が崩れるため、Handsontable描画後にcss適用する
         $('#' + String(i + 1) + '-handsontable').addClass('overflow-x-scroll');
     }

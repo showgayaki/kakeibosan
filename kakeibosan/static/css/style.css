@@ -176,6 +176,7 @@ th, .update-table .badge_clm{
 }
 .wtHolder{
     height: auto!important;
+    min-height: 300px;
     margin-bottom: 30px;
 }
 .overflow-x-scroll{

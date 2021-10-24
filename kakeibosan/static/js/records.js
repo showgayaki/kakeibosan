@@ -1,3 +1,24 @@
+// ------------------
+// コピーボタン押下時
+// ------------------
+$('.copy-btn')
+// tooltip設定
+.tooltip({
+    trigger: 'manual'
+})
+// tooltip表示後の動作を設定
+.on('shown.bs.tooltip', function(){
+    setTimeout((function(){
+    $(this).tooltip('hide');
+    }).bind(this), 1500);
+})
+// クリック時の動作を設定
+.on('click', function(){
+    // クリックした要素を取得してコピー
+    const clickElem = $(this);
+    copyText(clickElem);
+});
+
 function createTable(currentUserId, users, records, viewMonth){
     moment.locale('ja');
     let datePickerConfig = {

@@ -12,7 +12,6 @@ RUN apt-get install python3 python3-pip -y
 RUN pip install pipenv
 RUN mkdir /var/kakeibosan
 COPY . /var/kakeibosan
-COPY web/nginx.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/kakeibosan
 RUN pipenv install --system --deploy
 CMD ["uwsgi", "--ini", "/var/kakeibosan/kakeibosan_docker.ini"]

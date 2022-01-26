@@ -5,11 +5,8 @@ services:
     container_name: app-kakeibosan
     volumes:
       - type: bind
-        source: "./kakeibosan"
-        target: "/var/kakeibosan/kakeibosan"
-      - type: volume
-        source: static
-        target: "/var/kakeibosan/kakeibosan/static"
+        source: "./"
+        target: "/var/kakeibosan/"
       - type: volume
         source: "socket"
         target: "/tmp"
@@ -23,8 +20,8 @@ services:
       - type: bind
         source: "./web//conf.d/default.conf"
         target: "/etc/nginx/conf.d/default.conf"
-      - type: volume
-        source: static
+      - type: bind
+        source: "./kakeibosan/static"
         target: "/var/kakeibosan/kakeibosan/static"
       - type: volume
         source: "socket"
@@ -33,4 +30,3 @@ services:
 
 volumes:
   socket:
-  static:

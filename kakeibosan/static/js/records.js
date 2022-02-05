@@ -34,12 +34,16 @@ function createTable(currentUserId, users, records, viewMonth){
         }
     }
 
-    const SUB_CATEGORY_COLUMN = 2;
+    // カラムの順番(場所)が変わったら要変更
+    const SUB_CATEGORY_COLUMN = 3;
+    const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
-                {data: 'id', type: 'numeric', width:1},
+                {data: 'id', type: 'numeric', width: 1},
+                // {data: 'is_paid_in_advance', type: 'dropdown', width:70, source:['折半', '立替'],strict: true, allowInvalid: false, className: 'htCenter htMiddle'},
+                {data: 'is_paid_in_advance', type: 'checkbox', width: 40, className: 'htCenter htMiddle'},
                 {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費']},
                 {data: 'sub_category', type: 'dropdown'},
-                {data: 'paid_to', type: 'text'},
+                {data: 'paid_to', type: 'text', width: 160},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
                 {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
@@ -53,8 +57,8 @@ function createTable(currentUserId, users, records, viewMonth){
         'bought_in': '支払日',
     }
     var table = {};
-    // チェックボックスにfalseをいれておく
     records.forEach(function(val){
+        // チェックボックスにfalseをいれておく
         val['del'] = false;
     });
     // 参照渡し回避
@@ -77,6 +81,7 @@ function createTable(currentUserId, users, records, viewMonth){
             columns: COLUMNS,
             colHeaders: [
                 'ID',
+                '立替',
                 '種別<span class="required"> *</span>',
                 '項目<span class="required"> *</span>',
                 '支払先',
@@ -91,7 +96,7 @@ function createTable(currentUserId, users, records, viewMonth){
             minSpareRows: 1,
             columnSorting: {
                 initialConfig: {
-                    column: 5,
+                    column: BOUGHT_IN_COLUMN,
                     sortOrder: 'asc'
                 }
             },
@@ -105,7 +110,7 @@ function createTable(currentUserId, users, records, viewMonth){
                     change_prop = changes[0][1];
                     value_after_change = changes[0][3];
 
-                    if (change_prop == 'category') {
+                    if(change_prop == 'category'){
                         // category削除時はsub_categoryを空にする
                         if(value_after_change === ''){
                             this.setDataAtRowProp(change_row, 'sub_category', '', 'autoedit');
@@ -275,6 +280,10 @@ function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
             updateRecords[i]['id'] = null;
             updateRecords[i]['del'] = null;
         }
+        // is_paid_in_advanceがnullならデフォルト（折半）入れておく
+        if(updateRecords[i]['is_paid_in_advance'] == null){
+            updateRecords[i]['is_paid_in_advance'] = '折半';
+        }
         updateRecords[i]['month_to_add'] = viewMonth;
         updateRecords[i]['user_id'] = userId;
     }
@@ -293,7 +302,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
     let btn = '<button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>';
     $('#confirmModal').find('.modal-footer').html(btn);
 
-    console.log(validationErrorDict);
+    // console.log(validationErrorDict);
     // validationエラーのDictionaryが空でなければエラー表示
     if(Object.keys(validationErrorDict).length > 0){
         let validationError = '';
@@ -338,6 +347,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
 
                 html += '<tr>'
                 + badgeColumn
+                + '<td>' + updateRecords[i]['is_paid_in_advance'] + '</td>'
                 + '<td>' + updateRecords[i]['category'] + '</td>'
                 + '<td>' + updateRecords[i]['sub_category'] + '</td>'
                 + '<td>' + updateRecords[i]['paid_to'] + '</td>'

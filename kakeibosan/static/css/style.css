@@ -138,15 +138,41 @@ html{
 /*---------
  records
 ---------*/
+/* total table */
 .card-total-table{
     width: 480px;
     padding-left: 15px;
     padding-right: 15px;
 }
+table tbody tr td.copy-btn{
+    padding: 0;
+}
+.copy-btn{
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+}
+.total-copy-icon{
+    font-size: 1.2rem;
+    text-align: center;
+}
+.total-copy-icon:hover{
+    color: #f96332;
+}
+.total-copy-icon:action{
+    color: #f96332;
+}
 .card-records{
-    width: 620px;
+    width: 680px;
     padding-left: 15px;
     padding-right: 15px;
+}
+/* update modal */
+.update-modal{
+    max-width: 600px;
 }
 th, .update-table .badge_clm{
     text-align: center;
@@ -161,6 +187,7 @@ th, .update-table .badge_clm{
 .btn-md-xs{
     padding: 5px 15px;
 }
+/* calc */
 .btn-calc, .btn-calc:focus{
     color: #fff;
     background-color: #2a5788;
@@ -169,6 +196,7 @@ th, .update-table .badge_clm{
 .btn-calc:hover{
     background-color: rgba(42, 87, 136, 0.8);
 }
+/* table */
 .handsontable .htAutocompleteArrow {
     margin-left: 0.3rem;
     font-size: 18px;
@@ -196,27 +224,6 @@ p.annotation{
     font-size: 0.8rem;
 }
 span.required{
-    color: #f96332;
-}
-table tbody tr td.copy-btn{
-    padding: 0;
-}
-.copy-btn{
-    display: block;
-    margin: 0 auto;
-    padding: 0;
-    border: none;
-    background-color: #fff;
-    cursor: pointer;
-}
-.total-copy-icon{
-    font-size: 1.2rem;
-    text-align: center;
-}
-.total-copy-icon:hover{
-    color: #f96332;
-}
-.total-copy-icon:action{
     color: #f96332;
 }
 .validation-error{

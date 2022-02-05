@@ -39,6 +39,7 @@ class FixedCost(db.Model):
 class Cost(db.Model):
     __tablename__ = 'cost'
     id = db.Column(db.Integer, primary_key=True)
+    is_paid_in_advance = db.Column(db.Boolean, default=False)
     category = db.Column(db.String(100), nullable=False)
     sub_category = db.Column(db.String(100), nullable=False)
     paid_to = db.Column(db.String(100))
@@ -52,6 +53,7 @@ class Cost(db.Model):
     def to_dict(self):
         cost_dict = {
             'id': self.id,
+            'is_paid_in_advance': self.is_paid_in_advance,
             'category': self.category,
             'sub_category': self.sub_category,
             'paid_to': self.paid_to,

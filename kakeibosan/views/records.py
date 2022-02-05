@@ -69,6 +69,7 @@ def _insert_costs(record, cost, created_at):
     try:
         if not record['del']:
             cost.id = record['id']
+            cost.is_paid_in_advance = record['is_paid_in_advance']
             cost.category = record['category']
             cost.sub_category = record['sub_category']
             cost.paid_to = record['paid_to']
@@ -109,30 +110,74 @@ def _fetch_view_costs(view_month):
 
 def _cost_per_month(month_to_add):
     try:
-        costs = Cost.query.filter_by(month_to_add=month_to_add).order_by(Cost.id).all()
+        # 折半するレコード取得
+        costs_split = Cost.query.filter_by(month_to_add=month_to_add).filter(
+            (Cost.is_paid_in_advance == False) | (Cost.is_paid_in_advance == None)).order_by(Cost.id).all()
+
+        # 立替したレコード取得
+        costs_paid_in_advance = Cost.query.filter_by(
+            month_to_add=month_to_add, is_paid_in_advance=True).order_by(Cost.id).all()
+
         users = User.query.order_by(User.id).all()
     except exc.SQLAlchemyError:
-        costs = {}
+        costs_split = {}
+        costs_paid_in_advance = {}
         users = {}
     finally:
         db.session.close()
+
     total_costs = {}
-    total = 0
+    total_paid_in_advance = {}
+    total_amount = 0
 
     for user in users:
-        user_total = 0
-        for cost in costs:
-            if user.id == cost.user_id:
-                user_total += cost.amount
-                total += cost.amount
-        total_costs[user.view_name] = user_total
+        user_total_split = 0
+        # 折半金額と合計の計算
+        for cs in costs_split:
+            if user.id == cs.user_id:
+                user_total_split += cs.amount
+                total_amount += cs.amount
+        total_costs[user.view_name] = user_total_split
 
-    pay_by = min(total_costs, key=total_costs.get)
-    amount = (max(total_costs.values()) - min(total_costs.values())) / len(total_costs)
+        # 立替金額集計
+        user_total_paid_in_advance = 0
+        for cp in costs_paid_in_advance:
+            if user.id == cp.user_id:
+                user_total_paid_in_advance += cp.amount
+        # keyに金額、valに名前を入れておく
+        total_paid_in_advance[user_total_paid_in_advance] = user.view_name
+        # total_costs[user.view_name + '立替額'] = user_total_paid_in_advance
 
-    total_costs['合計'] = total
-    total_costs['折半額'] = Decimal(str(total / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
-    total_costs['{}支払額'.format(pay_by)] = Decimal(str(amount)).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+    total_costs['折半額'] = Decimal(str(total_amount / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+    # 立替金額の多い方はどっち
+    subtraction_name = (
+        total_paid_in_advance[max(total_paid_in_advance.keys())]
+        if max(total_paid_in_advance.keys()) != min(total_paid_in_advance.keys()) else ''
+    )
+    # 立替金額の多い方dictionary
+    advance_subtraction = {
+        'name': subtraction_name,
+        'subtraction_amount_advance': max(total_paid_in_advance.keys()) - min(total_paid_in_advance.keys())
+    }
+    # すべての差引
+    subtraction = {}
+    for user in users:
+        advance_amount = (
+            advance_subtraction['subtraction_amount_advance']
+            if user.view_name == advance_subtraction['name']
+            else -advance_subtraction['subtraction_amount_advance']
+        )
+        subtraction[user.view_name] = total_costs[user.view_name] - total_costs['折半額'] + advance_amount
+
+    print(total_costs)
+
+    for key, val in subtraction.items():
+        if val < 0:
+            pay_by = key
+            to_pay = abs(val)
+
+    total_costs['合計'] = total_amount
+    total_costs['{}支払額'.format(pay_by)] = to_pay
 
     return total_costs
 
@@ -156,9 +201,9 @@ def _cost_records(costs):
     for cost in costs:
         cost_dict = cost.to_dict().copy()
         for key, val in cost_dict.items():
-            if val is not None and key == 'bought_in':
+            if key == 'bought_in' and val is not None:
                 cost_dict[key] = '{0:%Y-%-m-%-d}'.format(val)
-            elif val is not None and key == 'month_to_add':
+            elif key == 'month_to_add' and val is not None:
                 cost_dict[key] = '{0:%Y-%-m}'.format(val)
             elif key == 'created_at':
                 cost_dict[key] = '{0:%Y-%m-%d %H:%M:%S}'.format(val)

@@ -39,11 +39,10 @@ function createTable(currentUserId, users, records, viewMonth){
     const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1},
-                // {data: 'is_paid_in_advance', type: 'dropdown', width:70, source:['折半', '立替'],strict: true, allowInvalid: false, className: 'htCenter htMiddle'},
                 {data: 'is_paid_in_advance', type: 'checkbox', width: 40, className: 'htCenter htMiddle'},
                 {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費']},
                 {data: 'sub_category', type: 'dropdown'},
-                {data: 'paid_to', type: 'text', width: 160},
+                {data: 'paid_to', type: 'text', width: 200},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
                 {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
@@ -179,8 +178,6 @@ function createTable(currentUserId, users, records, viewMonth){
                 table[users[i]['id']].render();
             }, 200);
         })
-        // 表示が崩れるため、Handsontable描画後にcss適用する
-        $('#' + String(i + 1) + '-handsontable').addClass('overflow-x-scroll');
     }
     // 登録ボタンクリック
     $(document).on('click', '[id$=fetch-update-records]', function(e){

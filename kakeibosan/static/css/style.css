@@ -207,9 +207,6 @@ th, .update-table .badge_clm{
     min-height: 300px;
     margin-bottom: 30px;
 }
-.overflow-x-scroll{
-    overflow-x: auto;
-}
 td.listbox.htDimmed{
     padding: 0.5em;
 }
@@ -250,6 +247,9 @@ span.required{
     }
     .btn-md-xs{
         padding: 0.4rem 0.6rem;
+    }
+    .handsontable{
+        overflow-x: auto;
     }
 }
 /*---------

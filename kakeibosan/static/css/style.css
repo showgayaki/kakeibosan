@@ -139,10 +139,14 @@ html{
  records
 ---------*/
 /* total table */
-.card-total-table{
-    width: 480px;
+.card-total{
+    width: 680px;
     padding-left: 15px;
     padding-right: 15px;
+}
+.card-total-table-header{
+    min-width: 60px;
+    padding: 5px 7px!important;
 }
 table tbody tr td.copy-btn{
     padding: 0;
@@ -234,9 +238,15 @@ span.required{
         display: flex;
         padding: 0!important;
     }
-    .card-total-table{
+    .card-total{
         width: 100%;
         padding: 0;
+    }
+    .card-total-table{
+        overflow: auto;
+    }
+    .card-total-table-header{
+        white-space: nowrap;
     }
     .card-records{
         width: 100%;

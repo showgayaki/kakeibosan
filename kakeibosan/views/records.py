@@ -146,9 +146,10 @@ def _cost_per_month(month_to_add):
                 user_total_paid_in_advance += cp.amount
         # keyに金額、valに名前を入れておく
         total_paid_in_advance[user_total_paid_in_advance] = user.view_name
-        # total_costs[user.view_name + '立替額'] = user_total_paid_in_advance
+        total_costs[user.view_name + '立替額'] = user_total_paid_in_advance
 
-    total_costs['折半額'] = Decimal(str(total_amount / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+    split_total = Decimal(str(total_amount / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+
     # 立替金額の多い方はどっち
     subtraction_name = (
         total_paid_in_advance[max(total_paid_in_advance.keys())]
@@ -157,28 +158,31 @@ def _cost_per_month(month_to_add):
     # 立替金額の多い方dictionary
     advance_subtraction = {
         'name': subtraction_name,
-        'subtraction_amount_advance': max(total_paid_in_advance.keys()) - min(total_paid_in_advance.keys())
+        'amount': max(total_paid_in_advance.keys()) - min(total_paid_in_advance.keys())
     }
     # すべての差引
     subtraction = {}
     for user in users:
         advance_amount = (
-            advance_subtraction['subtraction_amount_advance']
+            advance_subtraction['amount']
             if user.view_name == advance_subtraction['name']
-            else -advance_subtraction['subtraction_amount_advance']
+            else -advance_subtraction['amount']
         )
-        subtraction[user.view_name] = total_costs[user.view_name] - total_costs['折半額'] + advance_amount
-
-    print(total_costs)
+        subtraction[user.view_name] = total_costs[user.view_name] - split_total + advance_amount
 
     for key, val in subtraction.items():
         if val < 0:
             pay_by = key
             to_pay = abs(val)
 
-    total_costs['合計'] = total_amount
-    total_costs['{}支払額'.format(pay_by)] = to_pay
+    total_costs['折半合計'] = total_amount
+    total_costs['折半額'] = split_total
+    # 改行したいところに半角スペースを入れておく、テンプレート側で処理
+    advance_key = '立替差引' + (' ({})'.format(advance_subtraction['name']) if advance_subtraction['name'] != '' else '')
+    total_costs[advance_key] = advance_subtraction['amount']
+    total_costs['{} 支払額'.format(pay_by)] = to_pay
 
+    print(advance_subtraction)
     return total_costs
 
 

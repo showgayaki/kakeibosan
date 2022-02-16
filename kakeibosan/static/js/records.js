@@ -279,7 +279,7 @@ function fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords){
         }
         // is_paid_in_advanceがnullならデフォルト（折半）入れておく
         if(updateRecords[i]['is_paid_in_advance'] == null){
-            updateRecords[i]['is_paid_in_advance'] = '折半';
+            updateRecords[i]['is_paid_in_advance'] = false;
         }
         updateRecords[i]['month_to_add'] = viewMonth;
         updateRecords[i]['user_id'] = userId;
@@ -331,6 +331,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
             for(let i = 0; i < updateRecords.length; i++){
                 let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
                 let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
+                let is_paid_in_advance = updateRecords[i]['is_paid_in_advance']? '立替': '折半';
                 let remove = '<td class="badge_clm"><span class="badge badge-danger">削除</span></td>';
                 let badgeColumn = '';
 
@@ -344,7 +345,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
 
                 html += '<tr>'
                 + badgeColumn
-                + '<td>' + updateRecords[i]['is_paid_in_advance'] + '</td>'
+                + '<td>' + is_paid_in_advance + '</td>'
                 + '<td>' + updateRecords[i]['category'] + '</td>'
                 + '<td>' + updateRecords[i]['sub_category'] + '</td>'
                 + '<td>' + updateRecords[i]['paid_to'] + '</td>'

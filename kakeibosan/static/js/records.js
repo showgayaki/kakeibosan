@@ -19,6 +19,29 @@ $('.copy-btn')
     copyText(clickElem);
 });
 
+
+// チェックボックス用レンダラー
+function checkboxCustomRenderer(hotInstance, td, row, column, prop, value, cellProperties) {
+    Handsontable.renderers.CheckboxRenderer.apply(this, arguments);
+    let checked = '';
+    if(value){
+        checked = 'checked';
+    }
+    td.className = 'ht-checkbox';
+    let customCheckbox = '\
+        <div class="form-check">\
+            <label class="form-check-label">\
+                <input class="form-check-input" type="checkbox" ' + checked + ' data-row="' + row + '" data-col="' + column + '">\
+                    <span class="form-check-sign">\
+                        <span class="check"></span>\
+                    </span>\
+            </label>\
+        </div>\
+    '
+    $(td).html(customCheckbox);
+}
+
+
 function createTable(currentUserId, users, records, viewMonth){
     moment.locale('ja');
     let datePickerConfig = {
@@ -34,20 +57,22 @@ function createTable(currentUserId, users, records, viewMonth){
         }
     }
 
+    Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
+
     // カラムの順番(場所)が変わったら要変更
     const SUB_CATEGORY_COLUMN = 3;
     const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1},
-                {data: 'is_paid_in_advance', type: 'checkbox', width: 40, className: 'htCenter htMiddle'},
-                {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費']},
-                {data: 'sub_category', type: 'dropdown'},
-                {data: 'paid_to', type: 'text', width: 200},
-                {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}},
+                {data: 'is_paid_in_advance', type: 'checkbox', width: 40, renderer: 'custom.checkbox'},
+                {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費'], className: 'htMiddle'},
+                {data: 'sub_category', type: 'dropdown', className: 'htMiddle'},
+                {data: 'paid_to', type: 'text', width: 200, className: 'htMiddle'},
+                {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}, className: 'htMiddle'},
                 {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
                 {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1},
-                {data: 'del', type: 'checkbox', width: 40, className: 'htCenter htMiddle'}
+                {data: 'del', type: 'checkbox', width: 40, renderer: 'custom.checkbox'}
             ]
     const REQUIRED_COLUMNS = {
         'category': '種別',
@@ -91,7 +116,6 @@ function createTable(currentUserId, users, records, viewMonth){
                 '削除'
             ],
             rowHeights: 40,
-            className: 'htMiddle',
             minSpareRows: 1,
             columnSorting: {
                 initialConfig: {

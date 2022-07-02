@@ -24,7 +24,7 @@
       <img class="mb-4" src="{{ url_for('static', filename='img/favicon.png') }}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Please log in</h1>
       {{ form.username.label(class="sr-only") }}
-      {{ form.username(id="username", class="form-control", placeholder="Username") }}
+      {{ form.username(id="username", type="text", inputmode="email", class="form-control", placeholder="Username") }}
       {{ form.password.label(class="sr-only") }}
       {{ form.password(class="form-control", placeholder="Password") }}
       {{ form.remember(type="checkbox") }}

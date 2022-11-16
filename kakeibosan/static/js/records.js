@@ -63,14 +63,14 @@ function createTable(currentUserId, users, records, viewMonth){
     const SUB_CATEGORY_COLUMN = 3;
     const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
-                {data: 'id', type: 'numeric', width: 1},
+                {data: 'id', type: 'numeric', width: 1, className: 'ht-id'},
                 {data: 'is_paid_in_advance', type: 'checkbox', width: 40, renderer: 'custom.checkbox'},
                 {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費'], className: 'htMiddle'},
                 {data: 'sub_category', type: 'dropdown', className: 'htMiddle'},
                 {data: 'paid_to', type: 'text', width: 200, className: 'htMiddle'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}, className: 'htMiddle'},
                 {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
-                {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht_month_to_add htRight htMiddle'},
+                {data: 'month_to_add', type: 'text', width: 0.1, readOnly: true, dateFormat: 'YYYY-M', className: 'ht-month-to-add htRight htMiddle'},
                 {data: 'user_id', type: 'numeric', width: 0.1},
                 {data: 'del', type: 'checkbox', width: 40, renderer: 'custom.checkbox'}
             ]
@@ -115,7 +115,6 @@ function createTable(currentUserId, users, records, viewMonth){
                 'User_ID',
                 '削除'
             ],
-            rowHeights: 40,
             minSpareRows: 1,
             columnSorting: {
                 initialConfig: {
@@ -353,10 +352,10 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
             $('#updateCaption').html('以下 ' + updateRecords.length + '件のデータを更新しますか？');
             let html = '';
             for(let i = 0; i < updateRecords.length; i++){
-                let add = '<td class="badge_clm"><span class="badge badge-success">新規</span></td>';
-                let update = '<td class="badge_clm"><span class="badge badge-info">更新</span></td>';
+                let add = '<td class="badge-clm"><span class="badge badge-success">新規</span></td>';
+                let update = '<td class="badge-clm"><span class="badge badge-info">更新</span></td>';
                 let is_paid_in_advance = updateRecords[i]['is_paid_in_advance']? '立替': '折半';
-                let remove = '<td class="badge_clm"><span class="badge badge-danger">削除</span></td>';
+                let remove = '<td class="badge-clm"><span class="badge badge-danger">削除</span></td>';
                 let badgeColumn = '';
 
                 if(updateRecords[i]['id'] === null){
@@ -374,8 +373,8 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
                 + '<td>' + updateRecords[i]['sub_category'] + '</td>'
                 + '<td>' + updateRecords[i]['paid_to'] + '</td>'
                 + '<td class="amount">' + Number(updateRecords[i]['amount']).toLocaleString() + '</td>'
-                + '<td class="bought_in">' + updateRecords[i]['bought_in'] + '</td>'
-                + '<td class="month_to_add">' + updateRecords[i]['month_to_add'] + '</td>'
+                + '<td class="bought-in">' + updateRecords[i]['bought_in'] + '</td>'
+                + '<td class="month-to-add">' + updateRecords[i]['month_to_add'] + '</td>'
                 + '</tr>';
             }
             $('#tbody-update').html(html);

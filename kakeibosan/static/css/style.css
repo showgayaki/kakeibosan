@@ -178,14 +178,14 @@ table tbody tr td.copy-btn{
 .update-modal{
     max-width: 600px;
 }
-th, .update-table .badge_clm{
+th, .update-table .badge-clm{
     text-align: center;
 }
 .update-table .badge{
     font-size: 1em;
     text-align: center;
 }
-.update-table td.amount, td.bought_in, td.month_to_add{
+.update-table td.amount, td.bought-in, td.month-to-add{
     text-align: right;
 }
 .btn-md-xs{
@@ -216,6 +216,9 @@ td.listbox.htDimmed{
 }
 .handsontableEditor.autocompleteEditor, .handsontableEditor.autocompleteEditor .ht_master .wtHolder {
     min-height: 230px;
+}
+.handsontable td{
+    padding: 12px 4px;
 }
 .ht-checkbox{
     position: relative;
@@ -260,7 +263,8 @@ td.listbox.htDimmed{
     visibility: unset;
     margin: 0;
 }
-.ht_month_to_add{
+.ht-id,
+.ht-month-to-add{
     font-size: 0;
 }
 p.annotation{

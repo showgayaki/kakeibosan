@@ -1,47 +1,48 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='img/apple-icon.png') }}">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.ico') }}">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  {%- set app_name = '家計簿さん' %}
-  <title>{{ app_name }}{%- block title %}{%- endblock %}</title>
-  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-  <!--     Fonts and icons     -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts/fonts.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts/fontawesome.css') }}"/>
-  <!-- CSS Files -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/now-ui-dashboard.css') }}"/>
-  {%- block header %}{%- endblock %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+    <meta charset="utf-8" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ url_for('static', filename='img/apple-icon.png') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    {%- set app_name = '家計簿さん' %}
+    <title>{{ app_name }}{%- block title %}{%- endblock %}</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'
+        name='viewport' />
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts/fonts.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts/fontawesome.css') }}" />
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/now-ui-dashboard.css') }}" />
+    {%- block header %}{%- endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
-  <div class="wrapper">
-    {%- include 'base_side.html' %}
-    <div class="main-panel" id="main-panel">
-    <!-- Navbar -->
-    {%- include 'base_header.html' %}
-    <!-- End Navbar -->
-    <!-- LoadingAnimation -->
-    <div class="loader"></div>
-    <div class="loader-bg"></div>
-    {%- block contents %}
-    {%- endblock %}
+    <div class="wrapper">
+        {%- include 'base_side.html' %}
+        <div class="main-panel" id="main-panel">
+            <!-- Navbar -->
+            {%- include 'base_header.html' %}
+            <!-- End Navbar -->
+            <!-- LoadingAnimation -->
+            <div class="loader"></div>
+            <div class="loader-bg"></div>
+            {%- block contents %}
+            {%- endblock %}
+        </div>
     </div>
-  </div>
-  <!--   Core JS Files   -->
-  <script src="{{ url_for('static', filename='js/vendor/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/vendor/popper.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/vendor/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/vendor/perfect-scrollbar.jquery.min.js') }}"></script>
-  <!--  Notifications Plugin    -->
-  <script src="{{ url_for('static', filename='js/vendor/bootstrap-notify.js') }}"></script>
-  <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="{{ url_for('static', filename='js/vendor/now-ui-dashboard.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  {%- block footer %}
-  {%- endblock %}
+    <!--   Core JS Files   -->
+    <script src="{{ url_for('static', filename='js/vendor/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/perfect-scrollbar.jquery.min.js') }}"></script>
+    <!--  Notifications Plugin    -->
+    <script src="{{ url_for('static', filename='js/vendor/bootstrap-notify.js') }}"></script>
+    <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
+    <script src="{{ url_for('static', filename='js/vendor/now-ui-dashboard.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {%- block footer %}
+    {%- endblock %}
 </body>
 </html>

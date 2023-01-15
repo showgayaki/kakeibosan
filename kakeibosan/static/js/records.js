@@ -1,4 +1,15 @@
 // ------------------
+// 定数
+// ------------------
+const CATEGORY = {
+    '固定費': ['家賃','管理費','手数料'],
+    '光熱費': ['電気代','ガス代','水道代'],
+    '食費': ['食材費','外食費'],
+    '日用品': ['日用品','洗剤類'],
+    '交通費': ['タイムズ','レンタカー','ガソリン代']
+}
+
+// ------------------
 // コピーボタン押下時
 // ------------------
 $('.copy-btn')
@@ -65,7 +76,7 @@ function createTable(currentUserId, users, records, viewMonth){
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1, className: 'ht-id'},
                 {data: 'is_paid_in_advance', type: 'checkbox', width: 40, renderer: 'custom.checkbox'},
-                {data: 'category', type: 'dropdown', source:['固定費', '光熱費', '食費', '日用品', '交通費'], className: 'htMiddle'},
+                {data: 'category', type: 'dropdown', source: Object.keys(CATEGORY), className: 'htMiddle'},
                 {data: 'sub_category', type: 'dropdown', className: 'htMiddle'},
                 {data: 'paid_to', type: 'text', width: 200, className: 'htMiddle'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}, className: 'htMiddle'},
@@ -139,37 +150,19 @@ function createTable(currentUserId, users, records, viewMonth){
                         }
                         switch(value_after_change){
                             case '固定費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
-                                '家賃',
-                                '管理費',
-                                '手数料'
-                            ]);
+                                this.setCellMeta(change_row,SUB_CATEGORY_COLUMN,'source', CATEGORY['固定費']);
                             break;
                             case '光熱費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
-                                '電気代',
-                                'ガス代',
-                                '水道代'
-                            ]);
+                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['光熱費']);
                             break;
                             case '食費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
-                                '食材費',
-                                '外食費'
-                            ]);
+                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['食費']);
                             break;
                             case '日用品':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
-                                '日用品',
-                                '洗剤類'
-                            ]);
+                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['日用品']);
                             break;
                             case '交通費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', [
-                                'タイムズ',
-                                'レンタカー',
-                                'ガソリン代'
-                            ]);
+                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['交通費']);
                             break;
                             default:
                                 this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', []);
@@ -282,6 +275,8 @@ function createTable(currentUserId, users, records, viewMonth){
             return false;
         }
     })
+
+    return table;
 }
 
 

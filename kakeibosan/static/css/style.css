@@ -191,6 +191,11 @@ th, .update-table .badge-clm{
 .btn-md-xs{
     padding: 5px 15px;
 }
+.btn-camera{
+    color: #fff!important;
+    margin: 0!important;
+    font-size: 1rem!important;
+}
 /* calc */
 .btn-calc, .btn-calc:focus{
     color: #fff;

@@ -104,25 +104,31 @@
                     {%- endif %}
                     <div id="{{ user.user_name }}-content" class="tab-pane {{ active }}" role="tabpanel" aria-labelledby="{{ user.user_name }}-tab">
                         <div class="d-flex justify-content-between flex-nowrap mb-md-2 mb-3">
-                            <!-- 新規登録ボタン -->
-                            <div class="flex-itmes">
-                                <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm mr-md-3 mr-1 btn-md-xs">
+                            <!-- ボタン系 -->
+                            <div class="flex-itmes d-flex align-items-center mr-2">
+                                <div class="upload-receipt mr-3">
+                                    <label for="receiptImage" class="btn-camera btn btn-sm">
+                                        <i class="fa fa-camera"></i>
+                                    </label>
+                                    <input id="receiptImage" class="d-none" type="file" name="image" accept="image/*" capture="environment">
+                                </div>
+                                <button id="{{ user.id }}-fetch-update-records" type="button" class="btn btn-primary btn-sm mr-md-2 mr-1 btn-md-xs">
                                     登録
                                 </button>
                                 <button type="button" class="btn btn-calc btn-sm btn-md-xs" data-toggle="modal" data-target="#calcModal">
                                     電卓
                                 </button>
-                            </div><!-- end新規登録ボタン -->
+                            </div><!-- endボタン系 -->
                             <!-- ページャー -->
                             <div class="flex-itmes d-flex align-items-center">
                                 <ul class="pagination mb-0">
                                     {%- if month.prev != '' %}
                                     <li class="page-item">
-                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}"><< 前月</a>
+                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}"><< <span class="d-none d-sm-inline">前月</span></a>
                                     </li>
                                     {%- else %}
                                     <li class="page-item disabled">
-                                        <a class="page-link text-dark" href="#" tabindex="-1"><< 前月</a>
+                                        <a class="page-link text-dark" href="#" tabindex="-1"><< <span class="d-none d-sm-inline">前月</span></a>
                                     </li>
                                     {%- endif %}
                                     <li class="page-item disabled">
@@ -130,11 +136,11 @@
                                     </li>
                                     {%- if month.next != '' %}
                                     <li class="page-item">
-                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}">次月 >></a>
+                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}"><span class="d-none d-sm-inline">次月</span> >></a>
                                     </li>
                                     {%- else %}
                                     <li class="page-item disabled">
-                                        <a class="page-link text-dark" href="#" tabindex="-1">次月 >></a>
+                                        <a class="page-link text-dark" href="#" tabindex="-1"><span class="d-none d-sm-inline">次月</span> >></a>
                                     </li>
                                     {%- endif %}
                                 </ul>
@@ -247,13 +253,15 @@
 <script src="{{ url_for('static', filename='js/vendor/lodash.js') }}"></script>
 <script src="{{ url_for('static', filename='js/records.js') }}"></script>
 <script src="{{ url_for('static', filename='js/calc.js') }}"></script>
+<script src="{{ url_for('static', filename='js/receipt.js') }}"></script>
 <script>
     $(document).ready(function() {
-        var currentUserId = {{ current_user.id }}
-        var users = {{ users | tojson }};
-        var records = {{ costs | tojson }};
-        var viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
-        createTable(currentUserId, users, records, viewMonth);
+        // varなしはグローバル
+        currentUserId = {{ current_user.id }}
+        let users = {{ users | tojson }};
+        let records = {{ costs | tojson }};
+        let viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
+        table = createTable(currentUserId, users, records, viewMonth);
     });
 </script>
 {%- endblock %}

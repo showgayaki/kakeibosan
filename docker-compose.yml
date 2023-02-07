@@ -1,8 +1,9 @@
 version: "3"
 services:
-  kakeibosan:
+  kakeibosan_app:
     build: ./
-    container_name: app-kakeibosan
+    image: kakeibosan_app
+    container_name: kakeibosan_app
     volumes:
       - type: bind
         source: "./"
@@ -11,9 +12,10 @@ services:
         source: "socket"
         target: "/tmp"
     restart: always
-  nginx-kakeibosan:
-    image: nginx:latest
-    container_name: nginx-kakeibosan
+  kakeibosan_nginx:
+    build: ./web
+    image: kakeibosan_nginx
+    container_name: kakeibosan_nginx
     ports:
       - "8001:80"
     volumes:

@@ -124,7 +124,7 @@
                                 <ul class="pagination mb-0">
                                     {%- if month.prev != '' %}
                                     <li class="page-item">
-                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.prev) }}"><< <span class="d-none d-sm-inline">前月</span></a>
+                                        <a class="page-link text-primary" href="{{ url_for('records.records', month=month.prev) }}"><< <span class="d-none d-sm-inline">前月</span></a>
                                     </li>
                                     {%- else %}
                                     <li class="page-item disabled">
@@ -136,7 +136,7 @@
                                     </li>
                                     {%- if month.next != '' %}
                                     <li class="page-item">
-                                        <a class="page-link text-primary" href="{{ url_for('records', month=month.next) }}"><span class="d-none d-sm-inline">次月</span> >></a>
+                                        <a class="page-link text-primary" href="{{ url_for('records.records', month=month.next) }}"><span class="d-none d-sm-inline">次月</span> >></a>
                                     </li>
                                     {%- else %}
                                     <li class="page-item disabled">

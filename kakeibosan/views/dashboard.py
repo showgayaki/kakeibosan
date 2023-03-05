@@ -1,13 +1,16 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from flask import render_template
-from sqlalchemy import and_
+from flask import Blueprint, render_template
+from sqlalchemy import exc, and_
 from flask_login import login_required
-from kakeibosan import app, db
+from kakeibosan import db
 from kakeibosan.models import Cost, FixedCost
 
 
-@app.route('/kakeibosan/')
+bp = Blueprint('dashboard', __name__)
+
+
+@bp.route('/')
 @login_required
 def dashboard():
     this_month = datetime.today().date().replace(day=1)
@@ -40,7 +43,7 @@ def _total_per_months(this_month):
         try:
             costs = Cost.query.filter_by(month_to_add=month).all()
         except exc.SQLAlchemyError:
-            cost = {}
+            costs = {}
         finally:
             db.session.close()
         total = 0

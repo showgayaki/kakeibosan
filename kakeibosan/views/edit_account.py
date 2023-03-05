@@ -1,12 +1,15 @@
-from flask import render_template, request, redirect, flash, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
 from sqlalchemy import exc
-from kakeibosan import app, db
+from kakeibosan import db
 from kakeibosan.views.forms import EditAccount
 from kakeibosan.models import User
 
 
-@app.route('/kakeibosan/settings/account', methods=['GET', 'POST'])
+bp = Blueprint('edit_account', __name__)
+
+
+@bp.route('/settings/account', methods=['GET', 'POST'])
 @login_required
 def edit_account():
     form = EditAccount()
@@ -39,7 +42,7 @@ def edit_account():
                 db.session.close()
 
             flash(flash_message, flash_category)
-            return redirect(url_for('settings'))
+            return redirect(url_for('settings.settings'))
         else:
             flash('パスワードが一致しません', 'warning')
     else:

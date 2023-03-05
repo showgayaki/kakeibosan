@@ -6,17 +6,18 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-flask = "==1.1.1"
+flask = "*"
 uwsgi = "*"
 flask-sqlalchemy = "*"
 sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-wtf = "*"
-werkzeug = "==0.16.1"
+werkzeug = "*"
+python-dateutil = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
 
 [scripts]
 kakeibosan = "uwsgi --ini kakeibosan.ini"

@@ -15,7 +15,7 @@
   <body class="auth-bg h-100 d-flex align-items-center text-center">
     <div class="loader loader-top"></div>
     <div class="loader-bg"></div>
-    <form class="form-signin" action="{{ url_for('login') }}" method="post">
+    <form class="form-signin" action="{{ url_for('auth.login') }}" method="post">
       {% for category ,message in get_flashed_messages(with_categories=true) %}
       <div class="alert alert-{{ category }}">
         {{ message }}

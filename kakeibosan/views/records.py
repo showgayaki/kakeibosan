@@ -1,14 +1,17 @@
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from flask import render_template, request, abort, jsonify, flash
+from flask import Blueprint, render_template, request, abort, jsonify, flash
 from flask_login import login_required
 from sqlalchemy import exc
-from kakeibosan import app, db
-from kakeibosan.models import User, FixedCost, Cost
+from kakeibosan import db
+from kakeibosan.models import User, Cost
 
 
-@app.route('/kakeibosan/records', methods=['GET', 'POST'])
+bp = Blueprint('records', __name__)
+
+
+@bp.route('/records', methods=['GET', 'POST'])
 @login_required
 def records():
     if request.method == 'POST':
@@ -220,12 +223,12 @@ def _cost_records(costs):
 
 def _flash_message(flash_list):
     flash_dict = {
-        'add': 'を追加しました。'
-        , 'update': 'を更新しました。'
-        , 'delete': 'を削除しました。'
-        , 'add_error': 'の追加に失敗しました。'
-        , 'update_error': 'の更新に失敗しました。'
-        , 'delete_error': 'の削除に失敗しました。'
+        'add': 'を追加しました。',
+        'update': 'を更新しました。',
+        'delete': 'を削除しました。',
+        'add_error': 'の追加に失敗しました。',
+        'update_error': 'の更新に失敗しました。',
+        'delete_error': 'の削除に失敗しました。',
     }
     for key, val in flash_dict.items():
         category = 'warning' if 'error' in key else 'info'

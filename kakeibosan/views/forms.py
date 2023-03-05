@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField
 from wtforms.validators import DataRequired, InputRequired
-from wtforms.widgets import html5
+from wtforms import widgets
 from kakeibosan.models import User
 
 
@@ -37,6 +37,6 @@ class EditAccount(FlaskForm):
 class EditFixedCost(FlaskForm):
     sub_category = StringField('項目', [DataRequired()])
     paid_to = StringField('支払先')
-    amount = IntegerField('金額', [DataRequired()], widget=html5.NumberInput(min=1))
+    amount = IntegerField('金額', [DataRequired()], widget=widgets.NumberInput(min=1))
     username = SelectField('ユーザー名', [DataRequired()], choices=_user(), default=0)
     submit = SubmitField('登録')

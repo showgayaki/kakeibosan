@@ -34,7 +34,7 @@
                         <td>{{ user.view_name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                          <a href="{{ url_for('edit_account', edit='update', record_id=user.id) }}">
+                          <a href="{{ url_for('edit_account.edit_account', edit='update', record_id=user.id) }}">
                             <i class="now-ui-icons ui-2_settings-90"></i>
                           </a>
                         </td>
@@ -52,7 +52,7 @@
                 <h5 class="card-title">固定費</h5>
               </div>
               <div class="card-body">
-                <form class="form-add-new" action="{{ url_for('settings', card='fixedcost') }}" method="post">
+                <form class="form-add-new" action="{{ url_for('settings.settings', card='fixedcost') }}" method="post">
                   {{ form.add_fixed_cost(class="btn btn-sm btn-primary", id="add_fixed_cost") }}
                 </form>
                 <div class="table-responsive">
@@ -66,7 +66,7 @@
                         <td>{{ cost.sub_category }}</td>
                         <td>{{ '{:,}'.format(cost.amount) }}</td>
                         <td>
-                          <a href="{{ url_for('edit_fixedcost', edit='update', record_id=cost.id) }}">
+                          <a href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='update', record_id=cost.id) }}">
                             <i class="now-ui-icons ui-2_settings-90"></i>
                           </a>
                         </td>

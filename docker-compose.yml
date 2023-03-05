@@ -1,13 +1,16 @@
 version: "3"
 services:
   kakeibosan_app:
-    build: ./
+    build:
+      context: .
+      # args:
+      #   - ARCH=x86_64
     image: kakeibosan_app
     container_name: kakeibosan_app
     volumes:
       - type: bind
         source: "./"
-        target: "/var/kakeibosan/"
+        target: "/app"
       - type: volume
         source: "socket"
         target: "/tmp"
@@ -20,11 +23,8 @@ services:
       - "8001:80"
     volumes:
       - type: bind
-        source: "./web//conf.d/default.conf"
-        target: "/etc/nginx/conf.d/default.conf"
-      - type: bind
         source: "./kakeibosan/static"
-        target: "/var/kakeibosan/kakeibosan/static"
+        target: "/app/kakeibosan/static"
       - type: volume
         source: "socket"
         target: "/tmp"

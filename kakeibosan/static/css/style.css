@@ -147,6 +147,7 @@ html{
 .card-total-table-header{
     min-width: 60px;
     padding: 5px 7px!important;
+    text-align: center;
 }
 table tbody tr td.copy-btn{
     padding: 0;
@@ -178,7 +179,7 @@ table tbody tr td.copy-btn{
 .update-modal{
     max-width: 600px;
 }
-th, .update-table .badge-clm{
+.update-table .badge-clm{
     text-align: center;
 }
 .update-table .badge{

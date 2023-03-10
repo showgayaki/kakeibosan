@@ -19,11 +19,12 @@ def edit_fixedcost():
         flash_category = 'info'
         if record_id:
             fixed_cost = FixedCost.query.filter_by(id=record_id).first()
-            flash_message = '{}を更新しました'.format(form.sub_category.data)
+            flash_message = '{}:{}を更新しました'.format(form.category.data, form.sub_category.data)
         else:
             fixed_cost = FixedCost()
-            flash_message = '{}を追加しました'.format(form.sub_category.data)
+            flash_message = '{}:{}を追加しました'.format(form.category.data, form.sub_category.data)
 
+        fixed_cost.category = form.category.data
         fixed_cost.sub_category = form.sub_category.data
         fixed_cost.paid_to = form.paid_to.data
         fixed_cost.amount = form.amount.data
@@ -46,6 +47,7 @@ def edit_fixedcost():
             active_page = '固定費更新'
             form.username.default = fixed_cost.user_id
             form.process()
+            form.category.data = fixed_cost.category
             form.sub_category.data = fixed_cost.sub_category
             form.paid_to.data = fixed_cost.paid_to
             form.amount.data = fixed_cost.amount

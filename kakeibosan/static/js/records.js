@@ -54,6 +54,10 @@ function checkboxCustomRenderer(hotInstance, td, row, column, prop, value, cellP
 
 
 function createTable(currentUserId, users, records, viewMonth){
+    // チェックボックスのカスタマイズ
+    Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
+
+    // 日本語の設定
     moment.locale('ja');
     let datePickerConfig = {
         yearSuffix: '年',
@@ -68,10 +72,8 @@ function createTable(currentUserId, users, records, viewMonth){
         }
     }
 
-    Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
-
-    // カラムの順番(場所)が変わったら要変更
-    const SUB_CATEGORY_COLUMN = 3;
+    // 定数
+    const SUB_CATEGORY_COLUMN = 3; // カラムの順番(場所)が変わったら要変更
     const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1, className: 'ht-id'},
@@ -91,14 +93,16 @@ function createTable(currentUserId, users, records, viewMonth){
         'amount': '金額',
         'bought_in': '支払日',
     }
-    var table = {};
+
+    // 受け取ったレコードの処理
     records.forEach(function(val){
-        // チェックボックスにfalseをいれておく
-        val['del'] = false;
+        val['del'] = false; // 削除チェックボックスにfalseをいれておく
     });
     // 参照渡し回避
-    var defaultRecords = JSON.parse(JSON.stringify(records));
+    let defaultRecords = JSON.parse(JSON.stringify(records));
 
+    // Handsontableの作成
+    let table = {};
     for(let i = 0; i < users.length; i++){
         //テーブルを配置する要素を取得
         let tableId = users[i]['id'] + '-handsontable';
@@ -177,8 +181,12 @@ function createTable(currentUserId, users, records, viewMonth){
                 }
             }
         };
-        //テーブルを生成
+        // テーブルを生成
         table[users[i]['id']] = new Handsontable(tableElement, tableSettings);
+        // table[users[i]['id']].validateCells(function(valid){
+        //     console.log('CountRows: ', table[users[i]['id']].countRows())
+        //     console.log(valid);
+        // });
 
         // 非表示タブのHandsontableが描画されない問題回避
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -228,7 +236,7 @@ function createTable(currentUserId, users, records, viewMonth){
                 // 入力の判定
                 for(let item in REQUIRED_COLUMNS){
                     // 必須項目が空かどうか判定
-                    if(e[item] == null || e[item] == ''){
+                    if(e[item] === ''){
                         validationErrorEmpty.push(REQUIRED_COLUMNS[item]);
                     }else{
                         // 形式の判定

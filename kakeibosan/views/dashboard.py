@@ -113,7 +113,7 @@ def _insert_fixed_costs(month_to_add):
 
         if not found:
             cost = Cost()
-            cost.category = '固定費'
+            cost.category = fc.category
             cost.sub_category = fc.sub_category
             cost.paid_to = fc.paid_to
             cost.amount = fc.amount

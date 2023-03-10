@@ -35,6 +35,7 @@ class EditAccount(FlaskForm):
 
 
 class EditFixedCost(FlaskForm):
+    category = StringField('種別', [DataRequired()])
     sub_category = StringField('項目', [DataRequired()])
     paid_to = StringField('支払先')
     amount = IntegerField('金額', [DataRequired()], widget=widgets.NumberInput(min=1))

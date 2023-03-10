@@ -30,6 +30,7 @@ class User(db.Model, UserMixin):
 class FixedCost(db.Model):
     __tablename__ = 'fixed_cost'
     id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(20), nullable=False)
     sub_category = db.Column(db.String(20), nullable=False)
     paid_to = db.Column(db.String(100))
     amount = db.Column(db.Integer, nullable=False)

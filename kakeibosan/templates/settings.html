@@ -58,11 +58,12 @@
                 <div class="table-responsive">
                   <table class="table">
                     <thead class="text-primary small">
-                      <th>項目</th><th>金額</th><th></th>
+                      <th>種別</th><th>項目</th><th>金額</th><th></th>
                     </thead>
                     <tbody>
                     {% for cost in fixed_costs %}
                       <tr>
+                        <td>{{ cost.category }}</td>
                         <td>{{ cost.sub_category }}</td>
                         <td>{{ '{:,}'.format(cost.amount) }}</td>
                         <td>

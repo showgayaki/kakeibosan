@@ -17,6 +17,11 @@
                 {% endif %}
                     <!-- fieldsetタグのタイトル -->
                     <legend class="border-bottom md-4">固定費</legend>
+                    <!-- 種別 -->
+                    <div class="form-group">
+                        {{ form.category.label(class="form-control-label") }}
+                        {{ form.category(class="form-control form-control-lg") }}
+                    </div>
                     <!-- 項目 -->
                     <div class="form-group">
                         {{ form.sub_category.label(class="form-control-label") }}

@@ -112,6 +112,8 @@ def _insert_fixed_costs(month_to_add):
                 break
 
         if not found:
+            now = datetime.now()
+
             cost = Cost()
             cost.category = fc.category
             cost.sub_category = fc.sub_category
@@ -119,6 +121,8 @@ def _insert_fixed_costs(month_to_add):
             cost.amount = fc.amount
             cost.month_to_add = month_to_add
             cost.bought_in = month_to_add
+            cost.created_at = now
+            cost.updated_at = now
             cost.user_id = fc.user_id
             try:
                 db.session.add(cost)

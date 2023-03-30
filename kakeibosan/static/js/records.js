@@ -380,7 +380,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
                 + '<td class="month-to-add">' + updateRecords[i]['month_to_add'] + '</td>'
                 + '</tr>';
             }
-            $('#tbody-update').html(html);
+            $('#tbodyUpdate').html(html);
             btn = '<button name="save" type="button" class="to-loading btn btn-primary">OK</button>'
                     + '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>';
             $('#confirmModal').find('.modal-footer').html(btn);
@@ -420,4 +420,14 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
             console.log('always');
         });
     });
+
+    $('#confirmModal').find('button[data-dismiss=modal]').click(function(){
+        if(document.getElementById('storeName').textContent != ''){
+            // データのある最終行
+            let insertRow = table[currentUserId].countRows() - 2;
+            // 挿入したデータ削除
+            table[currentUserId].alter('remove_row', insertRow);
+            $('#itemSelectModal').modal('show');
+        }
+    })
 }

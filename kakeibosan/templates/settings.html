@@ -4,83 +4,92 @@
 {% endblock%}
 
 {% block contents %}
-      <div class="panel-header panel-header-sm">
-      </div>
-      <div class="content">
-      {% for category ,message in get_flashed_messages(with_categories=true) %}
-      <div class="alert alert-{{ category }} alert-dismissible">
+<div class="panel-header panel-header-sm">
+</div>
+<div class="content">
+    {% for category ,message in get_flashed_messages(with_categories=true) %}
+    <div class="alert alert-{{ category }} alert-dismissible">
         {{ message }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
         </button>
-      </div>
-      {% endfor %}
-        <div class="row">
-          <div class="col-md-7">
+    </div>
+    {% endfor %}
+    <div class="row">
+        <div class="col-md-7">
             <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">アカウント</h5>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead class="text-primary small">
-                      <th>ユーザー名</th><th>表示名</th><th>メールアドレス</th><th></th>
-                    </thead>
-                    <tbody>
-                      {% for user in users %}
-                      <tr>
-                        <td>{{ user.user_name }}</td>
-                        <td>{{ user.view_name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                          <a href="{{ url_for('edit_account.edit_account', edit='update', record_id=user.id) }}">
-                            <i class="now-ui-icons ui-2_settings-90"></i>
-                          </a>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                  </table>
+                <div class="card-header">
+                    <h5 class="card-title">アカウント</h5>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-5">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">固定費</h5>
-              </div>
-              <div class="card-body">
-                <form class="form-add-new" action="{{ url_for('settings.settings', card='fixedcost') }}" method="post">
-                  {{ form.add_fixed_cost(class="btn btn-sm btn-primary", id="add_fixed_cost") }}
-                </form>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead class="text-primary small">
-                      <th>種別</th><th>項目</th><th>金額</th><th></th>
-                    </thead>
-                    <tbody>
-                    {% for cost in fixed_costs %}
-                      <tr>
-                        <td>{{ cost.category }}</td>
-                        <td>{{ cost.sub_category }}</td>
-                        <td>{{ '{:,}'.format(cost.amount) }}</td>
-                        <td>
-                          <a href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='update', record_id=cost.id) }}">
-                            <i class="now-ui-icons ui-2_settings-90"></i>
-                          </a>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                  </table>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="text-primary small">
+                                <th>ユーザー名</th>
+                                <th>表示名</th>
+                                <th>メールアドレス</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                <tr>
+                                    <td>{{ user.user_name }}</td>
+                                    <td>{{ user.view_name }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        <a
+                                            href="{{ url_for('edit_account.edit_account', edit='update', record_id=user.id) }}">
+                                            <i class="now-ui-icons ui-2_settings-90"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">固定費</h5>
+                </div>
+                <div class="card-body">
+                    <form class="form-add-new" action="{{ url_for('settings.settings', card='fixedcost') }}"
+                        method="post">
+                        {{ form.add_fixed_cost(class="btn btn-sm btn-primary", id="add_fixed_cost") }}
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="text-primary small">
+                                <th>種別</th>
+                                <th>項目</th>
+                                <th>金額</th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                                {% for cost in fixed_costs %}
+                                <tr>
+                                    <td>{{ cost.category }}</td>
+                                    <td>{{ cost.sub_category }}</td>
+                                    <td>{{ '{:,}'.format(cost.amount) }}</td>
+                                    <td>
+                                        <a
+                                            href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='update', record_id=cost.id) }}">
+                                            <i class="now-ui-icons ui-2_settings-90"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block footer %}

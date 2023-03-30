@@ -186,8 +186,18 @@ table tbody tr td.copy-btn{
     font-size: 1em;
     text-align: center;
 }
-.update-table td.amount, td.bought-in, td.month-to-add{
+.amount, .bought-in, .month-to-add{
     text-align: right;
+}
+.item-select-header{
+    font-size: 1.2rem;
+}
+.item-select-modal .item-checkbox{
+    position: relative;
+    width: 1.5rem;
+}
+.btn-primary{
+    font-weight: bold;
 }
 .btn-md-xs{
     padding: 5px 15px;
@@ -202,6 +212,7 @@ table tbody tr td.copy-btn{
     color: #fff;
     background-color: #2a5788;
     border-color: #2a5788;
+    font-weight: bold;
 }
 .btn-calc:hover{
     background-color: rgba(42, 87, 136, 0.8);
@@ -238,7 +249,7 @@ td.listbox.htDimmed{
     width: 18px;
     height: 18px;
     padding-left: 0;
-    margin: auto;
+    margin: auto!important;
 }
 .form-check .form-check-label{
     display: block;
@@ -251,6 +262,8 @@ td.listbox.htDimmed{
 }
 .form-check .form-check-sign::before,
 .form-check .form-check-sign::after{
+    top: 0!important;
+    left: 0!important;
     width: 100%;
     height: 100%;
     cursor: default;
@@ -268,6 +281,15 @@ td.listbox.htDimmed{
     z-index: 3;
     visibility: unset;
     margin: 0;
+}
+.item-total-table{
+    width: 50%;
+    margin: 0 0 0 auto;
+    font-size: 1.1rem;
+}
+.item-total-table th,
+.item-total-table td{
+    padding: 8px!important;
 }
 .ht-id,
 .ht-month-to-add{

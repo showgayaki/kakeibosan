@@ -63,10 +63,10 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
     $(document).ready(function () {
-        let total_costs_last_12_months = {{ total_costs_last_12_months| tojson }};
-        let costs_this_month_by_category = {{ costs_this_month_by_category| tojson }};
+        let total_costs_last_12_months = {{ total_costs_last_12_months | tojson }};
+        let costs_this_month_by_category = {{ costs_this_month_by_category | tojson }};
 
-        let utility_costs = {{ utility_costs| tojson }};
+        let utility_costs = {{ utility_costs | tojson }};
         dashboard.initDashboardPageCharts(total_costs_last_12_months, costs_this_month_by_category, utility_costs);
     });
 </script>

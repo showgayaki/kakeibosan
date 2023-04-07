@@ -37,7 +37,7 @@ async function postFile(e){
     .then(json => {
         console.log(json);
         if('error' in json){
-            alert(json['error']);
+            alert(json['error'] + '\n' + '\n' + json['detail']);
         }else{
             let registerData = {};
 

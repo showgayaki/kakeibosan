@@ -1,3 +1,9 @@
+// ブラウザBack・Forward時にはローディングアニメーション表示しない
+window.addEventListener('pageshow', function(e){
+    if (e.persisted){
+        hideLoader();
+    }
+});
 // window読み込み終了時にローディングアニメーション終了
 $(window).on('load', function(){
     hideLoader();

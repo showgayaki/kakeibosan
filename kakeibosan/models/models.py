@@ -6,7 +6,7 @@ from kakeibosan import db
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_name = db.Column(db.String(100), unique=True, nullable=False)
     view_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
@@ -29,7 +29,7 @@ class User(db.Model, UserMixin):
 
 class FixedCost(db.Model):
     __tablename__ = 'fixed_cost'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     category = db.Column(db.String(20), nullable=False)
     sub_category = db.Column(db.String(20), nullable=False)
     paid_to = db.Column(db.String(100))
@@ -39,7 +39,7 @@ class FixedCost(db.Model):
 
 class Cost(db.Model):
     __tablename__ = 'cost'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     is_paid_in_advance = db.Column(db.Boolean, default=False)
     category = db.Column(db.String(100), nullable=False)
     sub_category = db.Column(db.String(100), nullable=False)

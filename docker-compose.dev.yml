@@ -1,0 +1,70 @@
+version: "3"
+services:
+  kakeibosan_app:
+    build:
+      context: .
+      # args:
+      #   - ARCH=x86_64
+    image: kakeibosan_app
+    container_name: kakeibosan_app
+    volumes:
+      - type: bind
+        source: "./"
+        target: "/app"
+      - type: volume
+        source: "socket"
+        target: "/tmp"
+    restart: always
+    networks:
+      - kakeibosan_network
+    depends_on:
+      kakeibosan_db:
+        condition: service_healthy
+  kakeibosan_nginx:
+    build: ./web
+    image: kakeibosan_nginx
+    container_name: kakeibosan_nginx
+    ports:
+      - "8001:80"
+    volumes:
+      - type: bind
+        source: "./kakeibosan/static"
+        target: "/app/kakeibosan/static"
+      - type: volume
+        source: "socket"
+        target: "/tmp"
+    restart: always
+    networks:
+      - kakeibosan_network
+  kakeibosan_db:
+    build:
+      context: ./db
+    image: kakeibosan_db
+    container_name: kakeibosan_db
+    # volumes:
+    #   - type: bind
+    #     source: ./db/db_data/
+    #     target: /var/lib/mysql
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+      TZ: Asia/Tokyo
+    networks:
+      - kakeibosan_network
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u ${MARIADB_USER} -p ${MARIADB_PASSWORD}
+
+volumes:
+  socket:
+
+networks:
+  kakeibosan_network:
+    name: kakeibosan_network
+    driver: bridge

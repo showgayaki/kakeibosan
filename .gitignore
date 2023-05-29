@@ -5,7 +5,9 @@ test_database.py
 .git
 .DS_Store
 edit_record.js
-*kakeibosan.db
+kakeibosan.db
+kakeibosan.sql
 backup
 memo.md
 .env
+db_data/

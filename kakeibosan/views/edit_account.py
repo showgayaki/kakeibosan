@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
-from sqlalchemy import exc
 from kakeibosan import db
 from kakeibosan.views.forms import EditAccount
 from kakeibosan.models import User
@@ -35,7 +34,7 @@ def edit_account():
             try:
                 db.session.add(user)
                 db.session.commit()
-            except exc.SQLAlchemyError:
+            except db.exc.SQLAlchemyError:
                 flash_category = 'warning'
                 flash_message = 'Insert Error'
             finally:

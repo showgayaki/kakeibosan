@@ -9,7 +9,6 @@ verify_ssl = true
 flask = "*"
 uwsgi = "*"
 flask-sqlalchemy = "*"
-sqlalchemy = "*"
 flask-migrate = "*"
 flask-login = "*"
 flask-wtf = "*"

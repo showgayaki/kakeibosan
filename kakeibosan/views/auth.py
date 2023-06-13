@@ -1,7 +1,6 @@
 from flask_login import login_user, logout_user
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from datetime import datetime
-# from kakeibosan import login_manager
 from kakeibosan.views.forms import LoginForm
 from kakeibosan.models import User
 

@@ -3,9 +3,8 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask import Blueprint, render_template, request, abort, jsonify, flash
 from flask_login import login_required
-from sqlalchemy import exc
 from kakeibosan import db
-from kakeibosan.models import User, Cost
+from kakeibosan.models import User, Cost, Category, CategoryPaths
 
 
 bp = Blueprint('records', __name__)
@@ -18,13 +17,14 @@ def records():
         records_json = request.json
         flash_list = []
         for record in records_json:
+            # idがない場合は新規登録
             if record['id'] is None:
                 cost = Cost()
                 created_at = datetime.now()
             else:
                 try:
-                    cost = Cost.query.filter_by(id=record['id']).first()
-                except exc.SQLAlchemyError:
+                    cost = db.session.query(Cost).filter_by(id=record['id']).first()
+                except db.exc.SQLAlchemyError:
                     cost = {}
                 finally:
                     db.session.close()
@@ -43,38 +43,81 @@ def records():
         next_month = (this_month + relativedelta(months=1))
 
         if oldest_month < view_month < next_month:
-            try:
-                users = User.query.order_by(User.id).all()
-            except exc.SQLAlchemyError:
-                users = {}
-            finally:
-                db.session.close()
+            user_list = _user_list()
+            category_list = _category_list()
 
             costs = _fetch_view_costs(view_month)
-            users_list = []
-            for user in users:
-                user_dict = user.to_dict()
-                user_dict['password'] = ''
-                users_list.append(user_dict)
-
-            total_cost = _cost_per_month(view_month.date())
+            total_detail = _fetch_total_detail(view_month.date())
             month = _month_pager(view_month, oldest_month)
 
-            cost_records = _cost_records(costs)
-            view_month = view_month.date()
-            return render_template('records.html', active_page='データ一覧・登録', users=users_list,
-                                   costs=cost_records, month=month, view_month=view_month, total_cost=total_cost)
+            return render_template(
+                'records.html',
+                active_page='データ一覧・登録',
+                users=user_list,
+                costs=costs,
+                month=month,
+                view_month=view_month.date(),
+                total_detail=total_detail,
+                category_dict=category_list,
+            )
         else:
             abort(404)
+
+
+def _user_list():
+    user_list = []
+    try:
+        users = db.session.query(User).order_by(User.id).all()
+        for user in users:
+            user_dict = user.to_dict()
+            user_dict['password'] = ''
+            user_list.append(user_dict)
+    except db.exc.SQLAlchemyError:
+        users = {}
+    finally:
+        db.session.close()
+
+    return user_list
+
+
+def _category_list():
+    category_list = []
+    try:
+        category = db.session.query(
+            CategoryPaths.ancestor,
+            CategoryPaths.descendant,
+            Category.name
+        ).join(Category, CategoryPaths.descendant == Category.id).all()
+
+        # [{'固定費': ['家賃', '管理費', '手数料', '更新料', '駐輪場']},...]の形にする
+        subcategory_list = []
+        category_name = ''
+        for cat in category:
+            if cat.ancestor == cat.descendant:
+                if len(subcategory_list) > 0:
+                    category_list.append({category_name: subcategory_list})
+                subcategory_list = []
+                category_name = cat.name
+            else:
+                subcategory_list.append(cat.name)
+        category_list.append({category_name: subcategory_list})
+    except db.exc.SQLAlchemyError:
+        category = []
+    finally:
+        db.session.close()
+
+    return category_list
 
 
 def _insert_costs(record, cost, created_at):
     try:
         if not record['del']:
+            category = db.session.query(Category).filter(Category.name == record['subcategory']).first()
+            category_id = category.id
+
             cost.id = record['id']
             cost.is_paid_in_advance = record['is_paid_in_advance']
-            cost.category = record['category']
-            cost.sub_category = record['sub_category']
+            cost.category_id = category_id
             cost.paid_to = record['paid_to']
             cost.amount = record['amount']
             cost.month_to_add = datetime.strptime(record['month_to_add'] + '-01', '%Y-%m-%d')
@@ -89,7 +132,7 @@ def _insert_costs(record, cost, created_at):
             flash_message = 'delete'
 
         db.session.commit()
-    except exc.SQLAlchemyError:
+    except db.exc.SQLAlchemyError:
         if record['user_id'] > 0:
             flash_message = 'add_error' if record['id'] is None else 'update_error'
         else:
@@ -101,28 +144,63 @@ def _insert_costs(record, cost, created_at):
 
 
 def _fetch_view_costs(view_month):
+    # カテゴリー・サブカテゴリーの結合用に、Categoryテーブルをそれぞれ別名で定義しておく
+    category_ancestor = db.orm.aliased(Category)
+    category_descendant = db.orm.aliased(Category)
     try:
         # 計上月で検索
-        costs = Cost.query.filter_by(month_to_add=view_month.date()).all()
-    except exc.SQLAlchemyError:
+        # category_idでCategoryを結合してサブカテゴリー名を取得
+        # category_idでCategoryPathsを結合
+        # 結合したCategoryPathsのancestorとCategory.idで結合
+        # Category.id(ancestor)の名前(カテゴリー名)を取得
+        costs = db.session.query(
+            Cost.id,
+            category_ancestor.name.label('category'),
+            category_descendant.name.label('subcategory'),
+            Cost.paid_to,
+            Cost.amount,
+            Cost.month_to_add,
+            Cost.bought_in,
+            Cost.user_id,
+        ).filter_by(month_to_add=view_month.date())\
+         .join(category_descendant, Cost.category_id == category_descendant.id)\
+         .join(CategoryPaths, Cost.category_id == CategoryPaths.descendant)\
+         .join(category_ancestor, CategoryPaths.ancestor == category_ancestor.id)\
+         .all()
+
+        # dictionaryに変換
+        costs = [
+            {
+                'id': row.id,
+                'category': row.category,
+                'subcategory': row.subcategory,
+                'paid_to': row.paid_to,
+                'amount': row.amount,
+                'month_to_add': '{0:%Y-%-m}'.format(row.month_to_add),
+                'bought_in': '{0:%Y-%-m-%-d}'.format(row.bought_in),
+                'user_id': row.user_id,
+            } for row in costs
+        ]
+    except db.exc.SQLAlchemyError:
         costs = {}
     finally:
         db.session.close()
+
     return costs
 
 
-def _cost_per_month(month_to_add):
+def _fetch_total_detail(month_to_add):
     try:
         # 折半するレコード取得
-        costs_split = Cost.query.filter_by(month_to_add=month_to_add).filter(
+        costs_split = db.session.query(Cost).filter_by(month_to_add=month_to_add).filter(
             (Cost.is_paid_in_advance == False) | (Cost.is_paid_in_advance == None)).order_by(Cost.id).all()
 
         # 立替したレコード取得
-        costs_paid_in_advance = Cost.query.filter_by(
+        costs_paid_in_advance = db.session.query(Cost).filter_by(
             month_to_add=month_to_add, is_paid_in_advance=True).order_by(Cost.id).all()
 
-        users = User.query.order_by(User.id).all()
-    except exc.SQLAlchemyError:
+        users = db.session.query(User).order_by(User.id).all()
+    except db.exc.SQLAlchemyError:
         costs_split = {}
         costs_paid_in_advance = {}
         users = {}
@@ -185,7 +263,6 @@ def _cost_per_month(month_to_add):
     total_costs[advance_key] = advance_subtraction['amount']
     total_costs['{} 支払額'.format(pay_by)] = to_pay
 
-    print(advance_subtraction)
     return total_costs
 
 
@@ -201,24 +278,6 @@ def _month_pager(view_month, oldest_month):
 
     month = {'prev': prev_month, 'next': next_month}
     return month
-
-
-def _cost_records(costs):
-    cost_records = []
-    for cost in costs:
-        cost_dict = cost.to_dict().copy()
-        for key, val in cost_dict.items():
-            if key == 'bought_in' and val is not None:
-                cost_dict[key] = '{0:%Y-%-m-%-d}'.format(val)
-            elif key == 'month_to_add' and val is not None:
-                cost_dict[key] = '{0:%Y-%-m}'.format(val)
-            elif key == 'created_at':
-                cost_dict[key] = '{0:%Y-%m-%d %H:%M:%S}'.format(val)
-            elif key == 'updated_at':
-                cost_dict[key] = '{0:%Y-%m-%d %H:%M:%S}'.format(val)
-        cost_records.append(cost_dict)
-
-    return cost_records
 
 
 def _flash_message(flash_list):

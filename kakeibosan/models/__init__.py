@@ -1,8 +1,10 @@
-from .models import User, FixedCost, Cost
+from .models import User, FixedCost, Cost, Category, CategoryPaths
 
 
 __all__ = [
     User,
     FixedCost,
-    Cost
+    Cost,
+    Category,
+    CategoryPaths,
 ]

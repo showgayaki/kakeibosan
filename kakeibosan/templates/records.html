@@ -25,7 +25,7 @@
                             <div class="table-responsive card-total-table">
                                 <table class="table table-bordered">
                                     <tr>
-                                        {%- for key in total_cost.keys() %}
+                                        {%- for key in total_detail.keys() %}
                                         {#- カラムの内容によって表示変更 #}
                                         {%- if key == '折半額' or key == '折半合計' or '立替差引' in key or '支払額' in key %}
                                         {#- 半角スペースで改行 #}
@@ -59,7 +59,7 @@
                                     </tr>
                                     <tbody>
                                         <tr>
-                                            {%- for key, val in total_cost.items() %}
+                                            {%- for key, val in total_detail.items() %}
                                             {%- if '支払額' in key %}
                                             <td class="text-right">{{ '{:,}'.format(val) }}</td>
                                             <td>
@@ -309,9 +309,10 @@
             const users = {{ users | tojson }};
             const records = {{ costs | tojson }};
             const viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
+            const categoryDict = {{ category_dict | tojson }};
             // varなしはグローバル
             currentUserId = {{ current_user.id }}
-            table = createTable(currentUserId, users, records, viewMonth);
+            table = createTable(currentUserId, users, records, viewMonth, categoryDict);
         });
     </script>
     <script src="{{ url_for('static', filename='js/receipt.js') }}"></script>

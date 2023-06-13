@@ -42,8 +42,8 @@ async function postFile(e){
             let registerData = {};
 
             registerData['sub_category'] = json['sub_category'];
-            for(let key in CATEGORY){
-                if(CATEGORY[key].includes(registerData['sub_category'])){
+            for(let key in categoryDict){
+                if(categoryDict[key].includes(registerData['sub_category'])){
                     registerData['category'] = key;
                 }
             }
@@ -145,7 +145,7 @@ async function clickConfirmButton(e){
     let insertRow = table[currentUserId].countRows() - 1;
     // データ挿入
     table[currentUserId].setDataAtRowProp(insertRow, 'category', this.data['category']);
-    table[currentUserId].setDataAtRowProp(insertRow, 'sub_category', this.data['sub_category']);
+    table[currentUserId].setDataAtRowProp(insertRow, 'subcategory', this.data['subcategory']);
     table[currentUserId].setDataAtRowProp(insertRow, 'paid_to', this.data['paid_to']);
     table[currentUserId].setDataAtRowProp(insertRow, 'amount', this.data['amount']);
     table[currentUserId].setDataAtRowProp(insertRow, 'bought_in', this.data['bought_in']);

@@ -1,20 +1,10 @@
 // ------------------
-// 定数
-// ------------------
-const CATEGORY = {
-    '固定費': ['家賃','管理費','手数料'],
-    '光熱費': ['電気代','ガス代','水道代'],
-    '食費': ['食材費','外食費'],
-    '日用品': ['日用品','洗剤類'],
-    '交通費': ['タイムズ','レンタカー','ガソリン代']
-}
-
-// ------------------
 // コピーボタン押下時
 // ------------------
 $('.copy-btn')
 // tooltip設定
-.tooltip({
+.tooltip(
+    {
     trigger: 'manual'
 })
 // tooltip表示後の動作を設定
@@ -53,7 +43,7 @@ function checkboxCustomRenderer(hotInstance, td, row, column, prop, value, cellP
 }
 
 
-function createTable(currentUserId, users, records, viewMonth){
+function createTable(currentUserId, users, records, viewMonth, categoryList){
     // チェックボックスのカスタマイズ
     Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
 
@@ -72,14 +62,22 @@ function createTable(currentUserId, users, records, viewMonth){
         }
     }
 
+    // カテゴリーの配列を取得
+    let categoryColumns = []
+    for(let i in categoryList){
+        for(let key in categoryList[i]){
+            categoryColumns.push(key);
+        }
+    }
+
     // 定数
-    const SUB_CATEGORY_COLUMN = 3; // カラムの順番(場所)が変わったら要変更
+    const SUBCATEGORY_COLUMN = 3; // カラムの順番(場所)が変わったら要変更
     const BOUGHT_IN_COLUMN = 6;
     const COLUMNS = [
                 {data: 'id', type: 'numeric', width: 1, className: 'ht-id'},
                 {data: 'is_paid_in_advance', type: 'checkbox', width: 40, renderer: 'custom.checkbox'},
-                {data: 'category', type: 'dropdown', source: Object.keys(CATEGORY), className: 'htMiddle'},
-                {data: 'sub_category', type: 'dropdown', className: 'htMiddle'},
+                {data: 'category', type: 'dropdown', source: categoryColumns, className: 'htMiddle'},
+                {data: 'subcategory', type: 'dropdown', className: 'htMiddle'},
                 {data: 'paid_to', type: 'text', width: 200, className: 'htMiddle'},
                 {data: 'amount', type: 'numeric', numericFormat:{pattern: '0,0'}, className: 'htMiddle'},
                 {data: 'bought_in', type: 'date', datePickerConfig: datePickerConfig, width: 110, dateFormat: 'YYYY-M-D', className: 'htRight htMiddle'},
@@ -89,7 +87,7 @@ function createTable(currentUserId, users, records, viewMonth){
             ]
     const REQUIRED_COLUMNS = {
         'category': '種別',
-        'sub_category': '項目',
+        'subcategory': '項目',
         'amount': '金額',
         'bought_in': '支払日',
     }
@@ -147,30 +145,24 @@ function createTable(currentUserId, users, records, viewMonth){
                     change_prop = changes[0][1];
                     value_after_change = changes[0][3];
 
+                    // カテゴリー選択時にサブカテゴリーを入れる
                     if(change_prop == 'category'){
-                        // category削除時はsub_categoryを空にする
+                        // category削除時はsubcategoryを空にする
                         if(value_after_change === ''){
-                            this.setDataAtRowProp(change_row, 'sub_category', '', 'autoedit');
+                            this.setDataAtRowProp(change_row, 'subcategory', '', 'autoedit');
                         }
-                        switch(value_after_change){
-                            case '固定費':
-                                this.setCellMeta(change_row,SUB_CATEGORY_COLUMN,'source', CATEGORY['固定費']);
-                            break;
-                            case '光熱費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['光熱費']);
-                            break;
-                            case '食費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['食費']);
-                            break;
-                            case '日用品':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['日用品']);
-                            break;
-                            case '交通費':
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', CATEGORY['交通費']);
-                            break;
-                            default:
-                                this.setCellMeta(change_row, SUB_CATEGORY_COLUMN, 'source', []);
+
+                        // サブカテゴリーリストを取得
+                        let subcategoryList = []
+                        for(let i in categoryList){
+                            for(let key in categoryList[i]){
+                                if(key == value_after_change){
+                                    subcategoryList = categoryList[i][key]
+                                    return
+                                }
+                            }
                         }
+                        this.setCellMeta(change_row, SUBCATEGORY_COLUMN, 'source', subcategoryList);
                     }
                 }
             },
@@ -228,13 +220,14 @@ function createTable(currentUserId, users, records, viewMonth){
                 }
                 // 空の行はスキップ
                 if((e['category'] == null || e['category'] === '') &&
-                   (e['sub_category'] == null || e['sub_category'] === '') &&
+                   (e['subcategory'] == null || e['subcategory'] === '') &&
                    (e['amount'] == null || e['amount'] === '') &&
                    (e['bought_in'] == null || e['bought_in'] === '')){
                        return;
                 }
                 // 入力の判定
                 for(let item in REQUIRED_COLUMNS){
+                    console.log(item)
                     // 必須項目が空かどうか判定
                     if(e[item] === ''){
                         validationErrorEmpty.push(REQUIRED_COLUMNS[item]);
@@ -373,7 +366,7 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
                 + badgeColumn
                 + '<td>' + is_paid_in_advance + '</td>'
                 + '<td>' + updateRecords[i]['category'] + '</td>'
-                + '<td>' + updateRecords[i]['sub_category'] + '</td>'
+                + '<td>' + updateRecords[i]['subcategory'] + '</td>'
                 + '<td>' + updateRecords[i]['paid_to'] + '</td>'
                 + '<td class="amount">' + Number(updateRecords[i]['amount']).toLocaleString() + '</td>'
                 + '<td class="bought-in">' + updateRecords[i]['bought_in'] + '</td>'

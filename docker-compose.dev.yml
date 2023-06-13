@@ -41,10 +41,10 @@ services:
       context: ./db
     image: kakeibosan_db
     container_name: kakeibosan_db
-    # volumes:
-    #   - type: bind
-    #     source: ./db/db_data/
-    #     target: /var/lib/mysql
+    volumes:
+      - type: bind
+        source: ./db/db_data/
+        target: /var/lib/mysql
     expose:
       - "3306"
     ports:

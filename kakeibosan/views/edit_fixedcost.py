@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
-from sqlalchemy import exc
 from kakeibosan import db
 from kakeibosan.views.forms import EditFixedCost
 from kakeibosan.models import FixedCost
@@ -33,7 +32,7 @@ def edit_fixedcost():
         try:
             db.session.add(fixed_cost)
             db.session.commit()
-        except exc.SQLAlchemyError:
+        except db.exc.SQLAlchemyError:
             flash_category = 'warning'
             flash_message = 'Insert Error'
         finally:

@@ -30,7 +30,7 @@ def records():
                     db.session.close()
                 created_at = datetime.strptime(record['created_at'], '%Y-%m-%d %H:%M:%S')
 
-            flash_list.append(_insert_costs(record, cost, created_at))
+            flash_list.append(_update_record(record, cost, created_at))
 
         _flash_message(flash_list)
         return jsonify(success=True)
@@ -109,7 +109,7 @@ def _category_list():
     return category_list
 
 
-def _insert_costs(record, cost, created_at):
+def _update_record(record, cost, created_at):
     try:
         if not record['del']:
             category = db.session.query(Category).filter(Category.name == record['subcategory']).first()
@@ -161,7 +161,10 @@ def _fetch_view_costs(view_month):
             Cost.amount,
             Cost.month_to_add,
             Cost.bought_in,
+            Cost.created_at,
+            Cost.updated_at,
             Cost.user_id,
+            Cost.is_paid_in_advance,
         ).filter_by(month_to_add=view_month.date())\
          .join(category_descendant, Cost.category_id == category_descendant.id)\
          .join(CategoryPaths, Cost.category_id == CategoryPaths.descendant)\
@@ -178,7 +181,10 @@ def _fetch_view_costs(view_month):
                 'amount': row.amount,
                 'month_to_add': '{0:%Y-%-m}'.format(row.month_to_add),
                 'bought_in': '{0:%Y-%-m-%-d}'.format(row.bought_in),
+                'created_at': '{0:%Y-%m-%d %H:%M:%S}'.format(row.created_at),
+                'updated_at': '{0:%Y-%m-%d %H:%M:%S}'.format(row.updated_at),
                 'user_id': row.user_id,
+                'is_paid_in_advance': row.is_paid_in_advance,
             } for row in costs
         ]
     except db.exc.SQLAlchemyError:

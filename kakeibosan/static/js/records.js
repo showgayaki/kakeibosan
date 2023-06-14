@@ -227,7 +227,6 @@ function createTable(currentUserId, users, records, viewMonth, categoryList){
                 }
                 // 入力の判定
                 for(let item in REQUIRED_COLUMNS){
-                    console.log(item)
                     // 必須項目が空かどうか判定
                     if(e[item] === ''){
                         validationErrorEmpty.push(REQUIRED_COLUMNS[item]);
@@ -270,6 +269,9 @@ function createTable(currentUserId, users, records, viewMonth, categoryList){
 
             defaultRecords = defaultRecords.filter(x => x.user_id == userId);
             updateRecords = fetchUpdateRecords(viewMonth, userId, currentRecords, defaultRecords);
+            console.log('defaultRecords:', defaultRecords);
+            console.log('updateRecords:', updateRecords);
+
             createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateRecords);
         }else{
             createUpdateModal(validationErrorDict, isThisMonth, isSelfData, [], []);

@@ -309,10 +309,11 @@
             const users = {{ users | tojson }};
             const records = {{ costs | tojson }};
             const viewMonth = '{{ '{0:%Y-%-m}'.format(view_month) }}'
-            const categoryDict = {{ category_dict | tojson }};
             // varなしはグローバル
             currentUserId = {{ current_user.id }}
-            table = createTable(currentUserId, users, records, viewMonth, categoryDict);
+            categoryList = {{ category_list | tojson }};
+
+            table = createTable(currentUserId, users, records, viewMonth, categoryList);
         });
     </script>
     <script src="{{ url_for('static', filename='js/receipt.js') }}"></script>

@@ -47,7 +47,7 @@ def records():
             category_list = _category_list()
 
             costs = _fetch_view_costs(view_month)
-            total_detail = _fetch_total_detail(view_month.date())
+            total_detail = _fetch_total_detail(view_month.date(), user_list)
             month = _month_pager(view_month, oldest_month)
 
             return render_template(
@@ -58,7 +58,7 @@ def records():
                 month=month,
                 view_month=view_month.date(),
                 total_detail=total_detail,
-                category_dict=category_list,
+                category_list=category_list,
             )
         else:
             abort(404)
@@ -195,7 +195,7 @@ def _fetch_view_costs(view_month):
     return costs
 
 
-def _fetch_total_detail(month_to_add):
+def _fetch_total_detail(month_to_add, user_list):
     try:
         # 折半するレコード取得
         costs_split = db.session.query(Cost).filter_by(month_to_add=month_to_add).filter(
@@ -204,12 +204,9 @@ def _fetch_total_detail(month_to_add):
         # 立替したレコード取得
         costs_paid_in_advance = db.session.query(Cost).filter_by(
             month_to_add=month_to_add, is_paid_in_advance=True).order_by(Cost.id).all()
-
-        users = db.session.query(User).order_by(User.id).all()
     except db.exc.SQLAlchemyError:
         costs_split = {}
         costs_paid_in_advance = {}
-        users = {}
     finally:
         db.session.close()
 
@@ -217,25 +214,25 @@ def _fetch_total_detail(month_to_add):
     total_paid_in_advance = {}
     total_amount = 0
 
-    for user in users:
+    for user in user_list:
         user_total_split = 0
         # 折半金額と合計の計算
         for cs in costs_split:
-            if user.id == cs.user_id:
+            if user['id'] == cs.user_id:
                 user_total_split += cs.amount
                 total_amount += cs.amount
-        total_costs[user.view_name] = user_total_split
+        total_costs[user['view_name']] = user_total_split
 
         # 立替金額集計
         user_total_paid_in_advance = 0
         for cp in costs_paid_in_advance:
-            if user.id == cp.user_id:
+            if user['id'] == cp.user_id:
                 user_total_paid_in_advance += cp.amount
         # keyに金額、valに名前を入れておく
-        total_paid_in_advance[user_total_paid_in_advance] = user.view_name
-        total_costs[user.view_name + '立替額'] = user_total_paid_in_advance
+        total_paid_in_advance[user_total_paid_in_advance] = user['view_name']
+        total_costs[user['view_name'] + '立替額'] = user_total_paid_in_advance
 
-    split_total = Decimal(str(total_amount / len(users))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
+    split_total = Decimal(str(total_amount / len(user_list))).quantize(Decimal('0'), rounding=ROUND_HALF_UP)
 
     # 立替金額の多い方はどっち
     subtraction_name = (
@@ -249,13 +246,13 @@ def _fetch_total_detail(month_to_add):
     }
     # すべての差引
     subtraction = {}
-    for user in users:
+    for user in user_list:
         advance_amount = (
             advance_subtraction['amount']
-            if user.view_name == advance_subtraction['name']
+            if user['view_name'] == advance_subtraction['name']
             else -advance_subtraction['amount']
         )
-        subtraction[user.view_name] = total_costs[user.view_name] - split_total + advance_amount
+        subtraction[user['view_name']] = total_costs[user['view_name']] - split_total + advance_amount
 
     for key, val in subtraction.items():
         if val < 0:

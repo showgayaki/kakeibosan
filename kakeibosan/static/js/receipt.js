@@ -43,10 +43,11 @@ async function postFile(e){
 
             registerData['subcategory'] = json['subcategory'];
             // [{'固定費': ['家賃', '管理費', '手数料', '更新料', '駐輪場']},...]の配列の形で来る
-            // サブカテゴリー名から、カテゴリー名を取得する
             for(let i = 0; i < categoryList.length; i++){
-                if(Object.values(categoryList[i]).includes(registerData['subcategory'])){
+                // サブカテゴリー名から、カテゴリー名を取得する
+                if(Object.values(categoryList[i])[0].includes(registerData['subcategory'])){
                     registerData['category'] = Object.keys(categoryList[i])[0];
+                    break;
                 }
             }
             registerData['paid_to'] = json['store'];

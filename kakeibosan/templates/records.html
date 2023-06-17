@@ -313,7 +313,7 @@
             currentUserId = {{ current_user.id }}
             categoryList = {{ category_list | tojson }};
 
-            table = createTable(currentUserId, users, records, viewMonth, categoryList);
+            table = createTable(currentUserId, users, records, viewMonth);
         });
     </script>
     <script src="{{ url_for('static', filename='js/receipt.js') }}"></script>

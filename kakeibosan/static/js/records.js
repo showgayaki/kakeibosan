@@ -43,7 +43,7 @@ function checkboxCustomRenderer(hotInstance, td, row, column, prop, value, cellP
 }
 
 
-function createTable(currentUserId, users, records, viewMonth, categoryList){
+function createTable(currentUserId, users, records, viewMonth){
     // チェックボックスのカスタマイズ
     Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
 
@@ -157,12 +157,13 @@ function createTable(currentUserId, users, records, viewMonth, categoryList){
                         for(let i in categoryList){
                             for(let key in categoryList[i]){
                                 if(key == value_after_change){
+                                    console.log(categoryList[i][key])
                                     subcategoryList = categoryList[i][key]
+                                    this.setCellMeta(change_row, SUBCATEGORY_COLUMN, 'source', subcategoryList);
                                     return
                                 }
                             }
                         }
-                        this.setCellMeta(change_row, SUBCATEGORY_COLUMN, 'source', subcategoryList);
                     }
                 }
             },

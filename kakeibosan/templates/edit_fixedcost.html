@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
-{% block title %} - {{ active_page }}{% endblock %}
-{% block header %}
-{% endblock%}
-{% block contents %}
+{%- extends 'base.html' %}
+{%- block title %} - {{ active_page }}{%- endblock %}
+{%- block header %}
+{%- endblock%}
+{%- block contents %}
       <div class="panel-header panel-header-sm">
       </div>
       <div class="content">
@@ -10,37 +10,37 @@
           <div class="col-md-6">
             <div class="card">
               <div class="card-body">
-                {% if record_id == None %}
+                {%- if record_id == None %}
                 <form action="{{ url_for('edit_fixedcost.edit_fixedcost', edit='add') }}" method="post">
-                {% else %}
+                {%- else %}
                 <form action="{{ url_for('edit_fixedcost.edit_fixedcost', edit='update', record_id=record_id) }}" method="post">
-                {% endif %}
+                {%- endif %}
                     <!-- fieldsetタグのタイトル -->
                     <legend class="border-bottom md-4">固定費</legend>
                     <!-- 種別 -->
                     <div class="form-group">
                         {{ form.category.label(class="form-control-label") }}
-                        {{ form.category(class="form-control form-control-lg") }}
+                        {{ form.category(class="input-fixedcost form-control form-control-lg") }}
                     </div>
                     <!-- 項目 -->
                     <div class="form-group">
-                        {{ form.sub_category.label(class="form-control-label") }}
-                        {{ form.sub_category(class="form-control form-control-lg") }}
+                        {{ form.subcategory.label(class="form-control-label") }}
+                        {{ form.subcategory(class="input-fixedcost form-control form-control-lg") }}
                     </div>
                     <!-- 支払先 -->
                     <div class="form-group">
                         {{ form.paid_to.label(class="form-control-label") }}
-                        {{ form.paid_to(class="form-control form-control-lg") }}
+                        {{ form.paid_to(class="input-fixedcost form-control form-control-lg") }}
                     </div>
                     <!-- 金額 -->
                     <div class="form-group">
                         {{ form.amount.label(class="form-control-label") }}
-                        {{ form.amount(class="form-control form-control-lg") }}
+                        {{ form.amount(class="input-fixedcost form-control form-control-lg") }}
                     </div>
                     <!-- ユーザー -->
                     <div class="form-group">
                         {{ form.username.label(class="form-control-label") }}
-                        {{ form.username(class="form-control form-control-lg") }}
+                        {{ form.username(class="input-fixedcost form-control form-control-lg") }}
                     </div>
                     <!-- 登録ボタン -->
                     <div class="form-group">
@@ -53,6 +53,6 @@
           </div>
         </div>
       </div>
-{% endblock %}
-{% block footer %}
-{% endblock %}
+{%- endblock %}
+{%- block footer %}
+{%- endblock %}

@@ -8,13 +8,15 @@ window.addEventListener('pageshow', function(e){
 $(window).on('load', function(){
     hideLoader();
 })
-// ログイン時にローディングアニメーション表示
-$('.form-signin').submit(function(){
-    displayLoader();
-});
-// レコード追加時にローディングアニメーション表示
-$(document).on('click', '.to-loading', function(){
-    displayLoader();
+// ローディングアニメーション表示
+$('.to-loading').bind('input contextmenu invalid', function(event){
+    console.log(event.type)
+    // 編集時(event: input)と入力チェックに引っかかったら何もしない
+    if(event.type != 'input' || event.type != 'invalid'){
+        ;
+    }else{
+        displayLoader();
+    }
 });
 // ログアウトモーダル表示時にOKボタンにフォーカス。エンターでログアウトできるように。
 $('#logoutModal').on('shown.bs.modal', function(){

@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
+from kakeibosan import db
 from kakeibosan.views.forms import Settings
-from kakeibosan.models import User, FixedCost
+from kakeibosan.models import User, FixedCost, Category, CategoryPaths
 
 
 bp = Blueprint('settings', __name__)
@@ -17,8 +18,32 @@ def settings():
         elif parameter == 'fixedcost':
             return redirect(url_for('edit_fixedcost.edit_fixedcost', edit='add'))
     else:
-        users = User.query.order_by(User.id).all()
-        fixed_costs = FixedCost.query.order_by(FixedCost.id)
+        category_ancestor = db.orm.aliased(Category)
+        category_descendant = db.orm.aliased(Category)
+        try:
+            users = db.session.query(User).order_by(User.id).all()
+            fixed_costs = db.session.query(
+                FixedCost.id,
+                category_ancestor.name.label('category'),
+                category_descendant.name.label('subcategory'),
+                FixedCost.paid_to,
+                FixedCost.amount,
+                FixedCost.user_id,
+            ).join(category_descendant, FixedCost.category_id == category_descendant.id)\
+             .join(CategoryPaths, FixedCost.category_id == CategoryPaths.descendant)\
+             .join(category_ancestor, CategoryPaths.ancestor == category_ancestor.id)\
+             .all()
+        except db.exc.SQLAlchemyError:
+            users = {}
+            fixed_costs = {}
+        finally:
+            db.session.close()
+
         form = Settings()
-        return render_template('settings.html', active_page='設定', fixed_costs=fixed_costs,
-                               users=users, form=form)
+        return render_template(
+            'settings.html',
+            active_page='設定',
+            fixed_costs=fixed_costs,
+            users=users,
+            form=form
+        )

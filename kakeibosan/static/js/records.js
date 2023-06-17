@@ -157,7 +157,6 @@ function createTable(currentUserId, users, records, viewMonth){
                         for(let i in categoryList){
                             for(let key in categoryList[i]){
                                 if(key == value_after_change){
-                                    console.log(categoryList[i][key])
                                     subcategoryList = categoryList[i][key]
                                     this.setCellMeta(change_row, SUBCATEGORY_COLUMN, 'source', subcategoryList);
                                     return

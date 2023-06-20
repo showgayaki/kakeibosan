@@ -51,8 +51,8 @@ def edit_fixedcost():
             # テーブルを結合して固定費を取得
             fixed_cost = db.session.query(
                 FixedCost.id,
-                category_ancestor.name.label('category'),
-                category_descendant.name.label('subcategory'),
+                category_ancestor.id.label('category'),
+                category_descendant.id.label('subcategory'),
                 FixedCost.paid_to,
                 FixedCost.amount,
                 FixedCost.user_id,
@@ -63,13 +63,17 @@ def edit_fixedcost():
              .first()
 
             active_page = '固定費更新'
+            form.category.default = fixed_cost.category
+            form.subcategory.default = '{}-{}'.format(fixed_cost.category, fixed_cost.subcategory)
             form.username.default = fixed_cost.user_id
             form.process()
-            form.category.data = fixed_cost.category
-            form.subcategory.data = fixed_cost.subcategory
             form.paid_to.data = fixed_cost.paid_to
             form.amount.data = fixed_cost.amount
         else:
             active_page = '固定費追加'
-        return render_template('edit_fixedcost.html', form=form, active_page=active_page,
-                               record_id=record_id)
+        return render_template(
+            'edit_fixedcost.html',
+            form=form,
+            active_page=active_page,
+            record_id=record_id
+        )

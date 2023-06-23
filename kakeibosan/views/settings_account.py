@@ -5,12 +5,12 @@ from kakeibosan.views.forms import EditAccount
 from kakeibosan.models import User
 
 
-bp = Blueprint('edit_account', __name__)
+bp = Blueprint('settings_account', __name__)
 
 
 @bp.route('/settings/account', methods=['GET', 'POST'])
 @login_required
-def edit_account():
+def settings_account():
     form = EditAccount()
     record_id = request.args.get('record_id')
     user = User.query.filter_by(id=record_id).first()
@@ -52,4 +52,4 @@ def edit_account():
             form.email.data = user.email
         else:
             active_page = 'ユーザー追加'
-    return render_template('edit_account.html', active_page=active_page, form=form, record_id=record_id)
+    return render_template('settings_account.html', active_page=active_page, form=form, record_id=record_id)

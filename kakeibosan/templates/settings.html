@@ -38,7 +38,7 @@
                                     <td>{{ user.email }}</td>
                                     <td>
                                         <a
-                                            href="{{ url_for('edit_account.edit_account', edit='update', record_id=user.id) }}">
+                                            href="{{ url_for('settings_account.settings_account', edit='update', record_id=user.id) }}">
                                             <i class="now-ui-icons ui-2_settings-90"></i>
                                         </a>
                                     </td>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="card-body">
                     <button class="form-add-new btn btn-sm btn-primary">
-                        <a href="{{ url_for('settings_category.settings_category') }}" class="text-white">
+                        <a href="{{ url_for('settings_category.settings_category', edit='add') }}" class="text-white">
                             新規登録
                         </a>
                     </button>
@@ -101,7 +101,7 @@
                 </div>
                 <div class="card-body">
                     <button class="form-add-new btn btn-sm btn-primary">
-                        <a href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='add') }}" class=" text-white">
+                        <a href="{{ url_for('settings_fixedcost.settings_fixedcost', edit='add') }}" class=" text-white">
                             新規登録
                         </a>
                     </button>
@@ -121,7 +121,7 @@
                                     <td>{{ '{:,}'.format(fc.amount) }}</td>
                                     <td>
                                         <a
-                                            href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='update', record_id=fc.id) }}">
+                                            href="{{ url_for('settings_fixedcost.settings_fixedcost', edit='update', record_id=fc.id) }}">
                                             <i class="now-ui-icons ui-2_settings-90"></i>
                                         </a>
                                     </td>

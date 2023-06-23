@@ -5,12 +5,12 @@ from kakeibosan.views.forms import EditFixedCost
 from kakeibosan.models import FixedCost, Category, CategoryPaths
 
 
-bp = Blueprint('edit_fixedcost', __name__)
+bp = Blueprint('settings_fixedcost', __name__)
 
 
-@bp.route('/settings/fixed_cost', methods=['GET', 'POST'])
+@bp.route('/settings/fixed-cost', methods=['GET', 'POST'])
 @login_required
-def edit_fixedcost():
+def settings_fixedcost():
     form = EditFixedCost()
     record_id = request.args.get('record_id')
 
@@ -72,7 +72,7 @@ def edit_fixedcost():
         else:
             active_page = '固定費追加'
         return render_template(
-            'edit_fixedcost.html',
+            'settings_fixedcost.html',
             form=form,
             active_page=active_page,
             record_id=record_id

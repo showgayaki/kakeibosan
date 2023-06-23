@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask_login import login_required
 from kakeibosan import db
-from kakeibosan.views.forms import Settings
 from kakeibosan.models import User, FixedCost, Category, CategoryPaths
 
 
@@ -34,16 +33,14 @@ def settings():
              .join(category_ancestor, CategoryPaths.ancestor == category_ancestor.id)\
              .all()
         except db.exc.SQLAlchemyError:
-            users = {}
-            fixed_costs = {}
+            users = []
+            fixed_costs = []
         finally:
             db.session.close()
 
-        form = Settings()
         return render_template(
             'settings.html',
             active_page='設定',
             fixed_costs=fixed_costs,
             users=users,
-            form=form
         )

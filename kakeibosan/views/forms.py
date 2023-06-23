@@ -13,10 +13,6 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class Settings(FlaskForm):
-    add_fixed_cost = SubmitField('新規登録')
-
-
 class EditAccount(FlaskForm):
     username = StringField('ユーザー名', [DataRequired()])
     veiwname = StringField('表示名', [DataRequired()])

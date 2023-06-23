@@ -16,7 +16,7 @@
     </div>
     {%- endfor %}
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">アカウント</h5>
@@ -52,14 +52,56 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">カテゴリー</h5>
+                </div>
+                <div class="card-body">
+                    <button class="form-add-new btn btn-sm btn-primary">
+                        <a href="{{ url_for('settings_category.settings_category') }}" class="text-white">
+                            新規登録
+                        </a>
+                    </button>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="text-primary small">
+                                <th>ID</th>
+                                <th>種別</th>
+                                <th>項目</th>
+                                <th>英語名</th>
+                                <th>チャートカラー</th>
+                            </thead>
+                            <tbody>
+                                {%- for cat in category %}
+                                <tr>
+                                    <td class="text-right">{{ cat.id }}</td>
+                                    <td>{{ cat.category }}</td>
+                                    <td>{{ cat.subcategory }}</td>
+                                    <td>{{ cat.in_english }}</td>
+                                    <td>{{ cat.chart_color }}</td>
+                                    <td>
+                                        <a
+                                            href="{{ url_for('settings_category.settings_category', edit='update', record_id=cat.id) }}">
+                                            <i class="now-ui-icons ui-2_settings-90"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {%- endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title">固定費</h5>
                 </div>
                 <div class="card-body">
                     <button class="form-add-new btn btn-sm btn-primary">
-                        <a href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='add') }}" class="text-white">
+                        <a href="{{ url_for('edit_fixedcost.edit_fixedcost', edit='add') }}" class=" text-white">
                             新規登録
                         </a>
                     </button>

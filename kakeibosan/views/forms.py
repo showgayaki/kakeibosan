@@ -23,9 +23,10 @@ class SettingsAccount(FlaskForm):
 
 
 class SettingsCagegory(FlaskForm):
-    category_parent = StringField('種別', [DataRequired()])
-    category = SelectField('種別', [DataRequired()], default=0)
-    subcategory = SelectField('項目', [DataRequired()], default=0)
+    category = StringField('種別', [DataRequired()])
+    category_select = SelectField('種別', [DataRequired()], default=0)
+    subcategory = StringField('種別', [DataRequired()])
+    subcategory_select = SelectField('項目', [DataRequired()], default=0)
     in_english = StringField('英語名')
     chart_color = StringField('チャートカラー')
     submit = SubmitField('登録')
@@ -34,8 +35,8 @@ class SettingsCagegory(FlaskForm):
         super(SettingsCagegory, self).__init__(*args, **kwargs)
         self.choices = [('', '-- 選択してください --')]
 
-        self.category.choices = self.category_choices()
-        self.subcategory.choices = self.subcategory_choices()
+        self.category_select.choices = self.category_choices()
+        self.subcategory_select.choices = self.subcategory_choices()
 
     def category_choices(self):
         categories = db.session.query(

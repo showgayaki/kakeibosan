@@ -25,7 +25,9 @@ def settings():
             # カテゴリー用
             category = db.session.query(
                 Category.id,
+                category_ancestor.id.label('ancestor'),
                 category_ancestor.name.label('category'),
+                category_descendant.id.label('descendant'),
                 category_descendant.name.label('subcategory'),
                 Category.in_english,
                 Category.chart_color,

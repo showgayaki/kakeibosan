@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
 from kakeibosan import db
-from kakeibosan.views.forms import EditAccount
+from kakeibosan.views.forms import SettingsAccount
 from kakeibosan.models import User
 
 
@@ -11,7 +11,7 @@ bp = Blueprint('settings_account', __name__)
 @bp.route('/settings/account', methods=['GET', 'POST'])
 @login_required
 def settings_account():
-    form = EditAccount()
+    form = SettingsAccount()
     record_id = request.args.get('record_id')
     user = User.query.filter_by(id=record_id).first()
     active_page = ''

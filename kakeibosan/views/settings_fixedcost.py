@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required
 from kakeibosan import db
-from kakeibosan.views.forms import EditFixedCost
+from kakeibosan.views.forms import SettingsFixedCost
 from kakeibosan.models import FixedCost, Category, CategoryPaths
 
 
@@ -11,7 +11,7 @@ bp = Blueprint('settings_fixedcost', __name__)
 @bp.route('/settings/fixed-cost', methods=['GET', 'POST'])
 @login_required
 def settings_fixedcost():
-    form = EditFixedCost()
+    form = SettingsFixedCost()
     record_id = request.args.get('record_id')
 
     if request.method == 'POST':

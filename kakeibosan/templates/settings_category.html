@@ -11,13 +11,19 @@
                     <div class="card">
                         <div class="card-body">
                             {%- if record_id == None %}
-                            <form action="{{ url_for('settings_fixedcost.settings_fixedcost', edit='add') }}" method="post">
+                            <form action="{{ url_for('settings_category.settings_category', edit='add') }}" method="post">
                             {%- else %}
-                            <form action="{{ url_for('settings_fixedcost.settings_fixedcost', edit='update', record_id=record_id) }}" method="post">
+                            <form action="{{ url_for('settings_category.settings_category', edit='update', record_id=record_id) }}" method="post">
                             {%- endif %}
                                 <!-- fieldsetタグのタイトル -->
-                                <legend class="border-bottom md-4">固定費</legend>
+                                <legend class="border-bottom md-4">カテゴリー</legend>
                                 <!-- 種別 -->
+                                {%- if type == 'parent' %}
+                                <div class="form-group mb-4">
+                                    {{ form.category.label(class="form-control-label") }}
+                                    {{ form.category_parent(class="input-fixedcost form-control form-control-lg") }}
+                                </div>
+                                {%- else %}
                                 <div class="form-group">
                                     {{ form.category.label(class="form-control-label") }}
                                     {{ form.category(class="input-fixedcost form-control form-control-lg") }}
@@ -27,21 +33,17 @@
                                     {{ form.subcategory.label(class="form-control-label") }}
                                     {{ form.subcategory(class="input-fixedcost form-control form-control-lg") }}
                                 </div>
-                                <!-- 支払先 -->
+                                <!-- 英語名 -->
                                 <div class="form-group">
-                                    {{ form.paid_to.label(class="form-control-label") }}
-                                    {{ form.paid_to(class="input-fixedcost form-control form-control-lg") }}
+                                    {{ form.in_english.label(class="form-control-label") }}
+                                    {{ form.in_english(class="input-fixedcost form-control form-control-lg") }}
                                 </div>
-                                <!-- 金額 -->
-                                <div class="form-group">
-                                    {{ form.amount.label(class="form-control-label") }}
-                                    {{ form.amount(class="input-fixedcost form-control form-control-lg") }}
-                                </div>
-                                <!-- ユーザー -->
+                                <!-- チャートカラー -->
                                 <div class="form-group mb-4">
-                                    {{ form.username.label(class="form-control-label") }}
-                                    {{ form.username(class="input-fixedcost form-control form-control-lg") }}
+                                    {{ form.chart_color.label(class="form-control-label") }}
+                                    {{ form.chart_color(class="input-fixedcost form-control form-control-lg") }}
                                 </div>
+                                {%- endif %}
                                 <!-- 登録ボタン -->
                                 <div class="form-group">
                                     {{ form.submit(class="to-loading btn btn-primary btn-block") }}

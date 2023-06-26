@@ -37,54 +37,14 @@
                                     <td>{{ user.view_name }}</td>
                                     <td>{{ user.email }}</td>
                                     <td>
+                                        {%- if user.id == current_user.id %}
                                         <a
                                             href="{{ url_for('settings_account.settings_account', edit='update', record_id=user.id) }}">
                                             <i class="now-ui-icons ui-2_settings-90"></i>
                                         </a>
-                                    </td>
-                                </tr>
-                                {%- endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">カテゴリー</h5>
-                </div>
-                <div class="card-body">
-                    <button class="form-add-new btn btn-sm btn-primary">
-                        <a href="{{ url_for('settings_category.settings_category', edit='add') }}" class="text-white">
-                            新規登録
-                        </a>
-                    </button>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="text-primary small">
-                                <th>ID</th>
-                                <th>種別</th>
-                                <th>項目</th>
-                                <th>英語名</th>
-                                <th>チャートカラー</th>
-                            </thead>
-                            <tbody>
-                                {%- for cat in category %}
-                                <tr>
-                                    <td class="text-right">{{ cat.id }}</td>
-                                    <td>{{ cat.category }}</td>
-                                    <td>{{ cat.subcategory }}</td>
-                                    <td>{{ cat.in_english }}</td>
-                                    <td>{{ cat.chart_color }}</td>
-                                    <td>
-                                        <a
-                                            href="{{ url_for('settings_category.settings_category', edit='update', record_id=cat.id) }}">
-                                            <i class="now-ui-icons ui-2_settings-90"></i>
-                                        </a>
+                                        {%- else %}
+                                        <i class="now-ui-icons ui-2_settings-90 text-muted"></i>
+                                        {%- endif %}
                                     </td>
                                 </tr>
                                 {%- endfor %}
@@ -129,6 +89,85 @@
                                 {%- endfor %}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">カテゴリー</h5>
+                </div>
+                <div class="card-body row">
+                    <div class="col-md-3">
+                        <button class="form-add-new btn btn-sm btn-primary">
+                            <a href="{{ url_for('settings_category.settings_category', type='parent', edit='add') }}" class="text-white">
+                                新規登録
+                            </a>
+                        </button>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary small">
+                                    <th>ID</th>
+                                    <th>種別</th>
+                                </thead>
+                                <tbody>
+                                    {%- for cat in category %}
+                                    {%- if cat.ancestor == cat.descendant %}
+                                    <tr>
+                                        <td class="text-right">{{ cat.id }}</td>
+                                        <td>{{ cat.category }}</td>
+                                        <td>
+                                            <a
+                                                href="{{ url_for('settings_category.settings_category', type='parent', edit='update', record_id=cat.id) }}">
+                                                <i class="now-ui-icons ui-2_settings-90"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%- endif %}
+                                    {%- endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <button class="form-add-new btn btn-sm btn-primary">
+                            <a href="{{ url_for('settings_category.settings_category', edit='add') }}" class="text-white">
+                                新規登録
+                            </a>
+                        </button>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead class="text-primary small">
+                                    <th>ID</th>
+                                    <th>種別</th>
+                                    <th>項目</th>
+                                    <th>英語表記（ID用）</th>
+                                    <th>チャートカラー</th>
+                                </thead>
+                                <tbody>
+                                    {%- for cat in category %}
+                                    {%- if cat.ancestor != cat.descendant %}
+                                    <tr>
+                                        <td class="text-right">{{ cat.id }}</td>
+                                        <td>{{ cat.category }}</td>
+                                        <td>{{ cat.subcategory }}</td>
+                                        <td>{{ cat.in_english }}</td>
+                                        <td>{{ cat.chart_color }}</td>
+                                        <td>
+                                            <a
+                                                href="{{ url_for('settings_category.settings_category', edit='update', record_id=cat.id) }}">
+                                                <i class="now-ui-icons ui-2_settings-90"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {%- endif %}
+                                    {%- endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

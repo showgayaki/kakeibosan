@@ -28,7 +28,7 @@ def create_app():
         migrate = Migrate(app, db)
 
         from kakeibosan.views import (
-            auth, dashboard, records, settings, settings_account, settings_fixedcost,  # settings_category,
+            auth, dashboard, records, settings, settings_account, settings_fixedcost, settings_category,
         )
 
         page_modules = [
@@ -38,7 +38,7 @@ def create_app():
             settings.bp,
             settings_account.bp,
             settings_fixedcost.bp,
-            # settings_category.bp,
+            settings_category.bp,
         ]
 
         for bp in page_modules:

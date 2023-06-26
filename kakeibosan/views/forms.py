@@ -13,7 +13,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class EditAccount(FlaskForm):
+class SettingsAccount(FlaskForm):
     username = StringField('ユーザー名', [DataRequired()])
     veiwname = StringField('表示名', [DataRequired()])
     email = StringField('email', [DataRequired()])
@@ -22,7 +22,49 @@ class EditAccount(FlaskForm):
     submit = SubmitField('登録')
 
 
-class EditFixedCost(FlaskForm):
+class SettingsCagegory(FlaskForm):
+    category_parent = StringField('種別', [DataRequired()])
+    category = SelectField('種別', [DataRequired()], default=0)
+    subcategory = SelectField('項目', [DataRequired()], default=0)
+    in_english = StringField('英語名')
+    chart_color = StringField('チャートカラー')
+    submit = SubmitField('登録')
+
+    def __init__(self, *args, **kwargs):
+        super(SettingsCagegory, self).__init__(*args, **kwargs)
+        self.choices = [('', '-- 選択してください --')]
+
+        self.category.choices = self.category_choices()
+        self.subcategory.choices = self.subcategory_choices()
+
+    def category_choices(self):
+        categories = db.session.query(
+            Category.id,
+            Category.name
+        ).join(CategoryPaths, Category.id == CategoryPaths.descendant)\
+         .filter(CategoryPaths.ancestor == CategoryPaths.descendant)\
+         .order_by(Category.id)
+
+        choices = self.choices + [(category.id, category.name) for category in categories]
+        return choices
+
+    def subcategory_choices(self):
+        categories = db.session.query(
+            CategoryPaths.ancestor,
+            Category.id,
+            Category.name
+        ).join(CategoryPaths, Category.id == CategoryPaths.descendant)\
+         .filter(CategoryPaths.ancestor != CategoryPaths.descendant)\
+         .order_by(Category.id)
+
+        # <option value="1-3">管理費</option> という形にする
+        # とりあえずoptionにはすべてのsubcategoryを入れておいて、
+        # 選択されたcategoryによっての表示・非表示はjacascript側でやる
+        choices = self.choices + [('{}-{}'.format(category.ancestor, category.id), category.name) for category in categories]
+        return choices
+
+
+class SettingsFixedCost(FlaskForm):
     category = SelectField('種別', [DataRequired()], default=0)
     subcategory = SelectField('項目', [DataRequired()], default=0)
     paid_to = StringField('支払先')
@@ -31,7 +73,7 @@ class EditFixedCost(FlaskForm):
     submit = SubmitField('登録')
 
     def __init__(self, *args, **kwargs):
-        super(EditFixedCost, self).__init__(*args, **kwargs)
+        super(SettingsFixedCost, self).__init__(*args, **kwargs)
         self.choices = [('', '-- 選択してください --')]
 
         self.category.choices = self.category_choices()

@@ -100,11 +100,11 @@ def _update_category_record(category_type, form, update_target_record):
             category_paths = CategoryPaths()
             category_paths.ancestor = update_target_record.id
             category_paths.descendant = update_target_record.id
-            flash_message = f'{update_target_record.id}: {update_target_record.name}を追加しました'
+            flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を追加しました'
         else:
             # 親カテゴリーの既存レコード更新
             update_target_record.name = form.category_parent.data
-            flash_message = f'{update_target_record.id}: {update_target_record.name}を更新しました'
+            flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を更新しました'
     else:
         if update_target_record.id is None:
             # サブカテゴリーの新規追加
@@ -123,11 +123,12 @@ def _update_category_record(category_type, form, update_target_record):
             category_paths = CategoryPaths()
             category_paths.ancestor = form.category_select.data
             category_paths.descendant = update_target_record.id
-            flash_message = f'{update_target_record.id}: {update_target_record.name}を追加しました'
+            flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を追加しました'
         else:
             # サブカテゴリーの既存レコード更新
             update_target_record.in_english = None if form.in_english.data == '' else form.in_english.data
             update_target_record.chart_color = None if form.chart_color.data == '' else form.chart_color.data
+            flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を更新しました'
 
     try:
         if category_paths:

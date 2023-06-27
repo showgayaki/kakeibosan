@@ -16,27 +16,31 @@ def settings_fixedcost():
 
     if request.method == 'POST':
         flash_category = 'info'
-        # サブカテゴリー名からcategory_idを取得
-        category_id = (db.session.query(Category).filter(Category.name == form.subcategory.data).first()).id
+        # 選択したサブカテゴリーからcategory_idを取得
+        subcategory_id = form.subcategory_select.data.split('-')[1]
+        update_target_category = db.session.query(Category).filter(Category.id == subcategory_id).first()
+
         if record_id:
             # record_idがあるときは既存レコードの更新
             fixed_cost = db.session.query(FixedCost).filter(FixedCost.id == record_id).first()
-            flash_message = '{}:{}を更新しました'.format(form.category.data, form.subcategory.data)
         else:
             fixed_cost = FixedCost()
-            flash_message = '{}:{}を追加しました'.format(form.category.data, form.subcategory.data)
 
-        fixed_cost.category_id = category_id
+        fixed_cost.category_id = update_target_category.id
         fixed_cost.paid_to = form.paid_to.data
         fixed_cost.amount = form.amount.data
         fixed_cost.user_id = form.username.data
 
         try:
             db.session.add(fixed_cost)
+            db.session.flush()
             db.session.commit()
-        except db.exc.SQLAlchemyError:
+
+            flash_message = 'ID:{} ({})を'.format(fixed_cost.id, update_target_category.name)
+            flash_message += '更新しました' if record_id else '追加しました'
+        except db.exc.SQLAlchemyError as e:
             flash_category = 'warning'
-            flash_message = 'Insert Error'
+            flash_message = str(e)
         finally:
             db.session.close()
 
@@ -63,8 +67,8 @@ def settings_fixedcost():
              .first()
 
             active_page = '固定費更新'
-            form.category.default = fixed_cost.category
-            form.subcategory.default = '{}-{}'.format(fixed_cost.category, fixed_cost.subcategory)
+            form.category_select.default = fixed_cost.category
+            form.subcategory_select.default = '{}-{}'.format(fixed_cost.category, fixed_cost.subcategory)
             form.username.default = fixed_cost.user_id
             form.process()
             form.paid_to.data = fixed_cost.paid_to

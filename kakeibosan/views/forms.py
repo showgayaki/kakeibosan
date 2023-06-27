@@ -66,8 +66,8 @@ class SettingsCagegory(FlaskForm):
 
 
 class SettingsFixedCost(FlaskForm):
-    category = SelectField('種別', [DataRequired()], default=0)
-    subcategory = SelectField('項目', [DataRequired()], default=0)
+    category_select = SelectField('種別', [DataRequired()], default=0)
+    subcategory_select = SelectField('項目', [DataRequired()], default=0)
     paid_to = StringField('支払先')
     amount = IntegerField('金額', [DataRequired()], widget=widgets.NumberInput(min=0))
     username = SelectField('ユーザー名', [DataRequired()], default=0)
@@ -77,8 +77,8 @@ class SettingsFixedCost(FlaskForm):
         super(SettingsFixedCost, self).__init__(*args, **kwargs)
         self.choices = [('', '-- 選択してください --')]
 
-        self.category.choices = self.category_choices()
-        self.subcategory.choices = self.subcategory_choices()
+        self.category_select.choices = self.category_choices()
+        self.subcategory_select.choices = self.subcategory_choices()
         self.username.choices = self.user_choices()
 
     def category_choices(self):

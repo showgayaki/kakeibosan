@@ -138,7 +138,7 @@ def _update_category_record(category_type, form, update_target_record):
         db.session.commit()
     except db.exc.SQLAlchemyError as e:
         flash_category = 'warning'
-        flash_message = f'{e}'
+        flash_message = str(e)
     finally:
         db.session.close()
 

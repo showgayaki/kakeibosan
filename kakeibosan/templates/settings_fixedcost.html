@@ -19,13 +19,13 @@
                                 <legend class="border-bottom md-4">固定費</legend>
                                 <!-- 種別 -->
                                 <div class="form-group">
-                                    {{ form.category.label(class="form-control-label") }}
-                                    {{ form.category(class="input-fixedcost form-control form-control-lg") }}
+                                    {{ form.category_select.label(class="form-control-label") }}
+                                    {{ form.category_select(id="categorySelect", class="input-fixedcost form-control form-control-lg") }}
                                 </div>
                                 <!-- 項目 -->
                                 <div class="form-group">
-                                    {{ form.subcategory.label(class="form-control-label") }}
-                                    {{ form.subcategory(class="input-fixedcost form-control form-control-lg") }}
+                                    {{ form.subcategory_select.label(class="form-control-label") }}
+                                    {{ form.subcategory_select(id="subcategorySelect", class="input-fixedcost form-control form-control-lg") }}
                                 </div>
                                 <!-- 支払先 -->
                                 <div class="form-group">

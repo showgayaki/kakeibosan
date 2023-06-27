@@ -338,6 +338,21 @@ span.required{
     }
 }
 /*---------
+ settings
+---------*/
+.settings-icon-link{
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+.settings-icon-link--non-active{
+    color: #2c2c2c;
+    pointer-events: none;
+}
+.settings-icon-link:hover{
+    text-decoration: none;
+}
+/*---------
  calc
 ---------*/
 .calc-result-area{

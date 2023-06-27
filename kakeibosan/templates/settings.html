@@ -38,12 +38,14 @@
                                     <td>{{ user.email }}</td>
                                     <td>
                                         {%- if user.id == current_user.id %}
-                                        <a
+                                        <a class="settings-icon-link"
                                             href="{{ url_for('settings_account.settings_account', edit='update', record_id=user.id) }}">
-                                            <i class="now-ui-icons ui-2_settings-90"></i>
+                                            <i class="settings-icon now-ui-icons ui-2_settings-90"></i>
                                         </a>
                                         {%- else %}
-                                        <i class="now-ui-icons ui-2_settings-90 text-muted"></i>
+                                        <a class="settings-icon-link settings-icon-link--non-active" tabindex="-1">
+                                            <i class="settings-icon now-ui-icons ui-2_settings-90"></i>
+                                        </a>
                                         {%- endif %}
                                     </td>
                                 </tr>
@@ -60,11 +62,9 @@
                     <h5 class="card-title">固定費</h5>
                 </div>
                 <div class="card-body">
-                    <button class="form-add-new btn btn-sm btn-primary">
-                        <a href="{{ url_for('settings_fixedcost.settings_fixedcost', edit='add') }}" class=" text-white">
-                            新規登録
-                        </a>
-                    </button>
+                    <a href="{{ url_for('settings_fixedcost.settings_fixedcost', edit='add') }}" class="btn btn-sm btn-primary">
+                        新規登録
+                    </a>
                     <div class="table-responsive">
                         <table class="table">
                             <thead class="text-primary small">
@@ -80,9 +80,9 @@
                                     <td>{{ fc.subcategory }}</td>
                                     <td>{{ '{:,}'.format(fc.amount) }}</td>
                                     <td>
-                                        <a
+                                        <a class="settings-icon-link"
                                             href="{{ url_for('settings_fixedcost.settings_fixedcost', edit='update', record_id=fc.id) }}">
-                                            <i class="now-ui-icons ui-2_settings-90"></i>
+                                            <i class="settings-icon now-ui-icons ui-2_settings-90"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -102,11 +102,9 @@
                 </div>
                 <div class="card-body row">
                     <div class="col-md-3">
-                        <button class="form-add-new btn btn-sm btn-primary">
-                            <a href="{{ url_for('settings_category.settings_category', type='parent', edit='add') }}" class="text-white">
-                                新規登録
-                            </a>
-                        </button>
+                        <a href="{{ url_for('settings_category.settings_category', type='parent', edit='add') }}" class="btn btn-sm btn-primary text-white">
+                            新規登録
+                        </a>
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class="text-primary small">
@@ -120,9 +118,9 @@
                                         <td class="text-right">{{ cat.id }}</td>
                                         <td>{{ cat.category }}</td>
                                         <td>
-                                            <a
+                                            <a class="settings-icon-link"
                                                 href="{{ url_for('settings_category.settings_category', type='parent', edit='update', record_id=cat.id) }}">
-                                                <i class="now-ui-icons ui-2_settings-90"></i>
+                                                <i class="settings-icon now-ui-icons ui-2_settings-90"></i>
                                             </a>
                                         </td>
                                     </tr>
@@ -133,11 +131,9 @@
                         </div>
                     </div>
                     <div class="col-md-9">
-                        <button class="form-add-new btn btn-sm btn-primary">
-                            <a href="{{ url_for('settings_category.settings_category', edit='add') }}" class="text-white">
-                                新規登録
-                            </a>
-                        </button>
+                        <a href="{{ url_for('settings_category.settings_category', edit='add') }}" class="btn btn-sm btn-primary">
+                            新規登録
+                        </a>
                         <div class="table-responsive">
                             <table class="table">
                                 <thead class="text-primary small">
@@ -157,9 +153,9 @@
                                         <td>{{ cat.in_english }}</td>
                                         <td>{{ cat.chart_color }}</td>
                                         <td>
-                                            <a
+                                            <a class="settings-icon-link"
                                                 href="{{ url_for('settings_category.settings_category', edit='update', record_id=cat.id) }}">
-                                                <i class="now-ui-icons ui-2_settings-90"></i>
+                                                <i class="settings-icon now-ui-icons ui-2_settings-90"></i>
                                             </a>
                                         </td>
                                     </tr>

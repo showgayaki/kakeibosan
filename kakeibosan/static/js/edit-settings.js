@@ -1,11 +1,15 @@
-window.addEventListener('load', displayToggleSubcategoryOptions, false);
 
-const categorySelect = document.getElementById('categorySelect');
-categorySelect.addEventListener('change', displayToggleSubcategoryOptions, false);
+const subcategorySelect = document.getElementById('subcategorySelect');
+
+if(subcategorySelect != null){
+    window.addEventListener('load', displayToggleSubcategoryOptions, false);
+
+    const categorySelect = document.getElementById('categorySelect');
+    categorySelect.addEventListener('change', displayToggleSubcategoryOptions, false);
+}
 
 
 function displayToggleSubcategoryOptions(event){
-    const subcategorySelect = document.getElementById('subcategorySelect');
     // categoryは、「<option value="1">固定費</option>」の形
     let categoryId = categorySelect.value;
 

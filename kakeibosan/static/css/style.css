@@ -352,6 +352,9 @@ span.required{
 .settings-icon-link:hover{
     text-decoration: none;
 }
+.color-picker{
+    padding: 3px 6px!important;
+}
 /*---------
  calc
 ---------*/

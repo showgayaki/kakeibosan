@@ -29,6 +29,7 @@ class SettingsCagegory(FlaskForm):
     subcategory_select = SelectField('項目', [DataRequired()], default=0)
     in_english = StringField('英語名')
     chart_color = StringField('チャートカラー')
+    color_picker = StringField('カラーピッカー', widget=widgets.ColorInput())
     submit = SubmitField('登録')
 
     def __init__(self, *args, **kwargs):

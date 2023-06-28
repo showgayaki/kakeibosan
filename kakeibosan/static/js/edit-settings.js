@@ -9,6 +9,22 @@ if(subcategorySelect != null){
 }
 
 
+const chartColorText = document.getElementById('settingsChartColorText');
+const colorPicker = document.getElementById('settingsColorPicker');
+
+if(chartColorText != null && colorPicker != null){
+    // ページ表示時にはchartColorTextに値が挿入されるので、その色をcolorPickerに反映させる
+    window.addEventListener('load', function(){
+        colorPicker.value = chartColorText.value;
+    }, false);
+
+    // colorPickerで色選択時にchartColorTextに反映させる
+    colorPicker.addEventListener('change', function(){
+        chartColorText.value = colorPicker.value;
+    }, false)
+}
+
+
 function displayToggleSubcategoryOptions(event){
     // categoryは、「<option value="1">固定費</option>」の形
     let categoryId = categorySelect.value;

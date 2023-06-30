@@ -94,7 +94,7 @@ def _update_category_record(category_type, form, update_target_record):
 
             # 新規追加されるidは、最大値＋100
             update_target_record.id = last_parent_category.id + PARENT_CATEGORY_INTERVAL
-            update_target_record.name = form.category_parent.data
+            update_target_record.name = form.category.data
 
             # 新規追加なのでCategoryPathsにも追加する（親カテゴリーなのでancestorとdescendantは同じ値）
             category_paths = CategoryPaths()
@@ -103,7 +103,7 @@ def _update_category_record(category_type, form, update_target_record):
             flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を追加しました'
         else:
             # 親カテゴリーの既存レコード更新
-            update_target_record.name = form.category_parent.data
+            update_target_record.name = form.category.data
             flash_message = f'カテゴリーID: {update_target_record.id} （{update_target_record.name}）を更新しました'
     else:
         if update_target_record.id is None:

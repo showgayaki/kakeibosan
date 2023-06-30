@@ -16,7 +16,7 @@ if(chartColorText != null && colorPicker != null){
     // ページ表示時にはchartColorTextに値が挿入されるので、その色をcolorPickerに反映させる
     window.addEventListener('load', function(){
         // colorPicker.value = chartColorText.value;
-        colorPicker.value = colorCodeShortToFull(chartColorText.value)
+        colorPicker.value = colorCode(chartColorText.value)
     }, false);
 
     // colorPickerで色選択時にchartColorTextに反映させる
@@ -26,7 +26,7 @@ if(chartColorText != null && colorPicker != null){
 
     // カラーコード手入力時の処理
     chartColorText.addEventListener('input', function(){
-        let colorCode = colorCodeShortToFull(chartColorText.value)
+        let colorCode = colorCode(chartColorText.value)
         if(colorCode != undefined){
             colorPicker.value = colorCode
         }
@@ -34,7 +34,7 @@ if(chartColorText != null && colorPicker != null){
 }
 
 
-function colorCodeShortToFull(text){
+function colorCode(text){
     if(text.match('^#([0-9a-fA-F]{3})$')){
         // 短縮系カラーコードのときの処理
         // #000 なら #000000の形にする

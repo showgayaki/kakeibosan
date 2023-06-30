@@ -29,19 +29,19 @@
                                     {{ form.category_select(id="categorySelect", class="form-control form-control-lg") }}
                                 </div>
                                 <!-- 項目 -->
-                                {%- if record_id == None %}
-                                {#- サブカテゴリーの新規追加時 #}
+                                    {%- if record_id == None %}
+                                    {#- サブカテゴリーの新規追加時 #}
                                 <div class="form-group">
                                     {{ form.subcategory.label(class="form-control-label") }}
                                     {{ form.subcategory(class="form-control form-control-lg") }}
                                 </div>
-                                {%- else %}
-                                {#- サブカテゴリーの既存レコード更新時 #}
+                                    {%- else %}
+                                    {#- サブカテゴリーの既存レコード更新時 #}
                                 <div class="form-group">
                                     {{ form.subcategory_select.label(class="form-control-label") }}
                                     {{ form.subcategory_select(id="subcategorySelect", class="form-control form-control-lg") }}
                                 </div>
-                                {%- endif %}
+                                    {%- endif %}
                                 <!-- 英語名 -->
                                 <div class="form-group">
                                     {{ form.in_english.label(class="form-control-label") }}
@@ -51,7 +51,7 @@
                                 <div class="form-group mb-4">
                                     {{ form.chart_color.label(class="form-control-label") }}
                                     <div class="row mx-0">
-                                        {{ form.chart_color(id="settingsChartColorText", class="col-10 form-control form-control-lg") }}
+                                        {{ form.chart_color(id="settingsChartColorText", class="col-10 form-control form-control-lg", placeholder="#000 or #000000") }}
                                         {{ form.color_picker(id="settingsColorPicker", class="color-picker col-2 form-control form-control-lg") }}
                                     </div>
                                 </div>

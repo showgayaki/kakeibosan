@@ -15,13 +15,39 @@ const colorPicker = document.getElementById('settingsColorPicker');
 if(chartColorText != null && colorPicker != null){
     // ページ表示時にはchartColorTextに値が挿入されるので、その色をcolorPickerに反映させる
     window.addEventListener('load', function(){
-        colorPicker.value = chartColorText.value;
+        // colorPicker.value = chartColorText.value;
+        colorPicker.value = colorCodeShortToFull(chartColorText.value)
     }, false);
 
     // colorPickerで色選択時にchartColorTextに反映させる
-    colorPicker.addEventListener('change', function(){
+    colorPicker.addEventListener('input', function(){
         chartColorText.value = colorPicker.value;
     }, false)
+
+    // カラーコード手入力時の処理
+    chartColorText.addEventListener('input', function(){
+        let colorCode = colorCodeShortToFull(chartColorText.value)
+        if(colorCode != undefined){
+            colorPicker.value = colorCode
+        }
+    }, false)
+}
+
+
+function colorCodeShortToFull(text){
+    if(text.match('^#([0-9a-fA-F]{3})$')){
+        // 短縮系カラーコードのときの処理
+        // #000 なら #000000の形にする
+        let red = text[1].repeat(2);
+        let green = text[2].repeat(2);
+        let blue = text[3].repeat(2);
+        // #001122の形でカラーピッカーのvalueに入れる
+        return text[0] + red + green + blue
+    }else if(text.match('^#([0-9a-fA-F]{6})$')){
+        return text
+    }else if(text == ''){
+        return '#000000'
+    }
 }
 
 

@@ -1,4 +1,3 @@
-
 const subcategorySelect = document.getElementById('subcategorySelect');
 
 if(subcategorySelect != null){
@@ -15,8 +14,7 @@ const colorPicker = document.getElementById('settingsColorPicker');
 if(chartColorText != null && colorPicker != null){
     // ページ表示時にはchartColorTextに値が挿入されるので、その色をcolorPickerに反映させる
     window.addEventListener('load', function(){
-        // colorPicker.value = chartColorText.value;
-        colorPicker.value = colorCode(chartColorText.value)
+        colorPicker.value = colorCode(chartColorText.value);
     }, false);
 
     // colorPickerで色選択時にchartColorTextに反映させる
@@ -28,7 +26,7 @@ if(chartColorText != null && colorPicker != null){
     chartColorText.addEventListener('input', function(){
         let colorCode = colorCode(chartColorText.value)
         if(colorCode != undefined){
-            colorPicker.value = colorCode
+            colorPicker.value = colorCode;
         }
     }, false)
 }

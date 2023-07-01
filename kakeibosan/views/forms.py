@@ -1,7 +1,7 @@
 import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, IntegerField, widgets
-from wtforms.validators import DataRequired, EqualTo, ValidationError, Length
+from wtforms.validators import DataRequired, EqualTo, ValidationError
 from kakeibosan import db
 from kakeibosan.models import User, Category, CategoryPaths
 

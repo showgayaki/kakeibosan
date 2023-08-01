@@ -192,6 +192,18 @@ table tbody tr td.copy-btn{
 .item-select-header{
     font-size: 1.2rem;
 }
+.item-select-undo,
+.item-select-undo:focus{
+    margin-right: 1rem!important;
+    background-color: #2a5788;
+    border-color: #2a5788;
+}
+.item-select-undo:hover{
+    background-color: rgba(42, 87, 136, 0.8);
+}
+.item-select-modal{
+    max-width: 560px;
+}
 .item-select-modal .item-checkbox{
     position: relative;
     width: 1.5rem;
@@ -206,6 +218,33 @@ table tbody tr td.copy-btn{
     color: #fff!important;
     margin: 0!important;
     font-size: 1rem!important;
+}
+.amount-input{
+    width: 3rem;
+    text-align: right;
+    border: 1px solid #ddd;
+}
+.delete-icon{
+    display: block;
+    text-align: right;
+}
+.delete-icon::before{
+    font-size: 1rem;
+    cursor: pointer;
+}
+.item-row{
+    position: relative;
+    top: 0;
+}
+.item-row.hide-row{
+    opacity: 0;
+    top: -50px;
+    z-index: -1;
+    transition: .4s;
+}
+.item-row.hide-row ~ .item-row{
+    top: -50px;
+    transition: top .4s;
 }
 /* calc */
 .btn-calc, .btn-calc:focus{

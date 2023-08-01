@@ -206,13 +206,14 @@
                                 <p id="storeName"></p>
                                 <p id="receiptDate"></p>
                             </div>
-                            <table class="table item-select-table">
+                            <table id="itemSelectTable" class="table item-select-table">
                                 <thead class="text-primary small">
                                     <th></th>
                                     <th>商品名</th>
                                     <th class="amount">金額</th>
                                     <th class="amount">税</th>
                                     <th class="amount">合計</th>
+                                    <th></th>
                                 </thead>
                                 <tbody id="tbodyItemsDetail">
                                 </tbody>
@@ -220,21 +221,24 @@
                             <table class="table table-borderless item-total-table">
                                 <tbody>
                                     <tr>
-                                        <th class="text-primary">小計</th><td id="itemSelectSubTotal" class="amount"></td>
+                                        <th class="text-primary">小計</th><td id="receiptSubtotal" class="amount"></td>
                                     </tr>
                                     <tr>
-                                        <th class="text-primary">税合計</th><td id="itemSelectTaxTotal" class="amount"></td>
+                                        <th class="text-primary">税合計</th><td id="receiptTaxTotal" class="amount"></td>
                                     </tr>
                                     <tr>
-                                        <th class="text-primary">合計</th><td id="itemTotal" class="amount"></td>
+                                        <th class="text-primary">合計</th><td id="receiptTotal" class="amount"></td>
                                     </tr>
                                     <tr>
-                                        <th class="text-primary">計上金額</th><td id="itemSelectTotal" class="amount"></td>
+                                        <th class="text-primary">計上金額</th><td id="toRecordTotal" class="amount"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div class="modal-footer">
+                            <button id="itemSelectUndo" class="btn item-select-undo">
+                                <i class="fa fa-undo"></i>
+                            </button>
                             <button id="itemSelectConfirm" type="button" class="btn btn-primary">内容確認</button>
                             <button id="itemSelectClose" type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
                         </div><!-- /.modal-footer -->

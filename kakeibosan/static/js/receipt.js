@@ -23,11 +23,16 @@ async function postFile(e){
     // ローディングアニメーション表示
     displayLoader();
 
-    // アップロードデータ
-    const formData = new FormData();
-    formData.append('receiptImage', receiptImage.files[0]);  // ファイル内容を詰める
+    // アップロード
+    const trimmedFileName = 'trimmed.jpg';
+    const uploadFile = receiptImage.files[0];
+    const fileName = uploadFile.name;
 
-    const url = '/ocreniisan';
+    const formData = new FormData();
+    formData.append('receiptImage', uploadFile);  // ファイル内容を詰める
+
+    const baseUrl = '/ocreniisan'
+    const url = (fileName === trimmedFileName)? baseUrl + '?trimmed=true': baseUrl;
     const param = {
         method: 'POST',
         mode: 'cors',
@@ -51,7 +56,20 @@ async function postFile(e){
     .then(json => {
         console.log(json);
         if('error' in json){
-            alert(json['error'] + '\n\n' + json['detail']);
+            if(json['error'] === 'trim'){
+                const confirmResult = confirm(
+                    json['message'] + '\n\n' +
+                    json['detail'] + '\n\n' +
+                    '手動でトリミングしますか？'
+                );
+
+                // confirmでOKならトリミングモーダル表示
+                if(confirmResult){
+                    showTrimmingModal(uploadFile, trimmedFileName);
+                }
+            }else{
+                alert(json['message'] + '\n\n' + json['detail']);
+            }
         }else{
             let registerData = {};
 
@@ -271,6 +289,60 @@ function undoButtonClickEvent(){
     this.registerData['amount'] = this.json['total'];
 }
 
+
+function showTrimmingModal(uploadFile, trimmedFileName){
+    // よくわかんないけど、下記URLを参考
+    // https://github.com/fengyuanchen/cropperjs/blob/main/docs/examples/cropper-in-modal.html
+    const trimmingReceiptImageElem = document.getElementById('trimmingReceiptImage');
+    const blobUrl = URL.createObjectURL(uploadFile);
+    trimmingReceiptImageElem.src = blobUrl;
+
+    let cropBoxData;
+    let canvasData;
+    let cropper;
+
+    $('#trimmingModal').on('shown.bs.modal', function(){
+        cropper = new Cropper(trimmingReceiptImageElem, {
+            autoCropArea: 0.5,
+            ready: function(){
+                //Should set crop box data first here
+                cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
+            }
+        });
+
+        // 用が済んだらURL.revokeObjectURL();でメモリを解放したほうがいいらしい
+        URL.revokeObjectURL(blobUrl);
+    }).on('hidden.bs.modal', function(){
+        cropBoxData = cropper.getCropBoxData();
+        canvasData = cropper.getCanvasData();
+        cropper.destroy();
+    });
+
+    // アップロードボタン押下イベント
+    const uploadTrimmedImageBtnElem = document.getElementById('uploadTrimmedImage');
+    uploadTrimmedImageBtnElem.addEventListener('click', function(){
+        const canvas = cropper.getCroppedCanvas();
+
+        // よくわかんないけど、下記URLを参考
+        // https://cobakura.com/articles/crop-image/
+        canvas.toBlob(function(imageBlob){
+            const trimmedImageFile = new File([imageBlob], trimmedFileName, {type: 'image/jpeg'});
+            const dt = new DataTransfer();
+
+            dt.items.add(trimmedImageFile);
+            receiptImage.files = dt.files;
+
+            // changeイベント発火でpostFile実行して、トリミング後の画像をアップロード
+            const changeEvent = new Event('change');
+            receiptImage.dispatchEvent(changeEvent);
+
+            // モーダル閉じる
+            $('#trimmingModal').modal('hide');
+        })
+    })
+
+    $('#trimmingModal').modal('show');
+}
 
 async function clickConfirmButton(e){
     // テーブルの行数

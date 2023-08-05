@@ -2,6 +2,7 @@
 {%- block title %} - {{ active_page }}{%- endblock %}
 {%- block header %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/handsontable.full.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/cropper.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}" />
 {%- endblock%}
 {%- block contents %}
@@ -236,7 +237,7 @@
                             </table>
                         </div>
                         <div class="modal-footer">
-                            <button id="itemSelectUndo" class="btn item-select-undo">
+                            <button id="itemSelectUndo" class="btn btn-undo">
                                 <i class="fa fa-undo"></i>
                             </button>
                             <button id="itemSelectConfirm" type="button" class="btn btn-primary">内容確認</button>
@@ -245,6 +246,31 @@
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
             </div><!-- end商品詳細モーダル -->
+            </div><!-- end追加確認モーダル -->
+            <!-- トリミングモーダル -->
+            <div class="modal fade" id="trimmingModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog trimming-modal" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">トリミング</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="閉じる">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="trimming-image">
+                                <img id="trimmingReceiptImage" class="receipt-image">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button id="uploadTrimmedImage" class="btn btn-primary upload-trimmed-reciept">
+                                <i class="fa fa-cloud-upload-alt"></i>
+                                アップロード
+                            </button>
+                        </div><!-- /.modal-footer -->
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- endトリミングモーダル -->
             <!-- 電卓モーダル -->
             <div class="modal fade calc-modal" id="calcModal" tabindex="-1" role="dialog">
                 <div class="modal-dialog modal-sm">
@@ -306,6 +332,7 @@
     <script src="{{ url_for('static', filename='js/vendor/handsontable.full.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/moment-with-locales.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vendor/lodash.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vendor/cropper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/records.js') }}"></script>
     <script src="{{ url_for('static', filename='js/calc.js') }}"></script>
     <script>

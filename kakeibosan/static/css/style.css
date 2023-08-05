@@ -189,16 +189,17 @@ table tbody tr td.copy-btn{
 .amount, .bought-in, .month-to-add{
     text-align: right;
 }
+/* item select modal */
 .item-select-header{
     font-size: 1.2rem;
 }
-.item-select-undo,
-.item-select-undo:focus{
+.btn-undo,
+.btn-undo:focus{
     margin-right: 1rem!important;
     background-color: #2a5788;
     border-color: #2a5788;
 }
-.item-select-undo:hover{
+.btn-undo:hover{
     background-color: rgba(42, 87, 136, 0.8);
 }
 .item-select-modal{
@@ -245,6 +246,10 @@ table tbody tr td.copy-btn{
 .item-row.hide-row ~ .item-row{
     top: -50px;
     transition: top .4s;
+}
+/* trimming modal */
+.receipt-image{
+    max-width: 100%;
 }
 /* calc */
 .btn-calc, .btn-calc:focus{

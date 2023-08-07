@@ -127,11 +127,11 @@ function buildItemSelectModal(json, registerData){
     receiptSubtotalElem.innerHTML = (json['subtotal'] === null)? '-----': json['subtotal'].toLocaleString();
     receiptTotalElem.innerHTML = json['total'].toLocaleString();
 
-    const customCheckbox = function(row){
+    const customCheckbox = function(checkboxId){
         return `
             <div class="form-check">
                 <label class="form-check-label">
-                    <input id="item-checkbox_` + row + `" class="form-check-input" type="checkbox" value="" checked  ` + `data-row="` + row + `">
+                    <input id="` + checkboxId + `" class="form-check-input" type="checkbox" value="" checked>
                         <span class="form-check-sign">
                             <span class="check"></span>
                         </span>
@@ -149,30 +149,38 @@ function buildItemSelectModal(json, registerData){
         const amount = json['items'][i]['amount'];
 
         const rowId = 'item_' + i;
+        const checkboxId = 'checkbox_' + i;
+        const inputAmountId = 'inputAmount_' + i;
+        const deleteId = 'deleteItem_' + i;
+
         const itemsDetail = `
         <tr id="` + rowId + `" class="item-row">
-            <td class="item-checkbox">` + customCheckbox(i) +`</td>
+            <td class="item-checkbox">` + customCheckbox(checkboxId) +`</td>
             <td>` + itemName + `</td>
-            <td class="amount"><input class="amount-input" type="text" value="` + amount.toLocaleString() + `"></td>
+            <td class="amount"><input id="` + inputAmountId + `" class="amount-input" type="text" pattern="\d*" value="` + amount.toLocaleString() + `"></td>
             <td class="amount item-tax"></td>
             <td class="amount item-taxin"></td>
-            <td><i id="deleteItem_` + i + `" class="fa fa-trash-alt text-primary delete-icon"></i>
+            <td><i id="` + deleteId + `" class="fa fa-trash-alt text-primary delete-icon"></i>
         </tr>
         `
         // tbody内のおしりに挿入
         itemDetailTbodyElem.insertAdjacentHTML('beforeend', itemsDetail);
 
         // チェックボックスOn・Off時のイベントリスナー
-        const toRecordElem = document.getElementById('item-checkbox_' + i);
+        const toRecordElem = document.getElementById(checkboxId);
         toRecordElem.addEventListener('change', {registerData: registerData, handleEvent: itemSelectCheckboxEvent}, false);
 
+        // 金額入力欄のイベントリスナー
+        const inputAmountElem = document.getElementById(inputAmountId);
+        inputAmountElem.addEventListener('input', {registerData: registerData, elem: inputAmountElem, json: json, handleEvent:inputAmountEvent});
+
         // ゴミ箱アイコンクリック時のイベントリスナー
-        const deleteItemElem = document.getElementById('deleteItem_' + i);
+        const deleteItemElem = document.getElementById(deleteId);
         deleteItemElem.addEventListener('click', {registerData: registerData, rowId: rowId, json: json, handleEvent: deleteIconClickEvent}, false)
     }
 
     const rowsElem = itemDetailTbodyElem.querySelectorAll('.item-row');
-    const selected = insertTaxAndTotalByItem(rowsElem, json['subtotal'], json['total']);
+    const selected = insertTaxAndTotalByItem(rowsElem, json);
     toRecordTotalElem.innerHTML = selected.toLocaleString();
 
     // undoボタンクリック時のイベントリスナー
@@ -183,8 +191,8 @@ function buildItemSelectModal(json, registerData){
 }
 
 
-function insertTaxAndTotalByItem(rowsElem, subtotal, total){
-    const taxTotal = total - subtotal;
+function insertTaxAndTotalByItem(rowsElem, json){
+    const taxTotal = josn['total'] - json['subtotal'];
 
     let selectTotal = 0;
     for(let i = 0; i < rowsElem.length; i++){
@@ -196,7 +204,7 @@ function insertTaxAndTotalByItem(rowsElem, subtotal, total){
         const itemTaxInElem = rowsElem[i].querySelector('.item-taxin');
         const calcTax = function(){
             // 小計がnullの時は、商品ごとの金額は税込なはず
-            if(subtotal === null){
+            if(json['subtotal'] === null){
                 itemTaxElem.innerHTML = '---';
 
                 return 0;
@@ -204,7 +212,7 @@ function insertTaxAndTotalByItem(rowsElem, subtotal, total){
                 // 商品ごとの税額は、小計と商品金額の割合で求める（軽減税率を考慮とか無理なので）
                 // 単にMath.roundで丸めると1円とかズレるので、1000倍して丸めて割る1000で桁を元に戻してまた丸める
                 // それでもズレる時あり
-                const thousandfold = Math.round((itemAmount / subtotal) * 1000);
+                const thousandfold = Math.round((itemAmount / json['subtotal']) * 1000);
                 const taxByItem = Math.round((thousandfold / 1000) * taxTotal);
                 itemTaxElem.innerHTML = taxByItem.toLocaleString();
 
@@ -232,6 +240,19 @@ function itemSelectCheckboxEvent(e){
     const calcToRecord = (e.target.checked)? (toRecordTotal + itemAmountTaxIn): (toRecordTotal - itemAmountTaxIn);
     toRecordTotalElem.innerHTML = calcToRecord.toLocaleString();
     this.registerData['amount'] = calcToRecord;
+}
+
+
+function inputAmountEvent(){
+    // 入力された値を三桁区切りにして、チェックボックスのvalueに入れる
+    const formattedValue = localeStringToNumber(this.elem.value).toLocaleString();
+    this.elem.value = formattedValue;
+
+    const rowsElem = itemDetailTbodyElem.querySelectorAll('.item-row:not(.d-none)');
+    const selected = insertTaxAndTotalByItem(rowsElem, this.json);
+
+    toRecordTotalElem.innerHTML = selected.toLocaleString();
+    this.registerData['amount'] = selected;
 }
 
 
@@ -267,7 +288,7 @@ function deleteIconClickEvent(){
         })
     }).then((tr) => {
         const rowsElem = itemDetailTbodyElem.querySelectorAll('.item-row:not(.d-none)');
-        const selected = insertTaxAndTotalByItem(rowsElem, this.json['subtotal'], this.json['total']);
+        const selected = insertTaxAndTotalByItem(rowsElem, this.json);
 
         toRecordTotalElem.innerHTML = selected.toLocaleString();
         this.registerData['amount'] = selected;

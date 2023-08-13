@@ -210,6 +210,7 @@ function buildItemSelectModal(json, registerData){
             }else{
                 $(receiptDateElem).tooltip('show');
             }
+            registerData['bought_in'] = receiptDateElem.value;
         },
     })
 

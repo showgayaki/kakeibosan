@@ -192,7 +192,7 @@ function buildItemSelectModal(json, registerData){
 
 
 function insertTaxAndTotalByItem(rowsElem, json){
-    const taxTotal = josn['total'] - json['subtotal'];
+    const taxTotal = json['total'] - json['subtotal'];
 
     let selectTotal = 0;
     for(let i = 0; i < rowsElem.length; i++){

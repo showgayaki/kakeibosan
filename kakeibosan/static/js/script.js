@@ -50,9 +50,9 @@ function copyText(elem){
     $textarea.remove();
     // コピー結果によって表示変更
     if(copyResult){
-    elem.attr('data-original-title', 'コピーしました');
+        elem.attr('data-original-title', 'コピーしました');
     }else{
-    elem.attr('data-original-title', 'コピー失敗しました');
+        elem.attr('data-original-title', 'コピー失敗しました');
     }
     // tooltip表示
     elem.tooltip('show');

@@ -193,6 +193,9 @@ table tbody tr td.copy-btn{
 .item-select-header{
     font-size: 1.2rem;
 }
+.receipt-date-input{
+    border: 1px solid #ddd;
+}
 .btn-undo,
 .btn-undo:focus{
     margin-right: 1rem!important;

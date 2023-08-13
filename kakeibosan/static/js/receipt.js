@@ -90,6 +90,25 @@ async function postFile(e){
             registerData = buildItemSelectModal(json, registerData);
             $('#itemSelectModal').modal('show');
 
+            // レシート日付用ツールチップ
+            $(receiptDateElem).tooltip(
+                {
+                    title: '日付が今月ではないようです',
+                    placement: 'top',
+                    trigger: 'manual',
+                    offset: '-22px, 0',
+                }
+            )
+
+            // 読み取ったレシートの日付が今月じゃない場合は、ツールチップを表示する
+            if(isThisMonth(json['date'])){
+                ;
+            }else{
+                $('#itemSelectModal').on('shown.bs.modal', function(){
+                    $(receiptDateElem).tooltip('show');
+                })
+            }
+
             // モーダル表示 → 閉じる → 別のレシートでモーダル表示 → confirmButtonクリック
             // とすると、1回目のデータも挿入されてしまう。
             // addEventListenerだと追加で登録されてしまうようなのでremoveEventListenerしたい。
@@ -122,7 +141,7 @@ function localeStringToNumber(localeString){
 
 function buildItemSelectModal(json, registerData){
     storeNameElem.innerHTML = '店名：' + json['store'];
-    receiptDateElem.innerHTML = '日付：' + json['date'];
+    receiptDateElem.value = json['date'];
     receiptTaxTotalElem.innerHTML = (json['total'] - json['subtotal']).toLocaleString();
     receiptSubtotalElem.innerHTML = (json['subtotal'] === null)? '-----': json['subtotal'].toLocaleString();
     receiptTotalElem.innerHTML = json['total'].toLocaleString();
@@ -183,11 +202,34 @@ function buildItemSelectModal(json, registerData){
     const selected = insertTaxAndTotalByItem(rowsElem, json);
     toRecordTotalElem.innerHTML = selected.toLocaleString();
 
+    // 日付inputに入力時のイベントリスナー
+    receiptDateElem.addEventListener('input', {
+        handleEvent: function(){
+            if(isThisMonth(receiptDateElem.value)){
+                $(receiptDateElem).tooltip('hide');
+            }else{
+                $(receiptDateElem).tooltip('show');
+            }
+        },
+    })
+
     // undoボタンクリック時のイベントリスナー
     const itemSelectUndoElem = document.getElementById('itemSelectUndo');
     itemSelectUndoElem.addEventListener('click', {registerData: registerData, json: json, handleEvent: undoButtonClickEvent}, false)
 
     return registerData;
+}
+
+
+function isThisMonth(receiptDate){
+    receiptDate = new Date(receiptDate);
+    const now = new Date();
+    if((receiptDate.getFullYear() === now.getFullYear())
+    && receiptDate.getMonth() === now.getMonth()){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 
@@ -297,10 +339,15 @@ function deleteIconClickEvent(){
 
 
 function undoButtonClickEvent(){
-    const rowHeight = itemDetailTbodyElem.querySelector('.item-row').clientHeight;
     const rowsElem = itemDetailTbodyElem.querySelectorAll('.d-none');
+    if(rowsElem.length === 0){
+        // 非表示にされている行がなければ抜ける
+        return
+    }
 
+    const rowHeight = itemDetailTbodyElem.querySelector('.item-row:not(.d-none)').clientHeight;
     let tableMarginBottom = Number(tableElem.style.marginBottom.replace('px', ''));
+
     for(let i = 0; i < rowsElem.length; i++){
         rowsElem[i].classList.remove('d-none');
         tableMarginBottom -= rowHeight;

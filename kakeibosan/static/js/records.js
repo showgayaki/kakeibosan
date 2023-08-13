@@ -10,7 +10,7 @@ $('.copy-btn')
 // tooltip表示後の動作を設定
 .on('shown.bs.tooltip', function(){
     setTimeout((function(){
-    $(this).tooltip('hide');
+        $(this).tooltip('hide');
     }).bind(this), 1500);
 })
 // クリック時の動作を設定

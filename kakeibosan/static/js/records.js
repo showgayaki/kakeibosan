@@ -43,7 +43,7 @@ function checkboxCustomRenderer(hotInstance, td, row, column, prop, value, cellP
 }
 
 
-function createTable(currentUserId, users, records, viewMonth){
+function createTable(users, records, viewMonth){
     // チェックボックスのカスタマイズ
     Handsontable.renderers.registerRenderer('custom.checkbox', checkboxCustomRenderer);
 
@@ -207,7 +207,7 @@ function createTable(currentUserId, users, records, viewMonth){
         let validationErrorDict = {};
 
         if(isSelfData){
-            var currentRecords = [];
+            let currentRecords = [];
             let updateRecords = [];
             $(table[userId].getSourceData()).filter(function(i, e){
                 // 最終行は除く
@@ -415,14 +415,4 @@ function createUpdateModal(validationErrorDict, isThisMonth, isSelfData, updateR
             console.log('always');
         });
     });
-
-    $('#confirmModal').find('button[data-dismiss=modal]').click(function(){
-        if(document.getElementById('storeName').textContent != ''){
-            // データのある最終行
-            let insertRow = table[currentUserId].countRows() - 2;
-            // 挿入したデータ削除
-            table[currentUserId].alter('remove_row', insertRow);
-            $('#itemSelectModal').modal('show');
-        }
-    })
 }

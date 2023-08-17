@@ -1,5 +1,7 @@
 const receiptImage = document.getElementById('receiptImage');
 const storeNameElem = document.getElementById('storeName');
+const storeCategoryElem = document.getElementById('storeCategory');
+const storeSubcategoryElem = document.getElementById('storeSubcategory');
 const receiptDateElem = document.getElementById('receiptDate');
 const receiptSubtotalElem = document.getElementById('receiptSubtotal');
 const receiptTaxTotalElem = document.getElementById('receiptTaxTotal');
@@ -7,6 +9,7 @@ const receiptTotalElem = document.getElementById('receiptTotal');
 const toRecordTotalElem = document.getElementById('toRecordTotal');
 const tableElem = document.getElementById('itemSelectTable');
 const itemDetailTbodyElem = document.getElementById('tbodyItemsDetail');
+const confirmButtonElem = document.getElementById('itemSelectConfirm');
 
 
 receiptImage.addEventListener('click', function(e){
@@ -71,23 +74,38 @@ async function postFile(e){
                 alert(json['message'] + '\n\n' + json['detail']);
             }
         }else{
-            let registerData = {};
-
-            registerData['subcategory'] = json['subcategory'];
-            // [{'固定費': ['家賃', '管理費', '手数料', '更新料', '駐輪場']},...]の配列の形で来る
-            for(let i = 0; i < categoryList.length; i++){
-                // サブカテゴリー名から、カテゴリー名を取得する
-                if(Object.values(categoryList[i])[0].includes(registerData['subcategory'])){
-                    registerData['category'] = Object.keys(categoryList[i])[0];
-                    break;
-                }
-            }
-            registerData['paid_to'] = json['store'];
-            registerData['amount'] = json['total'];
-            registerData['bought_in'] = json['date'];
+            // 内容確認ボタン押下前のHandsOnTableの行数
+            // ボタン押下時に行数が増えていたら、更新確認モーダル閉じる時に削除する用
+            const defaultRowsCount = table[currentUserId].countRows();
 
             // 商品選択モーダル作成してモーダル表示
-            registerData = buildItemSelectModal(json, registerData);
+            buildItemSelectModal(json);
+
+            // 内容確認ボタンのクリックイベント
+            // モーダル表示・非表示で、登録・削除
+            $('#itemSelectModal').on('shown.bs.modal', function(){
+                confirmButtonElem.addEventListener('click', clickConfirmButton, false);
+            }).on('hidden.bs.modal', function(){
+                confirmButtonElem.removeEventListener('click', clickConfirmButton, false);
+            })
+
+            // 更新確認モーダル非表示時のイベント
+            // 商品選択モーダル開く → 更新確認モーダル開く → 更新確認モーダル閉じる の流れを想定
+            $('#confirmModal').on('hidden.bs.modal', function(){
+                // confirmButtonElem.removeEventListener('click', clickConfirmButton, false);
+                const currentRowsCount = table[currentUserId].countRows();
+
+                // fetch直後より行数が増えていたら、その行を削除
+                if(currentRowsCount > defaultRowsCount){
+                    // データのある最終行
+                    let insertRow = table[currentUserId].countRows() - 2;
+                    // 挿入したデータ削除
+                    table[currentUserId].alter('remove_row', insertRow);
+                    $('#itemSelectModal').modal('show');
+                }
+            })
+
+            // モーダルをショーウ
             $('#itemSelectModal').modal('show');
 
             // レシート日付用ツールチップ
@@ -99,7 +117,6 @@ async function postFile(e){
                     offset: '-22px, 0',
                 }
             )
-
             // 読み取ったレシートの日付が今月じゃない場合は、ツールチップを表示する
             if(isThisMonth(json['date'])){
                 ;
@@ -109,23 +126,6 @@ async function postFile(e){
                 })
             }
 
-            // モーダル表示 → 閉じる → 別のレシートでモーダル表示 → confirmButtonクリック
-            // とすると、1回目のデータも挿入されてしまう。
-            // addEventListenerだと追加で登録されてしまうようなのでremoveEventListenerしたい。
-            // ------------------
-            // confirmButton.addEventListener('click', {data: registerData, handleEvent: clickConfirmButton}, false);
-            // confirmButton.removeEventListener('click', {data: registerData, handleEvent: clickConfirmButton}, false);
-            // ------------------
-            // 上記の記載だと、removeEventListenerが効かないようなので、第二引数をいったん変数に入れて取っておく。
-            // （addEventListenerとremoveEventListenerの引数がまったく同じでないと削除できないらしい）
-            const confirmEventObject = {data: registerData, handleEvent: clickConfirmButton};
-            const confirmButtonElem = document.getElementById('itemSelectConfirm');
-            confirmButtonElem.addEventListener('click', confirmEventObject, false);
-
-            const closeButtonElem = document.getElementById('itemSelectClose');
-            closeButtonElem.addEventListener('click', function(){
-                confirmButtonElem.removeEventListener('click', confirmEventObject, false);
-            }, false)
         }
     })
     .catch(error => {
@@ -139,8 +139,18 @@ function localeStringToNumber(localeString){
 }
 
 
-function buildItemSelectModal(json, registerData){
-    storeNameElem.innerHTML = '店名：' + json['store'];
+function buildItemSelectModal(json){
+    // [{'固定費': ['家賃', '管理費', '手数料', '更新料', '駐輪場']},...]の配列の形で来る
+    for(let i = 0; i < categoryList.length; i++){
+        // サブカテゴリー名から、カテゴリー名を取得する
+        if(Object.values(categoryList[i])[0].includes(json['subcategory'])){
+            storeCategoryElem.innerHTML = Object.keys(categoryList[i])[0];
+            break;
+        }
+    }
+
+    storeNameElem.innerHTML = json['store'];
+    storeSubcategoryElem.innerHTML = json['subcategory'];
     receiptDateElem.value = json['date'];
     receiptTaxTotalElem.innerHTML = (json['total'] - json['subtotal']).toLocaleString();
     receiptSubtotalElem.innerHTML = (json['subtotal'] === null)? '-----': json['subtotal'].toLocaleString();
@@ -187,15 +197,15 @@ function buildItemSelectModal(json, registerData){
 
         // チェックボックスOn・Off時のイベントリスナー
         const toRecordElem = document.getElementById(checkboxId);
-        toRecordElem.addEventListener('change', {registerData: registerData, handleEvent: itemSelectCheckboxEvent}, false);
+        toRecordElem.addEventListener('change', {handleEvent: itemSelectCheckboxEvent}, false);
 
         // 金額入力欄のイベントリスナー
         const inputAmountElem = document.getElementById(inputAmountId);
-        inputAmountElem.addEventListener('input', {registerData: registerData, elem: inputAmountElem, json: json, handleEvent:inputAmountEvent});
+        inputAmountElem.addEventListener('input', {elem: inputAmountElem, json: json, handleEvent:inputAmountEvent});
 
         // ゴミ箱アイコンクリック時のイベントリスナー
         const deleteItemElem = document.getElementById(deleteId);
-        deleteItemElem.addEventListener('click', {registerData: registerData, rowId: rowId, json: json, handleEvent: deleteIconClickEvent}, false)
+        deleteItemElem.addEventListener('click', {rowId: rowId, json: json, handleEvent: deleteIconClickEvent}, false)
     }
 
     const rowsElem = itemDetailTbodyElem.querySelectorAll('.item-row');
@@ -216,9 +226,7 @@ function buildItemSelectModal(json, registerData){
 
     // undoボタンクリック時のイベントリスナー
     const itemSelectUndoElem = document.getElementById('itemSelectUndo');
-    itemSelectUndoElem.addEventListener('click', {registerData: registerData, json: json, handleEvent: undoButtonClickEvent}, false)
-
-    return registerData;
+    itemSelectUndoElem.addEventListener('click', {json: json, handleEvent: undoButtonClickEvent}, false)
 }
 
 
@@ -282,7 +290,6 @@ function itemSelectCheckboxEvent(e){
     // チェックつける：計上金額に足す、チェック外す：計上金額から引く
     const calcToRecord = (e.target.checked)? (toRecordTotal + itemAmountTaxIn): (toRecordTotal - itemAmountTaxIn);
     toRecordTotalElem.innerHTML = calcToRecord.toLocaleString();
-    this.registerData['amount'] = calcToRecord;
 }
 
 
@@ -295,7 +302,6 @@ function inputAmountEvent(){
     const selected = insertTaxAndTotalByItem(rowsElem, this.json);
 
     toRecordTotalElem.innerHTML = selected.toLocaleString();
-    this.registerData['amount'] = selected;
 }
 
 
@@ -334,7 +340,6 @@ function deleteIconClickEvent(){
         const selected = insertTaxAndTotalByItem(rowsElem, this.json);
 
         toRecordTotalElem.innerHTML = selected.toLocaleString();
-        this.registerData['amount'] = selected;
     })
 }
 
@@ -355,7 +360,6 @@ function undoButtonClickEvent(){
     }
     tableElem.style.marginBottom = tableMarginBottom.toString() + 'px';
     toRecordTotalElem.innerHTML = this.json['total'];
-    this.registerData['amount'] = this.json['total'];
 }
 
 
@@ -413,15 +417,15 @@ function showTrimmingModal(uploadFile, trimmedFileName){
     $('#trimmingModal').modal('show');
 }
 
-async function clickConfirmButton(e){
+async function clickConfirmButton(){
     // テーブルの行数
     const insertRow = table[currentUserId].countRows() - 1;
     // データ挿入
-    table[currentUserId].setDataAtRowProp(insertRow, 'category', this.data['category']);
-    table[currentUserId].setDataAtRowProp(insertRow, 'subcategory', this.data['subcategory']);
-    table[currentUserId].setDataAtRowProp(insertRow, 'paid_to', this.data['paid_to']);
-    table[currentUserId].setDataAtRowProp(insertRow, 'amount', this.data['amount']);
-    table[currentUserId].setDataAtRowProp(insertRow, 'bought_in', this.data['bought_in']);
+    table[currentUserId].setDataAtRowProp(insertRow, 'category', storeCategoryElem.innerHTML);
+    table[currentUserId].setDataAtRowProp(insertRow, 'subcategory', storeSubcategoryElem.innerHTML);
+    table[currentUserId].setDataAtRowProp(insertRow, 'paid_to', storeNameElem.innerHTML);
+    table[currentUserId].setDataAtRowProp(insertRow, 'amount', localeStringToNumber(toRecordTotalElem.innerHTML));
+    table[currentUserId].setDataAtRowProp(insertRow, 'bought_in', receiptDateElem.value);
 
     $('#itemSelectModal').modal('hide');
     // ちょっと待ってからモーダル表示

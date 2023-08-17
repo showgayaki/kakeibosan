@@ -204,7 +204,12 @@
                         </div>
                         <div class="modal-body">
                             <div class="item-select-header d-flex justify-content-between">
-                                <p id="storeName"></p>
+                                <div class="store-name">
+                                    <p>店名：<span id="storeName"></span></p>
+                                    <p class="store-category">
+                                        <span id="storeCategory"></span> / <span id="storeSubcategory"></span>
+                                    </p>
+                                </div>
                                 <div class="receipt-date">
                                     <label for="receiptDate" class="receipt-date-label">
                                         日付：
@@ -348,7 +353,7 @@
             currentUserId = {{ current_user.id }}
             categoryList = {{ category_list | tojson }};
 
-            table = createTable(currentUserId, users, records, viewMonth);
+            table = createTable(users, records, viewMonth);
         });
     </script>
     <script src="{{ url_for('static', filename='js/receipt.js') }}"></script>

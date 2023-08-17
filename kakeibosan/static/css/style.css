@@ -193,6 +193,12 @@ table tbody tr td.copy-btn{
 .item-select-header{
     font-size: 1.2rem;
 }
+.store-name p{
+    margin-bottom: 0;
+}
+.store-category{
+    font-size: 1rem;
+}
 .receipt-date-input{
     border: 1px solid #ddd;
 }

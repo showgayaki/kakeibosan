@@ -159,12 +159,10 @@ function buildItemSelectModal(json){
     const customCheckbox = function(checkboxId){
         return `
             <div class="form-check">
-                <label class="form-check-label">
-                    <input id="` + checkboxId + `" class="form-check-input" type="checkbox" value="" checked>
-                        <span class="form-check-sign">
-                            <span class="check"></span>
-                        </span>
-                </label>
+                <input id="` + checkboxId + `" class="form-check-input" type="checkbox" value="" checked>
+                <span class="form-check-sign">
+                    <span class="check"></span>
+                </span>
             </div>
         `
     }
@@ -183,13 +181,17 @@ function buildItemSelectModal(json){
         const deleteId = 'deleteItem_' + i;
 
         const itemsDetail = `
-        <tr id="` + rowId + `" class="item-row">
-            <td class="item-checkbox">` + customCheckbox(checkboxId) +`</td>
-            <td>` + itemName + `</td>
-            <td class="amount"><input id="` + inputAmountId + `" class="amount-input" type="text" pattern="\d*" value="` + amount.toLocaleString() + `"></td>
+        <tr id="${rowId}" class="item-row">
+            <td class="item-checkbox">${customCheckbox(checkboxId)}</td>
+            <td>
+                <label class="item-name-label" for="${checkboxId}">${itemName}</label>
+            </td>
+            <td class="amount">
+                <input id="${inputAmountId}" class="amount-input" type="text" pattern="\d*" value="${amount.toLocaleString()}">
+            </td>
             <td class="amount item-tax"></td>
             <td class="amount item-taxin"></td>
-            <td><i id="` + deleteId + `" class="fa fa-trash-alt text-primary delete-icon"></i>
+            <td><i id="${deleteId}" class="fa fa-trash-alt text-primary delete-icon"></i>
         </tr>
         `
         // tbody内のおしりに挿入

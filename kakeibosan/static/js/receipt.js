@@ -78,6 +78,21 @@ async function postFile(e){
             // ボタン押下時に行数が増えていたら、更新確認モーダル閉じる時に削除する用
             const defaultRowsCount = table[currentUserId].countRows();
 
+            // 「2023」が「2013」に検知されてしますことがあるため、年を検証
+            const now = new Date();
+            const nowYear = now.getFullYear();
+            const receiptDate = new Date(json['date']);
+            const receiptYear = receiptDate.getFullYear();
+            // テキトーに、2年以上前ならConfirm出す
+            if(nowYear - receiptYear > 2){
+                const dateFixConfirm = confirm(
+                    `「${receiptYear}年」と読み取られました。そんなわけないですよね？\n「${nowYear}年」に修正しておきますか？`
+                )
+                if(dateFixConfirm){
+                    json['date'] = json['date'].replace(receiptYear, nowYear)
+                }
+            }
+
             // 商品選択モーダル作成してモーダル表示
             buildItemSelectModal(json);
 
@@ -125,7 +140,6 @@ async function postFile(e){
                     $(receiptDateElem).tooltip('show');
                 })
             }
-
         }
     })
     .catch(error => {

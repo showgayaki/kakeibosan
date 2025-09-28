@@ -23,7 +23,6 @@
                 <div class="col-md-6">
                     <div class="card card-chart">
                         <div class="card-header">
-                            <h5 class="card-category">過去{{ total_costs_last_12_months.months | length }}ヶ月</h5>
                             <h4 class="card-title">{{ view_category.name }}</h4>
                         </div>
                         <div class="card-body">
@@ -41,13 +40,15 @@
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script>
         $(document).ready(function () {
-            let totalCostsLast12Months = {{ total_costs_last_12_months | tojson }};
-            let costsThisMonthByCategory = {{ costs_this_month_by_category | tojson }};
-
-            let utilityCosts = {{ utility_costs | tojson }};
-            let viewCategory = {{ view_category_list | tojson }};
-
-            initDashboardPageCharts(totalCostsLast12Months, costsThisMonthByCategory, utilityCosts, viewCategory);
+            initDashboardPageCharts(
+                {{ this_month.month | tojson }},
+                {{ total_costs_last_year | tojson }},
+                {{ total_costs_this_year | tojson }},
+                {{ costs_this_month_by_category | tojson }},
+                {{ utility_last_year | tojson }},
+                {{ utility_this_year | tojson }},
+                {{ view_category_list | tojson }},
+            );
         });
     </script>
 {% endblock %}

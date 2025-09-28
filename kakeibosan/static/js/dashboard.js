@@ -1,12 +1,20 @@
 
-function initDashboardPageCharts(totalCostsLast12Months, costsThisMonthByCategory, utilityCosts, viewCategory) {
-    drawBigDashboardChart(totalCostsLast12Months['total'], totalCostsLast12Months['months']);
-    drawPieChart(costsThisMonthByCategory, totalCostsLast12Months['total']);
-    drawUtilityCostChart(utilityCosts, totalCostsLast12Months['months'], viewCategory);
+function initDashboardPageCharts(
+    thisMonth,
+    totalCostsLastYear,
+    totalCostsThisYear,
+    costsThisMonthByCategory,
+    utilityLastYear,
+    utilityThisYear,
+    viewCategory,
+) {
+    drawBigDashboardChart(totalCostsLastYear, totalCostsThisYear);
+    drawPieChart(thisMonth, costsThisMonthByCategory, totalCostsThisYear.totals);
+    drawUtilityCostChart(utilityLastYear, utilityThisYear, viewCategory);
 }
 
 
-function drawBigDashboardChart(totalCosts, months){
+function drawBigDashboardChart(lastYearData, thisYearData) {
     chartColor = "#FFFFFF";
 
     let ctx = document.getElementById('bigDashboardChart').getContext("2d");
@@ -19,26 +27,40 @@ function drawBigDashboardChart(totalCosts, months){
     gradientFill.addColorStop(0, "rgba(128, 182, 244, 0)");
     gradientFill.addColorStop(1, "rgba(255, 255, 255, 0.24)");
 
-    let myChart = new Chart(ctx, {
+    const chartStyle = {
+        borderColor: chartColor,
+        pointBorderColor: chartColor,
+        pointBackgroundColor: "#1e3d60",
+        pointHoverBackgroundColor: "#1e3d60",
+        pointHoverBorderColor: chartColor,
+        pointBorderWidth: 1,
+        pointHoverRadius: 7,
+        pointHoverBorderWidth: 2,
+        pointRadius: 5,
+        fill: true,
+        backgroundColor: gradientFill,
+        borderWidth: 2,
+    };
+
+    new Chart(ctx, {
         type: 'line',
         data: {
-            labels: months,
-            datasets: [{
-                label: "出費合計",
-                borderColor: chartColor,
-                pointBorderColor: chartColor,
-                pointBackgroundColor: "#1e3d60",
-                pointHoverBackgroundColor: "#1e3d60",
-                pointHoverBorderColor: chartColor,
-                pointBorderWidth: 1,
-                pointHoverRadius: 7,
-                pointHoverBorderWidth: 2,
-                pointRadius: 5,
-                fill: true,
-                backgroundColor: gradientFill,
-                borderWidth: 2,
-                data: totalCosts
-            }]
+            labels: lastYearData.months,
+            datasets: [
+                {
+                    ...chartStyle,
+                    borderColor: hexToRgba(chartColor, 0.4),
+                    pointBackgroundColor: hexToRgba(chartStyle.pointBackgroundColor, 0.4),
+                    pointHoverBackgroundColor: hexToRgba(chartStyle.pointHoverBackgroundColor, 0.4),
+                    label: `${lastYearData.year}年`,
+                    data: lastYearData.totals,
+                },
+                {
+                    ...chartStyle,
+                    label: `${thisYearData.year}年`,
+                    data: thisYearData.totals,
+                },
+            ]
         },
         options: {
             layout: {
@@ -61,9 +83,9 @@ function drawBigDashboardChart(totalCosts, months){
                 position: "nearest"
             },
             legend: {
-                position: "bottom",
+                position: "top",
                 fillStyle: "#FFF",
-                display: false
+                display: true,
             },
             scales: {
                 yAxes: [{
@@ -100,7 +122,7 @@ function drawBigDashboardChart(totalCosts, months){
 }
 
 
-function drawPieChart(costsThisMonthByCategory, totalCosts){
+function drawPieChart(thisMonth, costsThisMonthByCategory, totalCosts) {
     // 円グラフ用
     bg_color = ["#3399FF", "#00CC33", "#C71585", "#DDDDDD", "#FF9933"]
     categories = [];
@@ -117,13 +139,13 @@ function drawPieChart(costsThisMonthByCategory, totalCosts){
 
     for (let i in costsThisMonthByCategory) {
         categories.push(costsThisMonthByCategory[i]['category']);
-        percentage = Math.round((costsThisMonthByCategory[i]['amount'] / totalCosts.slice(-1)[0]) * 100);
+        percentage = Math.round((costsThisMonthByCategory[i]['amount'] / totalCosts[thisMonth - 1]) * 100);
         percentages.push(percentage);
     }
 
     // 月の割合
     ctx = document.getElementById('pieChart').getContext('2d');
-    let chart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'pie',
         data: {
             labels: categories,
@@ -135,42 +157,64 @@ function drawPieChart(costsThisMonthByCategory, totalCosts){
         options: {
             legend: {
                 display: true,
-                position: 'left'
+                position: 'left',
             }
         }
     });
 }
 
 
-function drawUtilityCostChart(utilityCosts, months, viewCategory){
+function drawUtilityCostChart(lastYearData, thisYearData, viewCategory) {
     // 各種料金のグラフ
-    viewCategory.forEach(function(category){
-        console.log(category)
-        let charges = [];
-        let chartBorderColor = category['chart_color'];
+    viewCategory.forEach(function (category) {
+        console.log('category', category);
+        console.log('lastYearData', lastYearData);
+        let chartBaseColor = category['chart_color'];
         let chartName = category['in_english'];
 
-        for(let month in utilityCosts){
-            charges.push(utilityCosts[month][category['name']]);
+        try {
+            ctx = document.getElementById('lineChart' + chartName).getContext('2d');
+        } catch (e) {
+            return;
         }
 
-        ctx = document.getElementById('lineChart' + chartName).getContext('2d');
-        let chart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: {
-                labels: months,
-                datasets: [{
-                    label: chartName,
-                    backgroundColor: 'rgba(0,0,0,0)',
-                    borderColor: chartBorderColor,
-                    data: charges,
-                }]
+                labels: lastYearData.months,
+                datasets: [
+                    {
+                        // 去年: 半透明
+                        label: `${lastYearData.year}年`,
+                        backgroundColor: 'rgba(0,0,0,0)',
+                        borderColor: hexToRgba(chartBaseColor, 0.6),
+                        data: lastYearData.totals[category['id']],
+                    },
+                    {
+                        // 今年: 通常カラー
+                        label: `${thisYearData.year}年`,
+                        backgroundColor: 'rgba(0,0,0,0)',
+                        borderColor: chartBaseColor,
+                        data: thisYearData.totals[category['id']],
+                    },
+                ]
             },
             options: {
                 legend: {
-                    display: false
+                    display: true,
                 }
             }
         });
     })
 }
+
+
+// hex -> rgba(…,0.4) へ変換する簡易関数
+const hexToRgba = (hex, alpha) => {
+    const c = hex.replace('#', '');
+    const bigint = parseInt(c, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `rgba(${r},${g},${b},${alpha})`;
+};

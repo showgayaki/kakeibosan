@@ -89,13 +89,13 @@ WantedBy=multi-user.target
 ## Dockerでやる場合
 ### 本番
 docker compose build && docker compose up -d
-####　更新時
+### 更新時
 docker compose down && docker compose build --no-cache && docker compose up -d
 
 ### 開発時
 dbディレクトリ直下に、本番からdumpしてきたsqlファイルを保存。
 
-docker compose down && docker compose -f docker-compose.dev.yml build --no-cache && docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml down && docker compose -f docker-compose.dev.yml build --no-cache && docker compose -f docker-compose.dev.yml up -d
 
 [感謝](https://qiita.com/kujira_engineer/items/b4442e4d37b117205aea)
 
